@@ -176,7 +176,7 @@ function totals(){var t={};S.patrols.forEach(function(p){t[p.id]=0});S.log.forEa
 function touch(){dirty=true;S.example=S.example&&true;render()}
 
 function header(){return '<header class="top"'+(S.cover?' style="background-image:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.7)),url('+S.cover+')"':'')+'><div class="eyebrow">'+esc(S.season)+'</div><h1>'+esc(S.troop)+'</h1></header>'+
- '<nav class="tabs" role="tablist">'+[['home','Accueil'],['points','Points'],['progress','Patrouilles'],['events','Activités']].map(function(t){return '<button role="tab" id="tab-'+t[0]+'" data-tab="'+t[0]+'" aria-selected="'+(tab===t[0])+'">'+t[1]+'</button>'}).join('')+'</nav>'+
+ '<nav class="tabs" role="tablist">'+[['home','Accueil'],['points','Points'],['progress','Patrouilles'],['events','Calendrier']].map(function(t){return '<button role="tab" id="tab-'+t[0]+'" data-tab="'+t[0]+'" aria-selected="'+(tab===t[0])+'">'+t[1]+'</button>'}).join('')+'</nav>'+
  (S.example?'<div class="note">Les points affichés sont des exemples. '+(canEdit?'Appuie sur <b>Modifier</b> pour les remplacer par les vrais.':'Les chefs ajouteront bientôt les vrais.')+'</div>':'')}
 
 function slideshow(){

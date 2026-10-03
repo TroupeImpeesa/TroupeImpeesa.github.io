@@ -139,6 +139,13 @@ h3{font-family:var(--display);font-size:19px;margin:0}
 .pill{font-size:12px;font-weight:700;border-radius:99px;padding:3px 10px}
 .pill.yes{background:var(--accent);color:var(--accent-ink)}
 .pill.no{border:1.5px solid var(--danger);color:var(--danger)}
+.hero{overflow:hidden;background:#141a22}
+.hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
+.hero>img.on{opacity:1}
+.hero .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.72))}
+.htext{position:relative;z-index:1}
+.hero .sdots{z-index:2;top:calc(12px + env(safe-area-inset-top,0px))}
+@media (prefers-reduced-motion:no-preference){.hero>img{transition:opacity 1s ease}}
 .empty{color:var(--muted);padding:16px 0}
 /* edit UI */
 .editbox{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0;display:grid;gap:10px}
@@ -175,7 +182,13 @@ function fmtDate(d){var p=d.split('-');return +p[2]+' '+MONTHS[+p[1]-1]}
 function totals(){var t={};S.patrols.forEach(function(p){t[p.id]=0});S.log.forEach(function(l){if(l.patrol in t)t[l.patrol]+=Number(l.pts)||0});return t}
 function touch(){dirty=true;S.example=S.example&&true;render()}
 
-function header(){return '<header class="top"'+(S.cover?' style="background-image:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.7)),url('+S.cover+')"':'')+'><div class="eyebrow">'+esc(S.season)+'</div><h1>'+esc(S.troop)+'</h1></header>'+
+function heroTop(){
+ var P=S.photos,txt='<div class="htext"><div class="eyebrow">'+esc(S.season)+'</div><h1>'+esc(S.troop)+'</h1></div>';
+ if(!P.length) return '<header class="top"'+(S.cover?' style="background-image:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.7)),url('+S.cover+')"':'')+'>'+txt+'</header>';
+ if(slide>=P.length) slide=0;
+ return '<header class="top hero" id="show">'+P.map(function(ph,i){return '<img src="'+ph.src+'" alt="'+esc(ph.caption||'Photo de la troupe')+'" class="'+(i===slide?'on':'')+'">'}).join('')+'<div class="shade"></div>'+txt+
+  (P.length>1?'<div class="sdots">'+P.map(function(ph,i){return '<button data-slide="'+i+'" class="'+(i===slide?'on':'')+'" aria-label="Photo '+(i+1)+'"></button>'}).join('')+'</div>':'')+'</header>'}
+function header(){return heroTop()+
  '<nav class="tabs" role="tablist">'+[['home','Accueil'],['points','Points'],['progress','Patrouilles'],['events','Calendrier']].map(function(t){return '<button role="tab" id="tab-'+t[0]+'" data-tab="'+t[0]+'" aria-selected="'+(tab===t[0])+'">'+t[1]+'</button>'}).join('')+'</nav>'+
  (S.example?'<div class="note">Les points affichés sont des exemples. '+(canEdit?'Appuie sur <b>Modifier</b> pour les remplacer par les vrais.':'Les chefs ajouteront bientôt les vrais.')+'</div>':'')}
 
@@ -215,11 +228,11 @@ function addPhotos(files){
 }
 
 function home(){
- var h=slideshow();
+ var h='';
  if(editing){
   h+='<div class="editbox"><h4>Photos du diaporama</h4><div class="fields"><input id="ph-file" type="file" accept="image/*" multiple aria-label="Ajouter des photos"></div>'+
    (S.photos.length?'<div class="thumbs">'+S.photos.map(function(ph){return '<div class="thumb"><img src="'+ph.src+'" alt=""><div class="fields"><input id="phc-'+ph.id+'" data-phcap="'+ph.id+'" value="'+esc(ph.caption||'')+'" placeholder="Légende" aria-label="Légende"><button class="x" data-delphoto="'+ph.id+'" aria-label="Supprimer la photo">×</button></div></div>'}).join('')+'</div>':'')+
-   '<span class="meta">Les photos sont réduites automatiquement. Elles défilent toutes les 5 secondes.</span></div>';
+   '<span class="meta">Ces photos défilent en haut du site, derrière le titre, toutes les 5 secondes.</span></div>';
  }
  if(editing) h+='<div class="editbox"><h4>Photo de l’en-tête</h4><div class="fields"><input id="cv-file" type="file" accept="image/*" aria-label="Choisir la photo de l’en-tête">'+(S.cover?'<button class="btn ghost" data-act="delcover">Retirer</button>':'')+'</div><span class="meta">Une photo large marche mieux (paysage).</span></div>';
  var N=S.news.slice().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:0}).slice(0,30);

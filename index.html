@@ -37,9 +37,12 @@ header.top .eyebrow{opacity:1;text-shadow:0 1px 6px rgba(0,0,0,.6)}
 .eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:12px;font-weight:700;opacity:.85}
 h1{font-family:var(--display);font-weight:900;letter-spacing:-.01em;font-size:clamp(28px,7.5vw,44px);line-height:1.05;margin:6px 0 4px;text-wrap:balance}
 .sub{opacity:.9;font-size:15px}
-nav.tabs{display:flex;gap:4px;margin:18px 0 0;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding-block:10px;z-index:5}
-nav.tabs button{flex:1;min-width:0;font:700 14px var(--body);padding:10px 4px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:10px;cursor:pointer}
-nav.tabs button[aria-selected="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.tabbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding-block:10px;margin-top:8px;background:linear-gradient(var(--bg) 70%,transparent)}
+nav.tabs{position:relative;display:grid;grid-template-columns:repeat(4,1fr);padding:4px;border-radius:999px;background:color-mix(in srgb,var(--fg) 7%,var(--bg));box-shadow:inset 0 0 0 1px var(--line)}
+.tab-ind{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/4);border-radius:999px;background:var(--fg);box-shadow:0 4px 12px color-mix(in srgb,var(--fg) 25%,transparent);transform:translateX(calc(var(--i,0)*100%))}
+nav.tabs button{position:relative;z-index:1;min-width:0;font:700 14px var(--body);letter-spacing:.01em;padding:11px 2px;border:none;background:none;color:var(--muted);border-radius:999px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+nav.tabs button[aria-selected="true"]{color:var(--bg)}
+@media (prefers-reduced-motion:no-preference){.tab-ind{transition:transform .32s cubic-bezier(.3,.7,.2,1)}nav.tabs button{transition:color .25s}}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ember);outline-offset:2px}
 h2{font-family:var(--display);font-size:24px;margin:22px 0 10px;text-wrap:balance}
 h3{font-family:var(--display);font-size:19px;margin:0}
@@ -170,7 +173,9 @@ input,select{font:16px var(--body);padding:9px 10px;border:1px solid var(--line)
 (function(){
 function load(){var x=JSON.parse(document.getElementById('state').textContent);x.meetings=x.meetings||[];x.photos=x.photos||[];x.news=x.news||[];x.faces=x.faces||{};return x}
 var S=load(),curM=null,slide=0,openScout=null;
+var TABS=['home','points','progress','events'];
 var tab=(location.hash||'#home').slice(1); if(['home','points','progress','events'].indexOf(tab)<0) tab='home';
+var prevTab=tab;
 var editing=false, dirty=false, canEdit=false, full=false, saving=false, artifactNs=null, msg='';
 var MONTHS=['janv','févr','mars','avr','mai','juin','juil','août','sept','oct','nov','déc'];
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -189,7 +194,7 @@ function heroTop(){
  return '<header class="top hero" id="show">'+P.map(function(ph,i){return '<img src="'+ph.src+'" alt="'+esc(ph.caption||'Photo de la troupe')+'" class="'+(i===slide?'on':'')+'">'}).join('')+'<div class="shade"></div>'+txt+
   (P.length>1?'<div class="sdots">'+P.map(function(ph,i){return '<button data-slide="'+i+'" class="'+(i===slide?'on':'')+'" aria-label="Photo '+(i+1)+'"></button>'}).join('')+'</div>':'')+'</header>'}
 function header(){return heroTop()+
- '<nav class="tabs" role="tablist">'+[['home','Accueil'],['points','Points'],['progress','Patrouilles'],['events','Calendrier']].map(function(t){return '<button role="tab" id="tab-'+t[0]+'" data-tab="'+t[0]+'" aria-selected="'+(tab===t[0])+'">'+t[1]+'</button>'}).join('')+'</nav>'+
+ '<div class="tabbar"><nav class="tabs" role="tablist"><span class="tab-ind" id="tab-ind" style="--i:'+TABS.indexOf(prevTab)+'"></span>'+[['home','Accueil'],['points','Points'],['progress','Patrouilles'],['events','Calendrier']].map(function(t){return '<button role="tab" id="tab-'+t[0]+'" data-tab="'+t[0]+'" aria-selected="'+(tab===t[0])+'">'+t[1]+'</button>'}).join('')+'</nav></div>'+
  (S.example?'<div class="note">Les points affichés sont des exemples. '+(canEdit?'Appuie sur <b>Modifier</b> pour les remplacer par les vrais.':'Les chefs ajouteront bientôt les vrais.')+'</div>':'')}
 
 function slideshow(){
@@ -305,12 +310,13 @@ function render(){
  app.innerHTML=body+
   (canEdit&&!editing?'<button class="btn editbtn" data-act="edit">Modifier</button>':'')+
   (editing?'<div class="savebar"><span class="msg" role="status">'+esc(msg||(dirty?'Modifications non publiées':'Aucune modification'))+'</span><button class="btn ghost" data-act="done">'+(dirty?'Annuler':'Fermer')+'</button><button class="btn" data-act="publish"'+(dirty&&!saving?'':' disabled')+'>'+(saving?'Publication…':'Publier')+'</button></div>':'');
+ var ind=document.getElementById('tab-ind');if(ind){requestAnimationFrame(function(){requestAnimationFrame(function(){ind.style.setProperty('--i',TABS.indexOf(tab));prevTab=tab})})}
 }
 
 function val(id){var e=document.getElementById(id);return e?e.value.trim():''}
 document.addEventListener('click',function(ev){
  var b=ev.target.closest('button'); if(!b) return;
- if(b.dataset.tab){tab=b.dataset.tab;try{history.replaceState(null,'','#'+tab)}catch(e){}render();return}
+ if(b.dataset.tab){prevTab=tab;tab=b.dataset.tab;try{history.replaceState(null,'','#'+tab)}catch(e){}render();return}
  msg='';
  if(b.dataset.delpatrol){S.patrols=S.patrols.filter(function(p){return p.id!==b.dataset.delpatrol});S.scouts=S.scouts.filter(function(s){return s.patrol!==b.dataset.delpatrol});return touch()}
  if(b.dataset.scout){openScout=b.dataset.scout;render();var pr=document.querySelector('.profile');if(pr)pr.scrollTop=0;return}

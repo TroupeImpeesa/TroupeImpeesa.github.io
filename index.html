@@ -100,6 +100,12 @@ h3{font-family:var(--display);font-size:19px;margin:0}
 .ndate{font-family:var(--display);font-size:13px;color:var(--accent);white-space:nowrap;font-variant-numeric:tabular-nums}
 .ntext{min-width:0;overflow-wrap:anywhere}
 .ntag{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ember);margin-right:4px}
+.scout summary{cursor:pointer;list-style:none;align-items:center}
+.scout summary::-webkit-details-marker{display:none}
+.chev{width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin-right:4px;flex:none}
+.scout[open] .chev{transform:rotate(-135deg)}
+.scout-body{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:no-preference){.chev{transition:transform .2s}}
 .empty{color:var(--muted);padding:16px 0}
 /* edit UI */
 .editbox{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0;display:grid;gap:10px}
@@ -210,17 +216,18 @@ function points(){
 function progress(){
  var n=S.stages.length,M=S.meetings.slice().sort(function(a,b){return a.date<b.date?-1:1});
  var h='<h2>Membres des patrouilles</h2><div class="meta">Mis à jour depuis les fiches de présence et de progression'+(S.synced?' · '+fmtDate(S.synced.slice(0,10)):'')+'</div>';
- h+='<div class="steplabels" style="margin:12px 0 6px">'+S.stages.map(function(s){return '<span>'+esc(s)+'</span>'}).join('')+'</div>';
  S.patrols.forEach(function(p){
   var list=S.scouts.filter(function(s){return s.patrol===p.id});
   h+='<div class="patrol-block"><h3><span class="dot" style="background:'+col(p)+'"></span>'+esc(p.name)+' <span class="meta" style="font-family:var(--body)">· '+list.length+' membre'+(list.length>1?'s':'')+'</span></h3>';
   list.forEach(function(s){
    var mine=M.filter(function(m){return m.patrols.indexOf(s.patrol)>=0});
    var pres=mine.filter(function(m){return m.present.indexOf(s.id)>=0}).length;
-   h+='<div class="scout"><div class="scout-head"><strong>'+(s.role?'<span class="role">'+esc(s.role)+'</span> ':'')+esc(s.name)+'</strong><span class="stage">'+esc(S.stages[s.stage]||'')+(s.badges?' · '+s.badges+' badge'+(s.badges>1?'s':''):'')+'</span></div>'+
+   h+='<details class="scout"><summary class="scout-head"><strong>'+(s.role?'<span class="role">'+esc(s.role)+'</span> ':'')+esc(s.name)+'</strong><span class="chev" aria-hidden="true"></span></summary><div class="scout-body">'+
+   '<div class="stage">'+esc(S.stages[s.stage]||'')+(s.badges?' · '+s.badges+' badge'+(s.badges>1?'s':''):'')+'</div>'+
    '<div class="steps" style="grid-template-columns:repeat('+n+',1fr)">'+S.stages.map(function(x,i){return '<span class="'+(i<=s.stage?'on':'')+'"></span>'}).join('')+'</div>'+
-   (mine.length?'<div class="att"><span>Présence '+pres+'/'+mine.length+'</span><span class="dots">'+mine.slice(-10).map(function(m){var y=m.present.indexOf(s.id)>=0;return '<i class="'+(y?'on':'')+'" title="'+fmtDate(m.date)+(y?' : présent':' : absent')+'"></i>'}).join('')+'</span></div>':'')+
-   '</div>'});
+   '<div class="steplabels">'+S.stages.map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+'</div>'+
+   (mine.length?'<div class="att"><span>Présence '+pres+'/'+mine.length+'</span><span class="dots">'+mine.slice(-10).map(function(m){var y=m.present.indexOf(s.id)>=0;return '<i class="'+(y?'on':'')+'" title="'+fmtDate(m.date)+(y?' : présent':' : absent')+'"></i>'}).join('')+'</span></div>':'<div class="att">Pas encore de présences enregistrées.</div>')+
+   '</div></details>'});
   if(!list.length) h+='<p class="empty">Aucun scout dans cette patrouille.</p>';
   h+='</div>'});
  if(!M.length) h+='<p class="note">Les présences apparaîtront ici dès que les dates des réunions seront remplies.</p>';

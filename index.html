@@ -109,13 +109,22 @@ h3{font-family:var(--display);font-size:19px;margin:0}
 .scout[open] .chev{transform:rotate(-135deg)}
 .scout-body{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
 @media (prefers-reduced-motion:no-preference){.chev{transition:transform .2s}}
-.roster{display:grid;gap:8px}
-.srow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;cursor:pointer}
-.srow .sname{flex:1;min-width:0;font-weight:700;display:flex;flex-direction:column}
-.srow .sname .meta{font-weight:400}
+.grp{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 1px 2px color-mix(in srgb,var(--fg) 6%,transparent),0 8px 24px -14px color-mix(in srgb,var(--fg) 25%,transparent)}
+.ghead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:14px 16px 12px;background:linear-gradient(90deg,color-mix(in srgb,var(--gc) 14%,var(--surface)),var(--surface));border-bottom:1px solid var(--line);border-left:5px solid var(--gc)}
+.gname{font-family:var(--display);font-size:20px;line-height:1.1}
+.gcount{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);white-space:nowrap}
+.roster{display:flex;flex-direction:column}
+.srow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:var(--fg);background:none;border:none;border-radius:0;padding:11px 16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.srow+.srow{border-top:1px solid var(--line)}
+.srow:not(.staff):active{background:color-mix(in srgb,var(--gc) 8%,var(--surface))}
+@media (hover:hover){.srow:not(.staff):hover{background:color-mix(in srgb,var(--gc) 6%,var(--surface))}}
+.srow .sname{flex:1;min-width:0;font-weight:700;display:flex;flex-direction:column;gap:1px}
+.nline{display:flex;align-items:center;gap:8px;min-width:0}
+.srow .role{font-size:10px;padding:2px 6px;border-radius:999px;background:var(--gc);color:#fff;letter-spacing:.08em;flex:none}
+.grp .av{box-shadow:0 0 0 2px var(--surface),0 0 0 4px color-mix(in srgb,var(--gc) 55%,transparent)}
+.srow .sname .meta{font-weight:400;font-size:13px}
 .srow{box-sizing:border-box}
 .srow.staff{cursor:default}
-.srow .role{align-self:flex-start;margin-bottom:2px}
 .av,.pav{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;overflow:hidden;color:#fff;font-family:var(--display);flex:none}
 .av{width:40px;height:40px;font-size:14px}
 .av img,.pav img{width:100%;height:100%;object-fit:cover}
@@ -319,16 +328,17 @@ function points(){
 function initials(n){return n.replace(/\./g,'').split(' ').filter(Boolean).slice(0,2).map(function(w){return w[0]}).join('').toUpperCase()}
 function avatar(s,cls){var f=S.faces[s.id];return '<span class="'+cls+'"'+(f?'':' style="background:'+col(pat(s.patrol))+'"')+'>'+(f?'<img src="'+f+'" alt="">':esc(initials(s.name)))+'</span>'}
 function progress(){
- var M=S.meetings;
  var h='<h2>Membres de la troupe</h2><div class="meta">Touche un nom pour voir sa fiche.</div>';
- if(S.staff&&S.staff.length){h+='<div class="patrol-block"><h3><span class="dot" style="background:var(--accent)"></span>Maîtrise <span class="meta" style="font-family:var(--body)">· '+S.staff.length+' chefs</span></h3><div class="roster">'+S.staff.map(function(m){return '<div class="srow staff">'+(m.photo?'<span class="av"><img src="'+m.photo+'" alt=""></span>':'<span class="av" style="background:var(--accent)">'+esc(initials(m.name))+'</span>')+'<span class="sname">'+esc(m.name)+'<span class="meta">'+esc(m.role==='ACT'?'ACT':m.role)+'</span></span></div>'}).join('')+'</div></div>'}
+ function grp(name,count,color,rows){return '<section class="grp" style="--gc:'+color+'"><header class="ghead"><span class="gname">'+esc(name)+'</span><span class="gcount">'+count+'</span></header><div class="roster">'+rows+'</div></section>'}
+ if(S.staff&&S.staff.length){
+  h+=grp('Maîtrise',S.staff.length+' chefs','var(--accent)',S.staff.map(function(m){return '<div class="srow staff">'+(m.photo?'<span class="av"><img src="'+m.photo+'" alt=""></span>':'<span class="av" style="background:var(--accent)">'+esc(initials(m.name))+'</span>')+'<span class="sname"><span class="nline">'+esc(m.name)+'</span><span class="meta">'+esc(m.role)+'</span></span></div>'}).join(''));
+ }
  S.patrols.forEach(function(p){
   var list=S.scouts.filter(function(s){return s.patrol===p.id});
-  h+='<div class="patrol-block"><h3><span class="dot" style="background:'+col(p)+'"></span>'+esc(p.name)+' <span class="meta" style="font-family:var(--body)">· '+list.length+' membre'+(list.length>1?'s':'')+'</span></h3><div class="roster">';
-  list.forEach(function(s){
-   h+='<button class="srow" data-scout="'+s.id+'">'+avatar(s,'av')+'<span class="sname">'+(s.role?'<span class="role">'+esc(s.role)+'</span> ':'')+esc(s.name)+'<span class="meta">'+esc(S.stages[s.stage]||'')+' · '+(s.badges||0)+' badge'+((s.badges||0)>1?'s':'')+'</span></span></button>'});
-  if(!list.length) h+='<p class="empty">Aucun scout dans cette patrouille.</p>';
-  h+='</div></div>'});
+  var rows=list.map(function(s){return '<button class="srow" data-scout="'+s.id+'">'+avatar(s,'av')+'<span class="sname"><span class="nline">'+esc(s.name)+(s.role?'<span class="role">'+esc(s.role)+'</span>':'')+'</span><span class="meta">'+esc(S.stages[s.stage]||'')+' · '+(s.badges||0)+' badge'+((s.badges||0)>1?'s':'')+'</span></span></button>'}).join('');
+  if(!list.length) rows='<p class="empty" style="padding:14px 16px">Aucun scout dans cette patrouille.</p>';
+  h+=grp(p.name,list.length+' membre'+(list.length>1?'s':''),col(p),rows);
+ });
  return h}
 function profile(){
  var s=S.scouts.filter(function(x){return x.id===openScout})[0]; if(!s) return '';
@@ -470,6 +480,7 @@ if(window.claude&&window.claude.use){
 }
 })();
 </script>
+
 
 </body>
 </html>

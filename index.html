@@ -166,6 +166,15 @@ h3{font-family:var(--display);font-size:19px;margin:0}
 .evlist li::before{content:"";position:absolute;left:14px;top:50%;width:8px;height:8px;margin-top:-4px;border-radius:50%;background:var(--accent)}
 .lbl{display:grid;gap:4px;font-size:13px;color:var(--muted);flex:1 1 140px}
 textarea{resize:vertical;font:16px var(--body)}
+.runner{position:fixed;left:0;right:0;bottom:calc(18% + env(safe-area-inset-bottom,0px));height:0;z-index:30;pointer-events:none;animation:runacross 2.6s cubic-bezier(.45,.05,.55,.95) forwards}
+.rbody{position:absolute;left:0;bottom:0;display:flex;align-items:center;gap:6px;animation:gallop .26s ease-in-out infinite alternate}
+.ranimal{font-size:88px;line-height:1;filter:drop-shadow(0 6px 8px rgba(0,0,0,.25))}
+.rtag{font:700 14px var(--body);color:#fff;padding:5px 12px;border-radius:999px;white-space:nowrap;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+.rdust{position:absolute;left:120px;bottom:-6px;width:70px;height:16px;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--muted) 45%,transparent),transparent);animation:dust .26s ease-out infinite}
+@keyframes runacross{from{transform:translateX(100vw)}to{transform:translateX(calc(-100% - 420px))}}
+@keyframes gallop{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-16px) rotate(3deg)}}
+@keyframes dust{from{opacity:.8;transform:scaleX(.6)}to{opacity:0;transform:scaleX(1.4) translateX(20px)}}
+@media (prefers-reduced-motion:reduce){.runner{display:none}}
 .empty{color:var(--muted);padding:16px 0}
 /* edit UI */
 .editbox{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0;display:grid;gap:10px}
@@ -270,6 +279,22 @@ function home(){
  if(nx){h+='<h2>Prochaine activité</h2>'+evCard(nx,false,false,true);}
  return h}
 
+var ANIMALS=[['poney','🐎'],['requin','🦈'],['castor','🦫'],['boa','🐍']];
+function leaderRun(){
+ try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return}catch(e){}
+ var t=totals(),sorted=S.patrols.slice().sort(function(a,b){return t[b.id]-t[a.id]});
+ if(!sorted.length||t[sorted[0].id]<=0)return;
+ if(sorted[1]&&t[sorted[1].id]===t[sorted[0].id])return;
+ var p=sorted[0],nm=p.name.toLowerCase(),em=null;
+ ANIMALS.forEach(function(a){if(!em&&nm.indexOf(a[0])>=0)em=a[1]});
+ if(!em)return;
+ var old=document.getElementById('runner');if(old)old.remove();
+ var d=document.createElement('div');d.id='runner';d.className='runner';d.setAttribute('aria-hidden','true');
+ d.innerHTML='<span class="rbody"><span class="ranimal">'+em+'</span><span class="rtag" style="background:'+col(p)+'">'+esc(p.name)+' en tête !</span></span><span class="rdust"></span>';
+ document.body.appendChild(d);
+ d.addEventListener('animationend',function(ev){if(ev.target===d)d.remove()});
+ setTimeout(function(){if(d.parentNode)d.remove()},4000);
+}
 function points(){
  var t=totals(),sorted=S.patrols.slice().sort(function(a,b){return t[b.id]-t[a.id]}),max=Math.max(1,Math.max.apply(null,sorted.map(function(p){return t[p.id]})));
  var h='';
@@ -364,7 +389,7 @@ function val(id){var e=document.getElementById(id);return e?e.value.trim():''}
 document.addEventListener('click',function(ev){
  var b=ev.target.closest('button');
  if(!b){var evl=ev.target.closest('[data-event]');if(evl){openEvent=evl.dataset.event;render();var pr=document.querySelector('.profile');if(pr)pr.scrollTop=0}return}
- if(b.dataset.tab){prevTab=tab;tab=b.dataset.tab;try{history.replaceState(null,'','#'+tab)}catch(e){}render();return}
+ if(b.dataset.tab){prevTab=tab;tab=b.dataset.tab;try{history.replaceState(null,'','#'+tab)}catch(e){}render();if(tab==='points')leaderRun();return}
  msg='';
  if(b.dataset.delpatrol){S.patrols=S.patrols.filter(function(p){return p.id!==b.dataset.delpatrol});S.scouts=S.scouts.filter(function(s){return s.patrol!==b.dataset.delpatrol});return touch()}
  if(b.dataset.scout){openScout=b.dataset.scout;render();var pr=document.querySelector('.profile');if(pr)pr.scrollTop=0;return}
@@ -427,6 +452,7 @@ function publish(){
 }
 
 render();
+if(tab==='points')setTimeout(leaderRun,400);
 if(window.claude&&window.claude.use){
  window.claude.use('artifact').then(function(ns){
   artifactNs=ns; if(!ns) return;
@@ -438,5 +464,6 @@ if(window.claude&&window.claude.use){
 }
 })();
 </script>
+
 </body>
 </html>

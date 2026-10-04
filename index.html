@@ -113,6 +113,7 @@ h3{font-family:var(--display);font-size:19px;margin:0}
 .srow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;cursor:pointer}
 .srow .sname{flex:1;min-width:0;font-weight:700;display:flex;flex-direction:column}
 .srow .sname .meta{font-weight:400}
+.srow{box-sizing:border-box}
 .srow.staff{cursor:default}
 .srow .role{align-self:flex-start;margin-bottom:2px}
 .av,.pav{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;overflow:hidden;color:#fff;font-family:var(--display);flex:none}
@@ -469,6 +470,7 @@ if(window.claude&&window.claude.use){
 }
 })();
 </script>
+
 
 
 

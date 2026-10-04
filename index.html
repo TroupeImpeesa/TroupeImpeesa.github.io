@@ -320,7 +320,7 @@ function avatar(s,cls){var f=S.faces[s.id];return '<span class="'+cls+'"'+(f?'':
 function progress(){
  var M=S.meetings;
  var h='<h2>Membres de la troupe</h2><div class="meta">Touche un nom pour voir sa fiche.</div>';
- if(S.staff&&S.staff.length){h+='<div class="patrol-block"><h3><span class="dot" style="background:var(--accent)"></span>Maîtrise <span class="meta" style="font-family:var(--body)">· '+S.staff.length+' chefs</span></h3><div class="roster">'+S.staff.map(function(m){return '<div class="srow staff"><span class="av" style="background:var(--accent)">'+esc(initials(m.name))+'</span><span class="sname"><span class="role">'+esc(m.role)+'</span> '+esc(m.name)+'</span></div>'}).join('')+'</div></div>'}
+ if(S.staff&&S.staff.length){h+='<div class="patrol-block"><h3><span class="dot" style="background:var(--accent)"></span>Maîtrise <span class="meta" style="font-family:var(--body)">· '+S.staff.length+' chefs</span></h3><div class="roster">'+S.staff.map(function(m){return '<div class="srow staff"><span class="av" style="background:var(--accent)">'+esc(initials(m.name))+'</span><span class="sname">'+esc(m.name)+'<span class="meta">'+esc(m.role==='ACT'?'ACT':m.role)+'</span></span></div>'}).join('')+'</div></div>'}
  S.patrols.forEach(function(p){
   var list=S.scouts.filter(function(s){return s.patrol===p.id});
   h+='<div class="patrol-block"><h3><span class="dot" style="background:'+col(p)+'"></span>'+esc(p.name)+' <span class="meta" style="font-family:var(--body)">· '+list.length+' membre'+(list.length>1?'s':'')+'</span></h3><div class="roster">';
@@ -469,5 +469,6 @@ if(window.claude&&window.claude.use){
 }
 })();
 </script>
+
 </body>
 </html>

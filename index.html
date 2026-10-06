@@ -46,9 +46,9 @@ header.top .eyebrow{opacity:1;text-shadow:0 1px 6px rgba(0,0,0,.6)}
 h1{font-family:var(--display);font-weight:900;letter-spacing:-.01em;font-size:clamp(28px,7.5vw,44px);line-height:1.05;margin:6px 0 4px;text-wrap:balance}
 .sub{opacity:.9;font-size:15px}
 .tabbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding-block:10px;margin-top:8px;background:linear-gradient(var(--bg) 70%,transparent)}
-nav.tabs{position:relative;display:grid;grid-template-columns:repeat(3,1fr);padding:4px;border-radius:999px;background:color-mix(in srgb,var(--fg) 7%,var(--bg));box-shadow:inset 0 0 0 1px var(--line)}
-.tab-ind{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/3);border-radius:999px;background:var(--fg);box-shadow:0 4px 12px color-mix(in srgb,var(--fg) 25%,transparent);transform:translateX(calc(var(--i,0)*100%))}
-nav.tabs button{position:relative;z-index:1;min-width:0;font:700 14px var(--body);letter-spacing:.01em;padding:11px 2px;border:none;background:none;color:var(--muted);border-radius:999px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+nav.tabs{position:relative;display:grid;grid-template-columns:repeat(4,1fr);padding:4px;border-radius:999px;background:color-mix(in srgb,var(--fg) 7%,var(--bg));box-shadow:inset 0 0 0 1px var(--line)}
+.tab-ind{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/4);border-radius:999px;background:var(--fg);box-shadow:0 4px 12px color-mix(in srgb,var(--fg) 25%,transparent);transform:translateX(calc(var(--i,0)*100%))}
+nav.tabs button{position:relative;z-index:1;min-width:0;font:700 13px var(--body);letter-spacing:.01em;padding:11px 2px;border:none;background:none;color:var(--muted);border-radius:999px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 nav.tabs button[aria-selected="true"]{color:var(--bg)}
 @media (prefers-reduced-motion:no-preference){.tab-ind{transition:transform .32s cubic-bezier(.3,.7,.2,1)}nav.tabs button{transition:color .25s}}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ember);outline-offset:2px}
@@ -236,6 +236,10 @@ textarea{resize:vertical;font:16px var(--body)}
 @keyframes tagpop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}12%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}20%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.herd{display:none}}
 .empty{color:var(--muted);padding:16px 0}
+.soonbox{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;margin-top:14px;padding:44px 20px;border-radius:22px;background:var(--surface);border:1px dashed var(--line)}
+.soonbox .tcirc{background:var(--navy)}
+.soonbox b{font-family:var(--display);font-size:22px}
+.soonbox span{color:var(--muted)}
 /* edit UI */
 .editbox{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0;display:grid;gap:10px}
 .editbox h4{margin:0;font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
@@ -259,7 +263,7 @@ input,select,textarea{font:16px var(--body);padding:9px 10px;border:1px solid va
 (function(){
 function load(){var x=JSON.parse(document.getElementById('state').textContent);x.meetings=x.meetings||[];x.photos=x.photos||[];x.news=x.news||[];x.faces=x.faces||{};return x}
 var S=load(),curM=null,slide=0,openScout=null,openEvent=null;
-var TABS=['home','progress','events'];
+var TABS=['home','progress','events','history'];
 var tab='home',openGroup=null,openPts=null;
 function route(h){h=(h==null?(location.hash||'#home').slice(1):h).split('/');var t=h[0]==='points'?'progress':h[0];if(TABS.indexOf(t)<0)t='home';tab=t;openGroup=null;openPts=null;openScout=null;openEvent=null;var x=h[1]||'';
  if(t==='progress'){if(x.indexOf('g-')===0)openGroup=x.slice(2);else if(x.indexOf('pts-')===0)openPts=x.slice(4);else if(x.indexOf('s-')===0){var sc=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc){openScout=sc.id;openGroup=sc.patrol}}}
@@ -299,7 +303,7 @@ function heroTop(){
  return '<header class="top hero" id="show">'+P.map(function(ph,i){return '<img '+(LOADED[i]?'src':'data-src')+'="'+ph.src+'" alt="'+esc(ph.caption||'Photo de la troupe')+'" class="'+(i===slide?'on':'')+'"'+(i===slide?' fetchpriority="high"':' decoding="async"')+'>'}).join('')+'<div class="shade"></div>'+txt+
   '</header>'}
 function header(){return heroTop()+
- '<div class="tabbar"><nav class="tabs" role="tablist"><span class="tab-ind" id="tab-ind" style="--i:'+TABS.indexOf(prevTab)+'"></span>'+[['home','Accueil'],['progress','Troupe'],['events','Calendrier']].map(function(t){return '<button role="tab" id="tab-'+t[0]+'" data-tab="'+t[0]+'" aria-selected="'+(tab===t[0])+'">'+t[1]+'</button>'}).join('')+'</nav></div>'+
+ '<div class="tabbar"><nav class="tabs" role="tablist"><span class="tab-ind" id="tab-ind" style="--i:'+TABS.indexOf(prevTab)+'"></span>'+[['home','Accueil'],['progress','Troupe'],['events','Calendrier'],['history','Histoire']].map(function(t){return '<button role="tab" id="tab-'+t[0]+'" data-tab="'+t[0]+'" aria-selected="'+(tab===t[0])+'">'+t[1]+'</button>'}).join('')+'</nav></div>'+
  (canEdit&&draftAvail?'<div class="note draftbar"><span>Tu as des modifications non publiées.</span><span><button class="btn" data-act="restore">Récupérer</button> <button class="btn ghost" data-act="nodraft">Ignorer</button></span></div>':'')+
  (S.example?'<div class="note">Les points affichés sont des exemples. '+(canEdit?'Appuie sur <b>Modifier</b> pour les remplacer par les vrais.':'Les chefs ajouteront bientôt les vrais.')+'</div>':'')}
 
@@ -486,12 +490,14 @@ function events(){
  if(past.length) h+='<h2>Passées</h2>'+past.map(function(e){return card(e,true)}).join('');
  return h}
 
+function histoire(){return '<h2>Histoire</h2><div class="soonbox"><span class="tcirc">📜</span><b>Bientôt disponible</b><span>L’histoire de la troupe arrive très bientôt.</span></div>'}
+
 function settings(){return editing?'<div class="editbox" style="margin-top:28px"><h4>Infos de la troupe</h4><div class="fields"><input id="set-troop" value="'+esc(S.troop)+'" aria-label="Nom de la troupe"><input id="set-season" value="'+esc(S.season)+'" aria-label="Saison"><button class="btn ghost" data-act="details">Mettre à jour</button></div>'+(S.example?'<div class="fields"><button class="btn ghost" data-act="clear">Supprimer toutes les données d’exemple</button></div>':'')+'<span class="meta">Après « Publier », le site public troupeimpeesa.github.io se met à jour dans l’heure.</span></div>':''}
 
 function render(){
  var app=document.getElementById('app');
  var keep=editing;
- var body=header()+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():events())+(full?settings():'');
+ var body=header()+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():events())+(full?settings():'');
  editing=keep;
  if(openScout) body+=profile();
  if(openEvent) body+=eventPage();
@@ -590,5 +596,6 @@ if(window.claude&&window.claude.use){
 }
 })();
 </script>
+
 </body>
 </html>

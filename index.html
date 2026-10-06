@@ -120,6 +120,20 @@ h3{font-family:var(--display);font-size:19px;margin:0}
 .tile.wide{flex-wrap:wrap}.tile.wide .tcount{margin-left:auto}
 @media (prefers-reduced-motion:no-preference){.tile{transition:transform .15s}.tile:active{transform:scale(.97)}}
 .gview{margin-top:10px}
+.rowlink{cursor:pointer;-webkit-tap-highlight-color:transparent}
+@media (prefers-reduced-motion:no-preference){.rowlink{transition:transform .15s}.rowlink:active{transform:scale(.98)}}
+.ptwrap{overflow-x:auto;margin-top:12px;border-radius:16px;border:1px solid var(--line);background:var(--surface)}
+.pt{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:14px}
+.pt th,.pt td{padding:11px 4px;text-align:center;white-space:nowrap}
+.pt thead th{font-size:9.5px;text-transform:uppercase;letter-spacing:.02em;color:var(--muted);background:color-mix(in srgb,var(--gc,var(--fg)) 6%,var(--surface));border-bottom:1px solid var(--line)}
+.pt tbody th,.pt tfoot th{text-align:left;font-weight:700;padding-left:12px}
+.pt thead th:first-child{text-align:left;padding-left:12px}
+.pt tbody tr+tr td,.pt tbody tr+tr th{border-top:1px solid var(--line)}
+.pt td.neg{color:var(--danger)}
+.pt .ptot{font-weight:700}
+.pt tfoot td,.pt tfoot th{border-top:2px solid var(--fg);font-weight:800}
+.ptempty{color:var(--muted);text-align:center!important;padding:18px!important}
+.mpf .lbl{flex:1 1 70px}
 .ghero{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:20px 16px 18px;border-radius:22px;background:color-mix(in srgb,var(--gc) 16%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gc) 18%,transparent)}
 .ghero .gname{font-family:var(--display);font-size:26px;line-height:1.1}
 .ghero .tcirc{width:76px;height:76px;font-size:42px}
@@ -339,22 +353,42 @@ function points(){
  var h='';
  h+='<h2>Classement des patrouilles</h2>';
  if(!S.patrols.length) h+='<p class="empty">Aucune patrouille pour l’instant.</p>';
- h+='<div class="board">'+sorted.map(function(p,i){return '<div class="row'+(i===0&&t[p.id]>0?' first':'')+'"><div class="rank">'+(i+1)+'</div><div style="min-width:0"><div class="pname"><span class="dot" style="background:'+col(p)+'"></span>'+
+ h+='<div class="meta" style="margin:-4px 0 10px">Touche une patrouille pour voir ses points par réunion.</div><div class="board">'+sorted.map(function(p,i){return '<div class="row rowlink'+(i===0&&t[p.id]>0?' first':'')+'" data-ptab="'+p.id+'" role="button" tabindex="0"><div class="rank">'+(i+1)+'</div><div style="min-width:0"><div class="pname"><span class="dot" style="background:'+col(p)+'"></span>'+
   (editing?'<input id="pn-'+p.id+'" data-rename="'+p.id+'" value="'+esc(p.name)+'" aria-label="Nom de la patrouille">':esc(p.name))+
   (editing?'<button class="x" data-delpatrol="'+p.id+'" aria-label="Supprimer la patrouille">×</button>':'')+'</div><div class="bar"><i style="width:'+Math.max(0,t[p.id])/max*100+'%;background:'+col(p)+'"></i></div></div><div class="pts">'+t[p.id]+'<small>pts</small></div></div>'}).join('')+'</div>';
  if(editing){
-  h+='<div class="editbox"><h4>Attribuer des points</h4><div class="fields"><select id="ap-patrol">'+S.patrols.map(function(p){return '<option value="'+p.id+'">'+esc(p.name)+'</option>'}).join('')+'</select><input id="ap-pts" type="number" placeholder="Points (ex. 10 ou -5)"><input id="ap-date" type="date" value="'+today()+'"></div><div class="fields"><input id="ap-reason" placeholder="Raison (ex. relais de nœuds)"><button class="btn" data-act="award">Ajouter</button></div></div>';
+  h+='<div class="editbox"><h4>Attribuer des points</h4><div class="fields"><select id="ap-patrol">'+S.patrols.map(function(p){return '<option value="'+p.id+'">'+esc(p.name)+'</option>'}).join('')+'</select><select id="ap-cat" aria-label="Catégorie">'+CATS.map(function(c){return '<option value="'+c[0]+'">'+c[1]+'</option>'}).join('')+'</select><input id="ap-pts" type="number" placeholder="Points (ex. 10 ou -5)"><input id="ap-date" type="date" value="'+today()+'"></div><div class="fields"><input id="ap-reason" placeholder="Raison (ex. relais de nœuds)"><button class="btn" data-act="award">Ajouter</button></div></div>';
   h+='<div class="editbox"><h4>Ajouter une patrouille</h4><div class="fields"><input id="np-name" placeholder="Nom de la patrouille"><button class="btn" data-act="addpatrol">Ajouter</button></div></div>';
  }
  var log=S.log.slice().sort(function(a,b){return a.date<b.date?1:-1});
- h+='<h2>Historique des points</h2>'+(log.length?'<ul class="log">'+log.map(function(l){var p=pat(l.patrol),n=Number(l.pts)||0;return '<li><span class="delta '+(n<0?'neg':'pos')+'">'+(n>0?'+':'')+n+'</span><span style="min-width:0">'+esc(l.reason||'Points')+'<br><span class="meta">'+(p?esc(p.name):'Patrouille supprimée')+'</span></span><span class="meta">'+fmtDate(l.date)+(editing?' <button class="x" data-dellog="'+l.id+'" aria-label="Retirer">×</button>':'')+'</span></li>'}).join('')+'</ul>':'<p class="empty">Aucun point attribué pour l’instant.</p>');
+ h+='<h2>Historique des points</h2>'+(log.length?'<ul class="log">'+log.map(function(l){var p=pat(l.patrol),n=Number(l.pts)||0;return '<li><span class="delta '+(n<0?'neg':'pos')+'">'+(n>0?'+':'')+n+'</span><span style="min-width:0">'+esc(l.reason||catName(l.cat)||'Points')+'<br><span class="meta">'+(p?esc(p.name):'Patrouille supprimée')+(l.cat&&l.reason?' · '+catName(l.cat):'')+'</span></span><span class="meta">'+fmtDate(l.date)+(editing?' <button class="x" data-dellog="'+l.id+'" aria-label="Retirer">×</button>':'')+'</span></li>'}).join('')+'</ul>':'<p class="empty">Aucun point attribué pour l’instant.</p>');
  return h}
 
 function initials(n){return n.replace(/\./g,'').split(' ').filter(Boolean).slice(0,2).map(function(w){return w[0]}).join('').toUpperCase()}
 function avatar(s,cls){var f=S.faces[s.id];return '<span class="'+cls+'"'+(f?'':' style="background:'+col(pat(s.patrol))+'"')+'>'+(f?'<img src="'+f+'" alt="">':esc(initials(s.name)))+'</span>'}
-var openGroup=null;
+var openGroup=null,openPts=null;
+var CATS=[['jeux','Jeux'],['esprit','Esprit'],['animation','Animation'],['presence','Présence']];
+function catName(c){var r='';CATS.forEach(function(x){if(x[0]===c)r=x[1]});return r}
+function ptsPage(){
+ var p=pat(openPts),L=S.log.filter(function(l){return l.patrol===p.id});
+ var other=L.some(function(l){return !catName(l.cat)});
+ var cols=CATS.slice();if(other)cols.push(['autre','Autre']);
+ var days={};L.forEach(function(l){var k=catName(l.cat)?l.cat:'autre';days[l.date]=days[l.date]||{};days[l.date][k]=(days[l.date][k]||0)+(Number(l.pts)||0)});
+ var dates=Object.keys(days).sort().reverse(),tot={},grand=0;
+ cols.forEach(function(c){tot[c[0]]=0});
+ dates.forEach(function(d){cols.forEach(function(c){tot[c[0]]+=days[d][c[0]]||0})});
+ cols.forEach(function(c){grand+=tot[c[0]]});
+ var h='<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+
+  '<section class="gview" style="--gc:'+col(p)+'"><header class="ghero"><span class="tcirc">'+animalOf(p.name)+'</span><span class="gname">'+esc(p.name)+'</span><span class="gcount">'+grand+' points au total</span></header></section>';
+ h+='<div class="ptwrap" style="--gc:'+col(p)+'"><table class="pt"><thead><tr><th>Réunion</th>'+cols.map(function(c){return '<th>'+c[1]+'</th>'}).join('')+'<th>Total</th>'+(editing?'<th></th>':'')+'</tr></thead><tbody>';
+ if(!dates.length) h+='<tr><td colspan="'+(cols.length+2)+'" class="ptempty">Aucun point pour l’instant.</td></tr>';
+ dates.forEach(function(d){var rt=0;h+='<tr><th>'+fmtDate(d)+'</th>'+cols.map(function(c){var v=days[d][c[0]];if(v)rt+=v;return '<td class="'+(v<0?'neg':'')+'">'+(v?v:'–')+'</td>'}).join('')+'<td class="ptot">'+rt+'</td>'+(editing?'<td><button class="x" data-delday="'+d+'" aria-label="Supprimer cette réunion">×</button></td>':'')+'</tr>'});
+ h+='</tbody><tfoot><tr><th>Total</th>'+cols.map(function(c){return '<td>'+tot[c[0]]+'</td>'}).join('')+'<td class="ptot">'+grand+'</td>'+(editing?'<td></td>':'')+'</tr></tfoot></table></div>';
+ if(editing) h+='<div class="editbox"><h4>Points d’une réunion</h4><div class="fields"><input id="mp-date" type="date" value="'+today()+'" aria-label="Date de la réunion"></div><div class="fields mpf">'+CATS.map(function(c){return '<label class="lbl">'+c[1]+'<input id="mp-'+c[0]+'" type="number" inputmode="numeric" placeholder="0"></label>'}).join('')+'</div><div class="fields"><button class="btn" data-act="addmeetpts">Ajouter les points</button></div></div>';
+ return h}
 function animalOf(name){var nm=String(name).toLowerCase(),em='🐾';ANIMALS.forEach(function(a){if(nm.indexOf(a[0])>=0)em=a[1]});return em}
 function progress(){
+ if(openPts&&pat(openPts)) return ptsPage();
  function grp(name,count,color,rows,em){return '<section class="gview" style="--gc:'+color+'"><header class="ghero"><span class="tcirc">'+(em||'🐾')+'</span><span class="gname">'+esc(name)+'</span><span class="gcount">'+count+'</span></header><div class="mgrid">'+rows+'</div></section>'}
  if(openGroup==='staff'&&S.staff){
   return '<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+grp('Maîtrise',S.staff.length+' chefs','var(--navy)',S.staff.map(function(m){return '<div class="mcard staff">'+(m.photo?'<span class="av"><img src="'+m.photo+'" alt=""></span>':'<span class="av" style="background:var(--navy)">'+esc(initials(m.name))+'</span>')+'<span class="mname">'+esc(m.name)+'</span><span class="mtag">'+esc(m.role)+'</span></div>'}).join(''),'🐺');
@@ -436,14 +470,16 @@ function render(){
 function val(id){var e=document.getElementById(id);return e?e.value.trim():''}
 document.addEventListener('click',function(ev){
  var b=ev.target.closest('button');
- if(!b){var evl=ev.target.closest('[data-event]');if(evl){openEvent=evl.dataset.event;render();var pr=document.querySelector('.profile');if(pr)pr.scrollTop=0}return}
+ if(!b){var pt=ev.target.closest('[data-ptab]');if(pt&&!ev.target.closest('input,select,textarea')){openPts=pt.dataset.ptab;openGroup=null;render();window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return}
+  var evl=ev.target.closest('[data-event]');if(evl){openEvent=evl.dataset.event;render();var pr=document.querySelector('.profile');if(pr)pr.scrollTop=0}return}
  if(b.dataset.group){openGroup=b.dataset.group;render();window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return}
- if(b.dataset.tab){prevTab=tab;tab=b.dataset.tab;openGroup=null;try{history.replaceState(null,'','#'+tab)}catch(e){}render();if(tab==='progress')leaderRun();return}
+ if(b.dataset.tab){prevTab=tab;tab=b.dataset.tab;openGroup=null;openPts=null;try{history.replaceState(null,'','#'+tab)}catch(e){}render();if(tab==='progress')leaderRun();return}
  msg='';
  if(b.dataset.delpatrol){S.patrols=S.patrols.filter(function(p){return p.id!==b.dataset.delpatrol});S.scouts=S.scouts.filter(function(s){return s.patrol!==b.dataset.delpatrol});return touch()}
  if(b.dataset.scout){openScout=b.dataset.scout;render();var pr=document.querySelector('.profile');if(pr)pr.scrollTop=0;return}
  if(b.dataset.slide){showSlide(+b.dataset.slide);return}
  if(b.dataset.delphoto){S.photos=S.photos.filter(function(x){return x.id!==b.dataset.delphoto});return touch()}
+ if(b.dataset.delday){var dd=b.dataset.delday;S.log=S.log.filter(function(l){return !(l.patrol===openPts&&l.date===dd)});return touch()}
  if(b.dataset.delnews){S.news=S.news.filter(function(x){return x.id!==b.dataset.delnews});return touch()}
  if(b.dataset.dellog){S.log=S.log.filter(function(l){return l.id!==b.dataset.dellog});return touch()}
  if(b.dataset.delscout){S.scouts=S.scouts.filter(function(s){return s.id!==b.dataset.delscout});return touch()}
@@ -454,14 +490,15 @@ document.addEventListener('click',function(ev){
  if(a==='addmeeting'){var d=val('nm-date');if(!d){msg='Choisis la date de la réunion.';return render()}var nm={id:uid('m'),date:d,present:[]};S.meetings.push(nm);curM=nm.id;return touch()}
  if(a==='closeevent'){openEvent=null;return render()}
  if(a==='saveevent'){var e=S.events.filter(function(x){return x.id===openEvent})[0];if(e){if(!val('ev-title')||!val('ev-date')){msg='Une activité a besoin d’un titre et d’une date.';return render()}e.title=val('ev-title');e.date=val('ev-date');e.time=val('ev-start');e.end=val('ev-end');e.place=val('ev-place');e.note=val('ev-note');e.bring=(document.getElementById('ev-bring')||{}).value||'';e.remarks=(document.getElementById('ev-rem')||{}).value||'';msg='Activité mise à jour. Appuie sur Publier.'}return touch()}
- if(a==='closegroup'){openGroup=null;render();return}
+ if(a==='closegroup'){openGroup=null;openPts=null;render();return}
+ if(a==='addmeetpts'){var d=val('mp-date');if(!d){msg='Choisis la date de la réunion.';return render()}var any=false;CATS.forEach(function(c){var v=parseInt(val('mp-'+c[0]),10);if(v){S.log.push({id:uid('l'),patrol:openPts,cat:c[0],pts:v,reason:'',date:d});any=true}});if(!any){msg='Entre au moins un nombre de points.';return render()}msg='Points ajoutés. Appuie sur Publier.';return touch()}
  if(a==='closeprofile'){openScout=null;return render()}
  if(a==='delface'){delete S.faces[openScout];return touch()}
  if(a==='delcover'){S.cover='';return touch()}
  if(a==='addnews'){if(!val('nw-text')){msg='Écris d’abord le texte de l’annonce.';return render()}S.news.push({id:uid('n'),date:val('nw-date')||today(),text:val('nw-text')});return touch()}
  if(a==='edit'){editing=true;return render()}
  if(a==='done'){if(dirty){S=load();dirty=false}editing=false;return render()}
- if(a==='award'){var n=parseInt(val('ap-pts'),10);if(!n||!val('ap-patrol')){msg='Entre d’abord un nombre de points.';return render()}S.log.push({id:uid('l'),patrol:val('ap-patrol'),pts:n,reason:val('ap-reason'),date:val('ap-date')||today()});return touch()}
+ if(a==='award'){var n=parseInt(val('ap-pts'),10);if(!n||!val('ap-patrol')){msg='Entre d’abord un nombre de points.';return render()}S.log.push({id:uid('l'),patrol:val('ap-patrol'),cat:val('ap-cat'),pts:n,reason:val('ap-reason'),date:val('ap-date')||today()});return touch()}
  if(a==='addpatrol'){if(!val('np-name')){msg='Écris d’abord le nom de la patrouille.';return render()}var used=S.patrols.map(function(p){return p.c});var c=1;while(used.indexOf(c)>=0&&c<6)c++;S.patrols.push({id:uid('p'),name:val('np-name'),c:c});return touch()}
  if(a==='addscout'){if(!val('ns-name')||!val('ns-patrol')){msg='Écris un prénom et choisis une patrouille.';return render()}S.scouts.push({id:uid('s'),name:val('ns-name'),patrol:val('ns-patrol'),stage:0});return touch()}
  if(a==='stages'){var st=val('stages').split(',').map(function(s){return s.trim()}).filter(Boolean);if(st.length<2){msg='Ajoute au moins deux étapes.';return render()}S.stages=st;S.scouts.forEach(function(s){if(s.stage>=st.length)s.stage=st.length-1});return touch()}
@@ -514,6 +551,7 @@ if(window.claude&&window.claude.use){
 }
 })();
 </script>
+
 
 
 

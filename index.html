@@ -497,7 +497,7 @@ function events(){
  if(past.length) h+='<h2>Passées</h2>'+past.map(function(e){return card(e,true)}).join('');
  return h}
 
-function histoire(){return '<h2>Histoire</h2><div class="soonbox"><span class="tcirc">📜</span><b>Bientôt disponible</b><span>L’histoire de la troupe arrive très bientôt.</span></div>'}
+function histoire(){return '<h2>Histoire</h2><div class="soonbox"><span class="tcirc">📜</span><b>Coming Soon</b></div>'}
 
 function settings(){return editing?'<div class="editbox" style="margin-top:28px"><h4>Infos de la troupe</h4><div class="fields"><input id="set-troop" value="'+esc(S.troop)+'" aria-label="Nom de la troupe"><input id="set-season" value="'+esc(S.season)+'" aria-label="Saison"><button class="btn ghost" data-act="details">Mettre à jour</button></div>'+(S.example?'<div class="fields"><button class="btn ghost" data-act="clear">Supprimer toutes les données d’exemple</button></div>':'')+'<span class="meta">Après « Publier », le site public troupeimpeesa.github.io se met à jour dans l’heure.</span></div>':''}
 
@@ -603,6 +603,7 @@ if(window.claude&&window.claude.use){
 }
 })();
 </script>
+
 
 </body>
 </html>

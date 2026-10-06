@@ -56,6 +56,12 @@ out = (
     '<!doctype html>\n<html lang="fr">\n<head>\n<meta charset="utf-8">\n'
     '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
     '<meta name="description" content="Troupe Impeesa VPJ : annonces, points des patrouilles, progression et activités.">\n'
+    + '<meta name="theme-color" content="#1e4636">\n'
+    '<link rel="icon" type="image/png" href="icon.png">\n<link rel="apple-touch-icon" href="icon.png">\n'
+    '<meta property="og:type" content="website">\n<meta property="og:url" content="https://troupeimpeesa.github.io/">\n'
+    '<meta property="og:title" content="Troupe Impeesa VPJ">\n'
+    '<meta property="og:description" content="Annonces, calendrier, patrouilles et points de la troupe.">\n'
+    + (('<meta property="og:image" content="https://troupeimpeesa.github.io/' + state["photos"][0]["src"] + '">\n') if state.get("photos") else "")
     + title + "\n<style>" + reset + "</style>\n" + link + "\n" + style
     + "\n</head>\n<body>\n" + rest + "\n</body>\n</html>\n"
 )

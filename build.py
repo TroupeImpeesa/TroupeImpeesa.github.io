@@ -1,6 +1,8 @@
 """Build the public site from the Claude admin page.
 
-Usage: python3 build.py <full-artifact-page.html>
+Usage: python3 build.py <full-artifact-page.html> [<folder with downloaded assets>]
+Photos stored as artifact assets (src "/_blob/<id>") must first be
+downloaded into that folder, one file per asset named <id>.<ext>.
 
 Writes index.html and puts every slideshow photo in photos/<hash>.jpg,
 so the page stays small and phones can cache the photos.
@@ -25,8 +27,16 @@ state = json.loads(m.group(2))
 used = set()
 for ph in state.get("photos", []):
     s = ph.get("src", "")
+    raw = None
     if s.startswith("data:image"):
         raw = base64.b64decode(s.split(",", 1)[1])
+    elif s.startswith("/_blob/") and len(sys.argv) > 2:
+        aid = s[len("/_blob/"):]
+        hits = [f for f in os.listdir(sys.argv[2]) if f.startswith(aid)]
+        if not hits:
+            sys.exit("missing downloaded asset " + aid)
+        raw = open(os.path.join(sys.argv[2], hits[0]), "rb").read()
+    if raw is not None:
         name = hashlib.sha1(raw).hexdigest()[:12] + ".jpg"
         path = os.path.join(here, "photos", name)
         if not os.path.exists(path):

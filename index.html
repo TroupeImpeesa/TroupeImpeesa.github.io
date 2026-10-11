@@ -46,7 +46,10 @@ header.top .eyebrow{opacity:1;text-shadow:0 1px 6px rgba(0,0,0,.6)}
 h1{font-family:var(--display);font-weight:900;letter-spacing:-.01em;font-size:clamp(28px,7.5vw,44px);line-height:1.05;margin:6px 0 4px;text-wrap:balance}
 .sub{opacity:.9;font-size:15px}
 .tabbar{height:10px}
-.navgrid{display:grid;gap:10px;margin-top:4px}
+.navgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:26px}
+.navgrid .tile{aspect-ratio:1;justify-content:center;gap:8px;padding:10px 4px;border-radius:20px}
+.navgrid .tile .tcirc{width:54px;height:54px;font-size:28px}
+.navgrid .tile .tname{font-size:15px}
 .navgrid .tile.wide{padding:14px 16px}
 .navgrid .tile.wide .tcirc{width:56px;height:56px;font-size:30px}
 .navgrid .tsub{display:block;font:400 13px var(--body);color:var(--muted);margin-top:3px}
@@ -383,7 +386,7 @@ function home(){
  h+=N.length?'<ul class="news">'+N.map(function(n){return '<li><span class="ndate">'+fmtDate(n.date)+'</span><span class="ntext">'+(n.auto?'<span class="ntag">Progression</span> ':'')+linkify(n.text)+'</span>'+(editing?'<button class="x" data-delnews="'+n.id+'" aria-label="Supprimer l’annonce">×</button>':'')+'</li>'}).join('')+'</ul>':'<p class="empty">Aucune annonce pour l’instant.</p>';
  var t=today(),nx=S.events.filter(function(e){return evEnd(e)>=t}).sort(function(a,b){return a.date<b.date?-1:1})[0];
  if(nx){h+='<h2>Prochaine activité</h2>'+evCard(nx,false,false,true);}
- h+='<h2>Découvrir</h2><div class="navgrid">'+[['progress','🐺','Troupe','Patrouilles, membres et points','var(--navy)'],['events','🗓️','Calendrier','Toutes les activités','var(--p3)'],['history','📜','Histoire','L’histoire de la troupe','var(--p4)']].map(function(x){return '<button class="tile wide" data-nav="'+x[0]+'" style="--gc:'+x[4]+'"><span class="tcirc">'+x[1]+'</span><span class="tname">'+x[2]+'<span class="tsub">'+x[3]+'</span></span><span class="evgo" aria-hidden="true">›</span></button>'}).join('')+'</div>';
+ h+='<div class="navgrid">'+[['progress','🐺','Troupe','Patrouilles, membres et points','var(--navy)'],['events','🗓️','Calendrier','Toutes les activités','var(--p3)'],['history','📜','Histoire','L’histoire de la troupe','var(--p4)']].map(function(x){return '<button class="tile" data-nav="'+x[0]+'" style="--gc:'+x[4]+'"><span class="tcirc">'+x[1]+'</span><span class="tname">'+x[2]+'</span></button>'}).join('')+'</div>';
  return h}
 
 var ANIMALS=[['poney','🐎'],['requin','🦈'],['castor','🦫'],['boa','🐍']];
@@ -628,7 +631,7 @@ if(window.claude&&window.claude.use){
 
 
 
-<meta data-build="e997ebf3c9d6">
-<script>(function(){var B="e997ebf3c9d6";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="fc184111bfda">
+<script>(function(){var B="fc184111bfda";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

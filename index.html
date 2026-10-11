@@ -14,7 +14,7 @@
 <meta property="og:image" content="https://troupeimpeesa.github.io/photos/9c06a059d4a2.jpg">
 <title>Troupe Impeesa VPJ</title>
 <style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap">
 <style>
 /* Layout: camp-noticeboard header, three tabs (Points / Progress / Events), single column ~720px */
 :root{
@@ -273,6 +273,87 @@ input,select,textarea{font:16px var(--body);padding:9px 10px;border:1px solid va
 .savebar .msg{color:var(--muted);font-size:14px}
 .editbtn{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:9}
 @media (prefers-reduced-motion:no-preference){.bar i{transition:width .5s ease}}
+/* ===== Design B : moderne minimal ===== */
+:root{--bg:#ffffff;--surface:#f5f5f7;--fg:#111111;--muted:#6e6e73;--line:#e6e6ea;--accent:#1e4636;--accent-ink:#ffffff;--soft:#f5f5f7;--pending:#ececef;--ember:#1e4636;--display:"Inter",system-ui,-apple-system,sans-serif;--body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif}
+body{font-family:var(--body);-webkit-font-smoothing:antialiased}
+h1,h2,h3,.tname,.gname,.pname2,.ghero .gname{font-family:var(--display);font-weight:800;letter-spacing:-.025em}
+h2{font-size:22px;margin:26px 0 12px}
+header.top{margin:12px 0 0;border-radius:24px;overflow:hidden;min-height:270px;padding:22px}
+header.top h1{font-size:clamp(28px,8vw,40px);text-shadow:none}
+header.top .eyebrow{letter-spacing:.16em;font-weight:600;text-shadow:none}
+.hero .shade{background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(0,0,0,.65))}
+.tabbar{height:6px}
+.meta{color:var(--muted)}
+/* cards: soft grey, no borders */
+.news li,.event,.evinfo div,.evlist li,.plist li,.stat,.scout,.ptwrap,.soonbox,.editbox{border:none;background:var(--surface);border-radius:18px;box-shadow:none}
+.news li{padding:14px 16px}
+.ndate{font-family:var(--body);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+/* date block */
+.cal{border:none;background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.cal b{background:none;color:var(--muted);font-size:10px;letter-spacing:.14em;padding:5px 0 0}
+.cal span{font-family:var(--display);font-weight:800;font-size:24px;line-height:1.15;padding-bottom:4px;letter-spacing:-.02em}
+.event{padding:14px}
+.event h3{font-size:16px;letter-spacing:-.01em}
+.soon{color:var(--accent);letter-spacing:.1em}
+.evgo{font-size:22px}
+.evhero{background:var(--surface);color:var(--fg);border-radius:20px}
+.evhero .pname2{color:var(--fg)}
+.evhero .ptag{color:var(--muted)}
+.cal.big{background:#fff;border:none;color:var(--fg)}
+.cal.big b{background:none;color:var(--muted)}
+.evlist li::before{background:var(--accent)}
+/* back button */
+.back{border:none;background:none;box-shadow:none;padding:4px 0;gap:10px;margin:14px 0 4px}
+.bico{width:34px;height:34px;background:#fff;color:var(--fg);border:1px solid var(--line)}
+/* tiles */
+.tiles{gap:10px}
+.tile{align-items:flex-start;text-align:left;gap:0;padding:16px;border-radius:18px;background:var(--surface);box-shadow:none}
+.tile .tcirc{width:40px;height:40px;border-radius:12px;font:800 17px var(--display);color:#fff;box-shadow:none;margin-bottom:14px}
+.tile .tname{font-size:17px}
+.tcount{text-transform:none;letter-spacing:0;font-weight:400;font-size:13px;color:var(--muted);margin-top:2px}
+.tile.wide{align-items:center;padding:14px 16px}
+.tile.wide .tcirc{width:40px;height:40px;font-size:17px;margin:0}
+.tile .tsub{display:block;font:400 13px var(--body);color:var(--muted);letter-spacing:0;margin-top:2px}
+.faces{display:flex;margin-left:auto;padding-left:6px}
+.faces img{width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid var(--surface);margin-left:-8px}
+.navgrid{margin-top:22px}
+.navgrid .tile{aspect-ratio:auto;justify-content:flex-start;padding:14px 12px 16px}
+.navgrid .tile .tcirc{width:40px;height:40px;background:#fff;color:var(--fg);border-radius:12px;margin-bottom:16px}
+.navgrid .tile .tname{font-size:15px;letter-spacing:-.01em}
+/* group view */
+.ghero{background:var(--surface);box-shadow:none;border-radius:20px}
+.ghero .tcirc{width:56px;height:56px;border-radius:16px;font:800 24px var(--display);color:#fff;box-shadow:none}
+.ghero .gname{font-size:24px}
+.gcount{text-transform:none;letter-spacing:0;font-weight:400;font-size:13px}
+.mcard{background:var(--surface);box-shadow:none;border-radius:16px}
+.mcard .av,.grp .av{box-shadow:none}
+.mtag.role{background:var(--fg)}
+/* leaderboard: one grouped list */
+.board{gap:0;background:var(--surface);border-radius:18px;overflow:hidden}
+.row{border:none;border-radius:0;background:transparent;padding:13px 16px;grid-template-columns:24px 1fr auto}
+.row+.row{border-top:1px solid var(--line)}
+.rank{font:700 16px var(--body);color:var(--muted)}
+.row.first .rank{color:var(--fg)}
+.dot{width:10px;height:10px;border-radius:3px}
+.bar{display:none}
+.pname{font-weight:600}
+.pts{font:800 20px var(--display);letter-spacing:-.02em}
+.pts small{display:inline;margin-left:3px;font-size:11px;letter-spacing:0;text-transform:none}
+.log li{border-color:var(--line)}
+/* profile */
+.phero{border-radius:20px}
+.stat b{font-family:var(--display);font-weight:800;letter-spacing:-.02em}
+.stat span{text-transform:none;letter-spacing:0;font-size:12px}
+.ladder li{border-radius:14px;padding:13px 16px;font-weight:600}
+.ladder li.done{background:var(--accent);border-color:var(--accent)}
+.pill.yes{background:var(--accent)}
+.igcard .igic{background:var(--accent)}
+.soonbox .tcirc{background:#fff;color:var(--fg);width:48px;height:48px;border-radius:14px}
+.soonbox b{font-family:var(--display);font-weight:800;letter-spacing:-.02em}
+.btn{border-radius:12px;font-family:var(--body)}
+input,select,textarea{border-radius:10px;font-family:var(--body)}
+.herd{display:none!important}
+
 </style>
 </head>
 <body>
@@ -386,11 +467,11 @@ function home(){
  h+=N.length?'<ul class="news">'+N.map(function(n){return '<li><span class="ndate">'+fmtDate(n.date)+'</span><span class="ntext">'+(n.auto?'<span class="ntag">Progression</span> ':'')+linkify(n.text)+'</span>'+(editing?'<button class="x" data-delnews="'+n.id+'" aria-label="Supprimer l’annonce">×</button>':'')+'</li>'}).join('')+'</ul>':'<p class="empty">Aucune annonce pour l’instant.</p>';
  var t=today(),nx=S.events.filter(function(e){return evEnd(e)>=t}).sort(function(a,b){return a.date<b.date?-1:1})[0];
  if(nx){h+='<h2>Prochaine activité</h2>'+evCard(nx,false,false,true);}
- h+='<div class="navgrid">'+[['progress','🐺','Troupe','Patrouilles, membres et points','var(--navy)'],['events','🗓️','Calendrier','Toutes les activités','var(--p3)'],['history','📜','Histoire','L’histoire de la troupe','var(--p4)']].map(function(x){return '<button class="tile" data-nav="'+x[0]+'" style="--gc:'+x[4]+'"><span class="tcirc">'+x[1]+'</span><span class="tname">'+x[2]+'</span></button>'}).join('')+'</div>';
+ h+='<div class="navgrid">'+[['progress','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/></svg>','Troupe','Patrouilles, membres et points','var(--navy)'],['events','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>','Calendrier','Toutes les activités','var(--p3)'],['history','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg>','Histoire','L’histoire de la troupe','var(--p4)']].map(function(x){return '<button class="tile" data-nav="'+x[0]+'" style="--gc:'+x[4]+'"><span class="tcirc">'+x[1]+'</span><span class="tname">'+x[2]+'</span></button>'}).join('')+'</div>';
  return h}
 
 var ANIMALS=[['poney','🐎'],['requin','🦈'],['castor','🦫'],['boa','🐍']];
-function leaderRun(){
+function leaderRun(){return;
  try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return}catch(e){}
  var t=totals(),sorted=S.patrols.slice().sort(function(a,b){return t[b.id]-t[a.id]});
  if(!sorted.length||t[sorted[0].id]<=0)return;
@@ -444,12 +525,12 @@ function ptsPage(){
  h+='</tbody><tfoot><tr><th>Total</th>'+cols.map(function(c){return '<td>'+tot[c[0]]+'</td>'}).join('')+'<td class="ptot">'+grand+'</td>'+(editing?'<td></td>':'')+'</tr></tfoot></table></div>';
  if(editing) h+='<div class="editbox"><h4>Points d’une réunion</h4><div class="fields"><input id="mp-date" type="date" value="'+today()+'" aria-label="Date de la réunion"></div><div class="fields mpf">'+CATS.map(function(c){return '<label class="lbl">'+c[1]+'<input id="mp-'+c[0]+'" type="number" inputmode="numeric" placeholder="0"></label>'}).join('')+'</div><div class="fields"><button class="btn" data-act="addmeetpts">Ajouter les points</button></div></div>';
  return h}
-function animalOf(name){var nm=String(name).toLowerCase(),em='🐾';ANIMALS.forEach(function(a){if(nm.indexOf(a[0])>=0)em=a[1]});return em}
+function animalOf(name){return esc(String(name).trim().charAt(0).toUpperCase()||'·')}
 function progress(){
  if(openPts&&pat(openPts)) return ptsPage();
  function grp(name,count,color,rows,em){return '<section class="gview" style="--gc:'+color+'"><header class="ghero"><span class="tcirc">'+(em||'🐾')+'</span><span class="gname">'+esc(name)+'</span><span class="gcount">'+count+'</span></header><div class="mgrid">'+rows+'</div></section>'}
  if(openGroup==='staff'&&S.staff){
-  return '<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+grp('Maîtrise',S.staff.length+' chefs','var(--navy)',S.staff.map(function(m){return '<div class="mcard staff">'+(m.photo?'<span class="av"><img src="'+m.photo+'" alt=""></span>':'<span class="av" style="background:var(--navy)">'+esc(initials(m.name))+'</span>')+'<span class="mname">'+esc(m.name)+'</span><span class="mtag">'+esc(m.role)+'</span></div>'}).join(''),'🐺');
+  return '<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+grp('Maîtrise',S.staff.length+' chefs','var(--navy)',S.staff.map(function(m){return '<div class="mcard staff">'+(m.photo?'<span class="av"><img src="'+m.photo+'" alt=""></span>':'<span class="av" style="background:var(--navy)">'+esc(initials(m.name))+'</span>')+'<span class="mname">'+esc(m.name)+'</span><span class="mtag">'+esc(m.role)+'</span></div>'}).join(''),'M');
  }
  var gp=openGroup&&pat(openGroup);
  if(gp){
@@ -460,7 +541,7 @@ function progress(){
  }
  var pts=points(),cut=pts.indexOf('<h2>Historique des points</h2>');
  var h='<h2>Les patrouilles</h2><div class="meta">Touche une patrouille pour voir ses membres.</div><div class="tiles">';
- if(S.staff&&S.staff.length) h+='<button class="tile wide" data-group="staff" style="--gc:var(--navy)"><span class="tcirc">🐺</span><span class="tname">Maîtrise</span><span class="tcount">'+S.staff.length+' chefs</span></button>';
+ if(S.staff&&S.staff.length) h+='<button class="tile wide" data-group="staff" style="--gc:var(--navy)"><span class="tcirc">M</span><span class="tname">Maîtrise<span class="tsub">'+S.staff.length+' chefs</span></span><span class="faces">'+S.staff.map(function(m){return m.photo?'<img src="'+m.photo+'" alt="">':''}).join('')+'</span></button>';
  S.patrols.forEach(function(p){var n=S.scouts.filter(function(s){return s.patrol===p.id}).length;
   h+='<button class="tile" data-group="'+p.id+'" style="--gc:'+col(p)+'"><span class="tcirc">'+animalOf(p.name)+'</span><span class="tname">'+esc(p.name)+'</span><span class="tcount">'+n+' membre'+(n>1?'s':'')+'</span></button>'});
  return h+'</div>'+pts}
@@ -514,7 +595,7 @@ function events(){
  return h}
 
 function backHome(){return '<button class="back" data-act="home"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Accueil</span></button>'}
-function histoire(){return '<h2>Histoire</h2><div class="soonbox"><span class="tcirc">📜</span><b>Coming Soon</b></div>'}
+function histoire(){return '<h2>Histoire</h2><div class="soonbox"><span class="tcirc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg></span><b>Coming Soon</b></div>'}
 
 function settings(){return editing?'<div class="editbox" style="margin-top:28px"><h4>Infos de la troupe</h4><div class="fields"><input id="set-troop" value="'+esc(S.troop)+'" aria-label="Nom de la troupe"><input id="set-season" value="'+esc(S.season)+'" aria-label="Saison"><button class="btn ghost" data-act="details">Mettre à jour</button></div>'+(S.example?'<div class="fields"><button class="btn ghost" data-act="clear">Supprimer toutes les données d’exemple</button></div>':'')+'<span class="meta">Après « Publier », le site public troupeimpeesa.github.io se met à jour dans l’heure.</span></div>':''}
 
@@ -631,7 +712,8 @@ if(window.claude&&window.claude.use){
 
 
 
-<meta data-build="fc184111bfda">
-<script>(function(){var B="fc184111bfda";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+
+<meta data-build="3e4c63e7f61d">
+<script>(function(){var B="3e4c63e7f61d";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

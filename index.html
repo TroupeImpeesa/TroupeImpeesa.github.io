@@ -663,7 +663,7 @@ function cpPage(){
  var p=pat(openCP),h='<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>'+esc(p.name)+'</span></button>';
  h+='<div class="cphead" style="--gc:'+col(p)+'"><span class="tcirc">'+animalOf(p.name)+'</span><div><div class="gname">Espace CP</div><div class="meta">'+esc(p.name)+'</div></div></div>';
  if(!cpAllowed(openCP)){
-  return h+'<div class="cpcard"><p class="cplead">Entre le mot de passe de la patrouille '+esc(p.name)+'.</p><div class="fields"><input id="cp-pw" type="password" autocomplete="current-password" placeholder="Mot de passe" aria-label="Mot de passe"><button class="btn" data-act="cpunlock"'+(cp.busy?' disabled':'')+'>'+(cp.busy?'Vérification…':'Ouvrir')+'</button></div>'+(cp.err?'<p class="cperr">'+esc(cp.err)+'</p>':'')+'</div>';
+  return h+'<div class="cpcard"><p class="cplead">Entre le mot de passe de la patrouille '+esc(p.name)+'.</p><div class="fields"><input id="cp-pw" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Mot de passe" aria-label="Mot de passe"><button class="btn" data-act="cpunlock"'+(cp.busy?' disabled':'')+'>'+(cp.busy?'Vérification…':'Ouvrir')+'</button></div>'+(cp.err?'<p class="cperr">'+esc(cp.err)+'</p>':'')+'</div>';
  }
  if(!cp.data||cp.patrol!==openCP){if(!cp.busy&&!cp.err)setTimeout(function(){cpLoad(openCP)},0);return h+'<div class="cpcard">'+(cp.err?'<p class="cperr">'+esc(cp.err)+'</p><button class="btn" data-act="cpretry">Réessayer</button>':'<p class="meta">Chargement…</p>')+'</div>'}
  var D=cp.data;
@@ -696,7 +696,7 @@ function cpPage(){
 function cpClick(b){
  var D=cp.data,a=b.dataset.act;
  if(a==='cpopen'){go('progress/cp-'+openGroup);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return true}
- if(a==='cpunlock'){var pw=val('cp-pw');if(!pw)return true;cp.busy=true;cp.err='';render();
+ if(a==='cpunlock'){var pw=val('cp-pw').toLowerCase().replace(/[\s\u2010-\u2015\u2212]+/g,function(x){return /\s/.test(x)?'':'-'});if(!pw)return true;cp.busy=true;cp.err='';render();
   unlock(pw,openCP).then(function(x){cp.token=x.token;cp.scope=x.scope;cp.busy=false;cp.dk=x.dk;cp.data=null;try{sessionStorage.setItem('ti-cp',JSON.stringify(x))}catch(e){}render()})
    .catch(function(e){cp.busy=false;cp.err=e==='nokeys'?'L’espace CP n’est pas encore activé.':'Mot de passe incorrect.';render()});return true}
  if(a==='cpretry'){cp.err='';cpLoad(openCP);return true}
@@ -898,7 +898,7 @@ if(window.claude&&window.claude.use){
 
 
 
-<meta data-build="c8fb5d91b047">
-<script>(function(){var B="c8fb5d91b047";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="744a130ff035">
+<script>(function(){var B="744a130ff035";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

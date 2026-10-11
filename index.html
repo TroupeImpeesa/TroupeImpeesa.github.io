@@ -793,10 +793,10 @@ function exportPDF(id){
  var btn=document.querySelector('[data-pdf]');if(btn){btn.disabled=true;btn.querySelector('span').textContent='Préparation…'}
  function done(){if(btn){btn.disabled=false;btn.querySelector('span').textContent='Exporter en PDF'}}
  loadPdfLib().then(function(){
-  var holder=document.createElement('div');holder.style.cssText='position:fixed;left:-10000px;top:0;z-index:-1';holder.innerHTML=pdfSheet(s);document.body.appendChild(holder);
+  var holder=document.createElement('div');holder.style.cssText='position:fixed;left:0;top:0;width:794px;height:1122px;z-index:-5;pointer-events:none;overflow:hidden';holder.innerHTML=pdfSheet(s);document.body.appendChild(holder);
   var el=holder.querySelector('.pdfx');
   return (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){
-   return html2pdf().set({margin:0,filename:'Fiche - '+s.name+'.pdf',image:{type:'jpeg',quality:0.96},html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',windowWidth:794},jsPDF:{unit:'px',format:[794,1123],orientation:'portrait',hotfixes:['px_scaling']},pagebreak:{mode:[]}}).from(el).save();
+   return html2pdf().set({margin:0,filename:'Fiche - '+s.name+'.pdf',image:{type:'jpeg',quality:0.96},html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',x:0,y:0,scrollX:0,scrollY:0,width:794,height:1122,windowWidth:794,windowHeight:1122},jsPDF:{unit:'px',format:[794,1123],orientation:'portrait',hotfixes:['px_scaling']},pagebreak:{mode:[]}}).from(el).save();
   }).then(function(){holder.remove();done()},function(e){holder.remove();throw e});
  }).catch(function(){done();alertless('Export impossible. Vérifie ta connexion et réessaie.')});
 }
@@ -976,7 +976,7 @@ if(window.claude&&window.claude.use){
 
 
 
-<meta data-build="3b0c168459d3">
-<script>(function(){var B="3b0c168459d3";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="bdeea15ec1ea">
+<script>(function(){var B="bdeea15ec1ea";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

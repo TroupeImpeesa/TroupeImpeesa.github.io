@@ -410,7 +410,8 @@ var TABS=['home','progress','events','history'];
 var tab='home',openGroup=null,openPts=null;
 function route(h){h=(h==null?(location.hash||'#home').slice(1):h).split('/');var t=h[0]==='points'?'progress':h[0];if(TABS.indexOf(t)<0)t='home';tab=t;openGroup=null;openPts=null;openScout=null;openEvent=null;openCP=null;var x=h[1]||'';
  if(t==='progress'){if(x.indexOf('g-')===0)openGroup=x.slice(2);else if(x.indexOf('cp-')===0&&pat(x.slice(3))){openCP=x.slice(3);openGroup=openCP}else if(x.indexOf('pts-')===0)openPts=x.slice(4);else if(x.indexOf('s-')===0){var sc=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc){openScout=sc.id;openGroup=sc.patrol}}}
- if(x.indexOf('e-')===0&&S.events.some(function(e){return e.id===x.slice(2)}))openEvent=x.slice(2)}
+ if(x.indexOf('e-')===0&&S.events.some(function(e){return e.id===x.slice(2)}))openEvent=x.slice(2);
+ if(!openCP)cpLock()}
 function go(h){try{history.pushState({ia:1},'','#'+h)}catch(e){}route(h);render()}
 function closeView(){if(history.state&&history.state.ia){history.back();return}var h=tab;if((openScout||openCP)&&openGroup)h='progress/g-'+openGroup;try{history.replaceState(null,'','#'+h)}catch(e){}route(h);render()}
 route();
@@ -594,7 +595,8 @@ function streakOf(s){var t=today(),M=S.meetings.filter(function(m){return m.patr
 var CP_ON=/github\.io$/.test(location.hostname)||location.hostname==='localhost'||location.hostname==='127.0.0.1';
 var REPO='TroupeImpeesa/TroupeImpeesa.github.io',BADGES=[],openCP;
 var cp={token:null,dk:{},contacts:{},csha:null,cdirty:false,scope:null,patrol:null,data:null,sha:null,tab:'pres',date:today(),open:null,msg:'',err:'',busy:false,dirty:false,del:null};
-try{var _k=JSON.parse(sessionStorage.getItem('ti-cp')||'null');if(_k&&_k.scope&&_k.token){cp.token=_k.token||null;cp.scope=_k.scope;cp.dk=_k.dk||{}}}catch(e){}
+try{sessionStorage.removeItem('ti-cp')}catch(e){}
+function cpLock(){if(typeof cp==='undefined'||!cp)return;cp.token=null;cp.scope=null;cp.dk={};cp.data=null;cp.contacts={};cp.dirty=false;cp.cdirty=false;cp.err='';cp.msg='';cp.relock=null;cp.open=null;cp.del=null;cp.tab='pres'}
 function u8(b){var s=atob(b),a=new Uint8Array(s.length);for(var i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a}
 function b64e(str){return btoa(unescape(encodeURIComponent(str)))}
 function b64d(b){return decodeURIComponent(escape(atob(String(b).replace(/\s/g,''))))}
@@ -697,7 +699,7 @@ function cpClick(b){
  var D=cp.data,a=b.dataset.act;
  if(a==='cpopen'){go('progress/cp-'+openGroup);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return true}
  if(a==='cpunlock'){var pw=val('cp-pw').toLowerCase().replace(/[\s\u2010-\u2015\u2212]+/g,function(x){return /\s/.test(x)?'':'-'});if(!pw)return true;cp.busy=true;cp.err='';render();
-  unlock(pw,openCP).then(function(x){cp.token=x.token;cp.scope=x.scope;cp.busy=false;cp.dk=x.dk;cp.data=null;if(cp.relock&&cp.relock.patrol===openCP&&x.token){cp.data=cp.relock;cp.patrol=openCP;cp.dirty=true;cp.relock=null;cp.err='';cp.msg='Mot de passe OK. Appuie sur Enregistrer.';ghJson('data/'+openCP+'.json').then(function(j){cp.sha=j?j.sha:null;return ghJson('data/contacts-'+openCP+'.json')}).then(function(c){cp.csha=c?c.sha:null}).catch(function(){})}try{sessionStorage.setItem('ti-cp',JSON.stringify(x))}catch(e){}render()})
+  unlock(pw,openCP).then(function(x){cp.token=x.token;cp.scope=x.scope;cp.busy=false;cp.dk=x.dk;cp.data=null;if(cp.relock&&cp.relock.patrol===openCP&&x.token){cp.data=cp.relock;cp.patrol=openCP;cp.dirty=true;cp.relock=null;cp.err='';cp.msg='Mot de passe OK. Appuie sur Enregistrer.';ghJson('data/'+openCP+'.json').then(function(j){cp.sha=j?j.sha:null;return ghJson('data/contacts-'+openCP+'.json')}).then(function(c){cp.csha=c?c.sha:null}).catch(function(){})}render()})
    .catch(function(e){cp.busy=false;cp.err=e==='nokeys'?'L’espace CP n’est pas encore activé.':'Mot de passe incorrect.';render()});return true}
  if(a==='cpretry'){cp.err='';cpLoad(openCP);return true}
  if(a==='cpsave'){cpSave(false);return true}
@@ -898,7 +900,7 @@ if(window.claude&&window.claude.use){
 
 
 
-<meta data-build="b0ae5c7cbf48">
-<script>(function(){var B="b0ae5c7cbf48";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="e47bfb3769f3">
+<script>(function(){var B="e47bfb3769f3";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

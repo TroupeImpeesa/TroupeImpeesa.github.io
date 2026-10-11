@@ -392,6 +392,9 @@ input,select,textarea{border-radius:10px;font-family:var(--body)}
 .btn:disabled{opacity:.4;cursor:default}
 .bchips{display:flex;flex-wrap:wrap;gap:6px}
 .bchip{background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+.pinfo{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#fff;border-radius:12px;padding:10px}
+.pinfo .lbl{margin:0;font-size:12px}
+.pinfo .lbl:first-child{grid-column:1/-1}
 
 
 </style>
@@ -590,8 +593,8 @@ function streakOf(s){var t=today(),M=S.meetings.filter(function(m){return m.patr
 /* ===== Espace CP : présences et progression enregistrées sur le site ===== */
 var CP_ON=/github\.io$/.test(location.hostname)||location.hostname==='localhost'||location.hostname==='127.0.0.1';
 var REPO='TroupeImpeesa/TroupeImpeesa.github.io',BADGES=[],openCP;
-var cp={token:null,scope:null,patrol:null,data:null,sha:null,tab:'pres',date:today(),open:null,msg:'',err:'',busy:false,dirty:false,del:null};
-try{var _k=JSON.parse(sessionStorage.getItem('ti-cp')||'null');if(_k&&_k.token){cp.token=_k.token;cp.scope=_k.scope}}catch(e){}
+var cp={token:null,dk:{},contacts:{},csha:null,cdirty:false,scope:null,patrol:null,data:null,sha:null,tab:'pres',date:today(),open:null,msg:'',err:'',busy:false,dirty:false,del:null};
+try{var _k=JSON.parse(sessionStorage.getItem('ti-cp')||'null');if(_k&&_k.scope){cp.token=_k.token||null;cp.scope=_k.scope;cp.dk=_k.dk||{}}}catch(e){}
 function u8(b){var s=atob(b),a=new Uint8Array(s.length);for(var i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a}
 function b64e(str){return btoa(unescape(encodeURIComponent(str)))}
 function b64d(b){return decodeURIComponent(escape(atob(String(b).replace(/\s/g,''))))}
@@ -623,27 +626,33 @@ function unlock(pw,pid){
    return crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey'])
     .then(function(base){return crypto.subtle.deriveKey({name:'PBKDF2',salt:u8(e.salt),iterations:e.it,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt'])})
     .then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:u8(e.iv)},k,u8(e.ct))})
-    .then(function(buf){return {token:new TextDecoder().decode(buf),scope:tries[i][0]}})
+    .then(function(buf){var t=new TextDecoder().decode(buf),o;try{o=JSON.parse(t)}catch(e){o={token:t,dk:{}}}return {token:o.token||null,dk:o.dk||{},scope:tries[i][0]}})
     .catch(function(){return attempt(i+1)})}
   return attempt(0)})}
-function gh(path,opt){opt=opt||{};opt.headers={'Authorization':'Bearer '+cp.token,'Accept':'application/vnd.github+json'};opt.cache='no-store';return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path,opt)}
-function cpAllowed(pid){return cp.token&&(cp.scope==='chef'||cp.scope===pid)}
+function gh(path,opt){opt=opt||{};opt.headers={'Accept':'application/vnd.github+json'};if(cp.token)opt.headers.Authorization='Bearer '+cp.token;opt.cache='no-store';return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path,opt)}
+function cpAllowed(pid){return !!cp.scope&&(cp.scope==='chef'||cp.scope===pid)}
+function aesKey(pid,use){return crypto.subtle.importKey('raw',u8(cp.dk[pid]),'AES-GCM',false,[use])}
+function decContacts(pid,j){if(!j||!cp.dk[pid])return Promise.resolve({});return aesKey(pid,'decrypt').then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:u8(j.iv)},k,u8(j.ct))}).then(function(b){return JSON.parse(new TextDecoder().decode(b))}).catch(function(){return {}})}
+function encContacts(pid,obj){var iv=crypto.getRandomValues(new Uint8Array(12));return aesKey(pid,'encrypt').then(function(k){return crypto.subtle.encrypt({name:'AES-GCM',iv:iv},k,new TextEncoder().encode(JSON.stringify(obj)))}).then(function(ct){function b(x){var s='',a=new Uint8Array(x);for(var i=0;i<a.length;i++)s+=String.fromCharCode(a[i]);return btoa(s)}return {iv:b(iv),ct:b(ct)}})}
+function ghJson(path){return gh(path+'?ref=main').then(function(r){if(r.status===404)return null;if(!r.ok)throw r.status;return r.json()})}
 function cpLoad(pid){
  cp.busy=true;cp.err='';render();
  gh('data/'+pid+'.json?ref=main').then(function(r){if(r.status===401){cp.token=null;try{sessionStorage.removeItem('ti-cp')}catch(e){}throw 'auth'}if(r.status===404)return null;if(!r.ok)throw 'net';return r.json()})
   .then(function(j){cp.patrol=pid;cp.sha=j?j.sha:null;
    if(j){cp.data=JSON.parse(b64d(j.content))}else{cp.data={patrol:pid,members:S.scouts.filter(function(s){return s.patrol===pid}).map(function(s){return {id:s.id,name:s.name,role:s.role||'',stage:+s.stage||0,badges:(s.badgeList||[]).slice()}}),meetings:[]}}
-   cp.data.meetings=cp.data.meetings||[];cp.busy=false;cp.dirty=false;cp.msg='';render()})
+   cp.data.meetings=cp.data.meetings||[];
+   return ghJson('data/contacts-'+pid+'.json').then(function(c){cp.csha=c?c.sha:null;return decContacts(pid,c?JSON.parse(b64d(c.content)):null)}).then(function(o){cp.contacts=o||{};cp.cdirty=false;cp.busy=false;cp.dirty=false;cp.msg='';render()})})
   .catch(function(e){cp.busy=false;cp.err=e==='auth'?'Le mot de passe a expiré. Reconnecte-toi.':'Impossible de charger. Vérifie ta connexion et réessaie.';render()});
 }
 function cpSave(retry){
- if(!cp.data)return;cp.busy=true;cp.err='';cp.msg='Enregistrement…';render();
+ if(!cp.data)return;if(!cp.token){cp.err='L’enregistrement n’est pas encore activé (clé GitHub manquante).';render();return}cp.busy=true;cp.err='';cp.msg='Enregistrement…';render();
  cp.data.updated=new Date().toISOString();
  cp.data.meetings=cp.data.meetings.filter(function(m){return m.date}).sort(function(a,b){return a.date<b.date?-1:1});
  var body={message:'Espace CP : '+(pat(cp.patrol)||{}).name+' ('+today()+')',content:b64e(JSON.stringify(cp.data,null,1)),branch:'main'};if(cp.sha)body.sha=cp.sha;
  gh('data/'+cp.patrol+'.json',{method:'PUT',headers:{},body:JSON.stringify(body)}).then(function(r){
   if((r.status===409||r.status===422)&&!retry){return gh('data/'+cp.patrol+'.json?ref=main').then(function(x){return x.ok?x.json():null}).then(function(j){cp.sha=j?j.sha:null;return cpSave(true)})}
-  if(!r.ok)throw r.status;return r.json().then(function(j){cp.sha=j.content.sha;cp.busy=false;cp.dirty=false;cp.msg='Enregistré ✓ Visible par tous dans 1 à 2 minutes.';applyPatrol(JSON.parse(JSON.stringify(cp.data)));render()})})
+  if(!r.ok)throw r.status;return r.json().then(function(j){cp.sha=j.content.sha;if(!cp.cdirty)return;return encContacts(cp.patrol,cp.contacts).then(function(enc){var cb={message:'Espace CP : infos privées '+(pat(cp.patrol)||{}).name,content:b64e(JSON.stringify(enc)),branch:'main'};if(cp.csha)cb.sha=cp.csha;
+   return gh('data/contacts-'+cp.patrol+'.json',{method:'PUT',body:JSON.stringify(cb)}).then(function(r2){if(!r2.ok)throw r2.status;return r2.json()}).then(function(j2){cp.csha=j2.content.sha;cp.cdirty=false})})}).then(function(){cp.busy=false;cp.dirty=false;cp.msg='Enregistré ✓ Visible par tous dans 1 à 2 minutes.';applyPatrol(JSON.parse(JSON.stringify(cp.data)));render()})})
  .catch(function(e){cp.busy=false;cp.msg='';cp.err=e===401?'Le mot de passe a expiré. Reconnecte-toi.':'Échec de l’enregistrement. Vérifie ta connexion et réessaie.';render()});
 }
 function cpMeeting(date,create){var m=cp.data.meetings.filter(function(x){return x.date===date})[0];if(!m&&create){m={date:date,present:[]};cp.data.meetings.push(m)}return m}
@@ -672,6 +681,7 @@ function cpPage(){
    var r='<div class="cpm'+(o?' open':'')+'"><button class="cpmh" data-cpopenm="'+s.id+'"><span class="cpname">'+esc(s.name)+(s.role?' <span class="mtag role">'+esc(s.role)+'</span>':'')+'</span><span class="meta">'+esc(S.stages[s.stage]||'')+' · '+b.length+' badge'+(b.length>1?'s':'')+'</span></button>';
    if(o){r+='<div class="cpmb"><div class="lbl">Étape</div><div class="seg small">'+S.stages.map(function(x,i){return '<button data-cpstage="'+s.id+'" data-v="'+i+'" aria-selected="'+(s.stage===i)+'">'+esc(x)+'</button>'}).join('')+'</div>'+
     '<div class="lbl">Rôle</div><div class="seg small">'+[['','Scout'],['CP','CP'],['SP','SP']].map(function(x){return '<button data-cprole="'+s.id+'" data-v="'+x[0]+'" aria-selected="'+((s.role||'')===x[0])+'">'+x[1]+'</button>'}).join('')+'</div>'+
+    (cp.dk[openCP]?(function(){var c=cp.contacts[s.id]||{};return '<div class="lbl">Infos privées <span class="meta">(visibles seulement ici)</span></div><div class="pinfo">'+[['dob','Date de naissance'],['father','Père'],['mother','Mère'],['phone','Téléphone'],['phone2','Téléphone des parents']].map(function(f){return '<label class="lbl">'+f[1]+'<input data-cpinfo="'+s.id+'" data-f="'+f[0]+'" value="'+esc(c[f[0]]||'')+'"'+(f[0].indexOf('phone')===0?' inputmode="tel"':'')+'></label>'}).join('')+'</div>'})():'')+
     '<div class="lbl">Badges ('+b.length+')</div><input class="cpq" data-cpq="1" type="search" placeholder="Chercher un badge" aria-label="Chercher un badge">'+
     '<div class="blist">'+BADGES.slice().sort(function(x,y){return (b.indexOf(y)>=0)-(b.indexOf(x)>=0)}).map(function(x){var on=b.indexOf(x)>=0;return '<label class="bitem'+(on?' on':'')+'" data-name="'+esc(x.toLowerCase())+'"><input type="checkbox" data-cpbadge="'+s.id+'" value="'+esc(x)+'"'+(on?' checked':'')+'>'+esc(x)+'</label>'}).join('')+'</div></div>'}
    return r+'</div>'}).join('')+'</div>';
@@ -687,7 +697,7 @@ function cpClick(b){
  var D=cp.data,a=b.dataset.act;
  if(a==='cpopen'){go('progress/cp-'+openGroup);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return true}
  if(a==='cpunlock'){var pw=val('cp-pw');if(!pw)return true;cp.busy=true;cp.err='';render();
-  unlock(pw,openCP).then(function(x){cp.token=x.token;cp.scope=x.scope;cp.busy=false;try{sessionStorage.setItem('ti-cp',JSON.stringify(x))}catch(e){}render()})
+  unlock(pw,openCP).then(function(x){cp.token=x.token;cp.scope=x.scope;cp.busy=false;cp.dk=x.dk;cp.data=null;try{sessionStorage.setItem('ti-cp',JSON.stringify(x))}catch(e){}render()})
    .catch(function(e){cp.busy=false;cp.err=e==='nokeys'?'L’espace CP n’est pas encore activé.':'Mot de passe incorrect.';render()});return true}
  if(a==='cpretry'){cp.err='';cpLoad(openCP);return true}
  if(a==='cpsave'){cpSave(false);return true}
@@ -701,7 +711,7 @@ function cpClick(b){
  var mem=function(id){return D.members.filter(function(s){return s.id===id})[0]};
  if(b.dataset.cpstage){mem(b.dataset.cpstage).stage=+b.dataset.v;cpTouch();return true}
  if(b.dataset.cprole!=null&&b.hasAttribute('data-cprole')){var who=mem(b.dataset.cprole),v=b.dataset.v;if(v)D.members.forEach(function(s){if(s.role===v)s.role=''});who.role=v;cpTouch();return true}
- if(b.dataset.cpdel){if(cp.del!==b.dataset.cpdel){cp.del=b.dataset.cpdel;render();return true}var id=b.dataset.cpdel;D.members=D.members.filter(function(s){return s.id!==id});D.meetings.forEach(function(x){x.present=x.present.filter(function(i){return i!==id})});cp.del=null;cpTouch();return true}
+ if(b.dataset.cpdel){if(cp.del!==b.dataset.cpdel){cp.del=b.dataset.cpdel;render();return true}var id=b.dataset.cpdel;D.members=D.members.filter(function(s){return s.id!==id});D.meetings.forEach(function(x){x.present=x.present.filter(function(i){return i!==id})});if(cp.contacts[id]){delete cp.contacts[id];cp.cdirty=true}cp.del=null;cpTouch();return true}
  if(a==='cpadd'){var n=val('cp-new');if(!n)return true;D.members.push({id:openCP+'-n'+Date.now().toString(36),name:n,role:'',stage:0,badges:[]});cpTouch();return true}
  return false;
 }
@@ -710,6 +720,7 @@ function cpChange(t){
  if(t.id==='cp-date'){if(t.value)cp.date=t.value;render();return true}
  if(t.dataset.cpbadge){var s=cp.data.members.filter(function(x){return x.id===t.dataset.cpbadge})[0];if(!s)return true;s.badges=s.badges||[];var i=s.badges.indexOf(t.value);if(t.checked&&i<0)s.badges.push(t.value);if(!t.checked&&i>=0)s.badges.splice(i,1);cp.dirty=true;cp.msg='';
   var lab=t.closest('.bitem');if(lab)lab.classList.toggle('on',t.checked);var st=document.querySelector('.cpsave .msg');if(st)st.textContent='Modifications non enregistrées';var sb=document.querySelector('[data-act="cpsave"]');if(sb)sb.disabled=false;return true}
+ if(t.dataset.cpinfo){var id=t.dataset.cpinfo;cp.contacts[id]=cp.contacts[id]||{};cp.contacts[id][t.dataset.f]=t.value.trim();cp.cdirty=true;cp.dirty=true;cp.msg='';var st2=document.querySelector('.cpsave .msg');if(st2)st2.textContent='Modifications non enregistrées';var sb2=document.querySelector('[data-act="cpsave"]');if(sb2)sb2.disabled=false;return true}
  if(t.dataset.cpname){var s2=cp.data.members.filter(function(x){return x.id===t.dataset.cpname})[0];if(s2&&t.value.trim()){s2.name=t.value.trim();cpTouch()}return true}
  return false;
 }
@@ -887,7 +898,7 @@ if(window.claude&&window.claude.use){
 
 
 
-<meta data-build="2a4a63e70ad1">
-<script>(function(){var B="2a4a63e70ad1";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="c8fb5d91b047">
+<script>(function(){var B="c8fb5d91b047";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

@@ -1,0 +1,127 @@
+{
+ "patrol": "p2",
+ "members": [
+  {
+   "id": "p2-1",
+   "name": "Charbel Tawk",
+   "role": "CP",
+   "stage": 1,
+   "badges": [
+    "Ami de Dieu Jaune",
+    "Ami de Dieu Vert",
+    "Animateur",
+    "Meneur de jeu",
+    "Sport de balles",
+    "Cuisinier",
+    "Intendant"
+   ]
+  },
+  {
+   "id": "p2-2",
+   "name": "Matheo Ayoub",
+   "role": "SP",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p2-3",
+   "name": "Cyril Bou Sleiman",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p2-4",
+   "name": "Jason Morkos",
+   "role": "",
+   "stage": 1,
+   "badges": [
+    "Meneur de jeu",
+    "Musicien",
+    "Sciences Animales",
+    "Intendant"
+   ]
+  },
+  {
+   "id": "p2-5",
+   "name": "Joseph Tannoury",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p2-6",
+   "name": "Fredy Ghossein",
+   "role": "",
+   "stage": 1,
+   "badges": [
+    "Meneur de jeu",
+    "Musicien"
+   ]
+  },
+  {
+   "id": "p2-7",
+   "name": "Ely Harfouche",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p2-8",
+   "name": "Jacques Habib",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p2-9",
+   "name": "Karim Yehya",
+   "role": "",
+   "stage": 0,
+   "badges": []
+  },
+  {
+   "id": "p2-10",
+   "name": "Charbel Loutfi",
+   "role": "",
+   "stage": 0,
+   "badges": []
+  },
+  {
+   "id": "p2-11",
+   "name": "Charbel Nassif",
+   "role": "",
+   "stage": 0,
+   "badges": []
+  },
+  {
+   "id": "p2-12",
+   "name": "Marc Reaidy",
+   "role": "",
+   "stage": 0,
+   "badges": []
+  }
+ ],
+ "meetings": [
+  {
+   "date": "2026-10-10",
+   "present": [
+    "p2-1",
+    "p2-2",
+    "p2-3",
+    "p2-4",
+    "p2-5",
+    "p2-6",
+    "p2-7",
+    "p2-8",
+    "p2-10",
+    "p2-11",
+    "p2-12"
+   ]
+  },
+  {
+   "date": "2026-10-17",
+   "present": []
+  }
+ ]
+}

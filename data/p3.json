@@ -1,0 +1,122 @@
+{
+ "patrol": "p3",
+ "members": [
+  {
+   "id": "p3-1",
+   "name": "Ibrahim Bou Fadel",
+   "role": "CP",
+   "stage": 2,
+   "badges": [
+    "Ami de Dieu Jaune",
+    "Meneur de jeu",
+    "Animaux domestiques",
+    "Campeur",
+    "Cuisinier",
+    "Sciences Animales",
+    "Electricien",
+    "Gérant De Matériel"
+   ]
+  },
+  {
+   "id": "p3-2",
+   "name": "Joe Geagea",
+   "role": "SP",
+   "stage": 2,
+   "badges": [
+    "Interprète"
+   ]
+  },
+  {
+   "id": "p3-3",
+   "name": "Mateo Tawk",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p3-4",
+   "name": "Michel Njeim",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p3-5",
+   "name": "Anthony Semaan",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p3-6",
+   "name": "Pierre Eid",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p3-7",
+   "name": "Theodor Chahoud",
+   "role": "",
+   "stage": 1,
+   "badges": [
+    "Ecologie"
+   ]
+  },
+  {
+   "id": "p3-8",
+   "name": "Raphael Radwan",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p3-9",
+   "name": "Joud Obeid",
+   "role": "",
+   "stage": 0,
+   "badges": []
+  },
+  {
+   "id": "p3-10",
+   "name": "Georges Rahal",
+   "role": "",
+   "stage": 0,
+   "badges": []
+  },
+  {
+   "id": "p3-11",
+   "name": "Jason Nemer",
+   "role": "",
+   "stage": 0,
+   "badges": []
+  },
+  {
+   "id": "p3-12",
+   "name": "Charbel Abboud",
+   "role": "",
+   "stage": 0,
+   "badges": []
+  }
+ ],
+ "meetings": [
+  {
+   "date": "2026-10-10",
+   "present": [
+    "p3-1",
+    "p3-2",
+    "p3-5",
+    "p3-7",
+    "p3-8",
+    "p3-9",
+    "p3-10",
+    "p3-11",
+    "p3-12"
+   ]
+  },
+  {
+   "date": "2026-10-17",
+   "present": []
+  }
+ ]
+}

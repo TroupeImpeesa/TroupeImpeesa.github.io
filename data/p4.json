@@ -1,0 +1,134 @@
+{
+ "patrol": "p4",
+ "members": [
+  {
+   "id": "p4-1",
+   "name": "Georges Hanna",
+   "role": "CP",
+   "stage": 2,
+   "badges": [
+    "Ami de Dieu Jaune",
+    "Ami de Dieu Vert",
+    "Animateur",
+    "Patrimoine",
+    "Sport de balles",
+    "Animaux domestiques",
+    "Campeur",
+    "Sciences Animales",
+    "Collectionneur"
+   ]
+  },
+  {
+   "id": "p4-2",
+   "name": "Matheo Badawi",
+   "role": "SP",
+   "stage": 2,
+   "badges": [
+    "Ami de Dieu Jaune",
+    "Meneur de jeu",
+    "Sport de balles",
+    "Sciences Animales",
+    "Gérant De Matériel",
+    "Intendant"
+   ]
+  },
+  {
+   "id": "p4-3",
+   "name": "Peter Karam",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p4-4",
+   "name": "Chris Harb",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p4-5",
+   "name": "Chris Kachi",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p4-6",
+   "name": "Charbel Habib",
+   "role": "",
+   "stage": 1,
+   "badges": [
+    "Ami de Dieu Jaune",
+    "Animateur",
+    "Sciences Animales"
+   ]
+  },
+  {
+   "id": "p4-7",
+   "name": "Charbel Chucry",
+   "role": "",
+   "stage": 2,
+   "badges": [
+    "Ami de Dieu Jaune",
+    "Meneur de jeu",
+    "Musicien",
+    "Self Defense",
+    "Animaux domestiques",
+    "Botanique",
+    "Intendant"
+   ]
+  },
+  {
+   "id": "p4-8",
+   "name": "Farid Atallah",
+   "role": "",
+   "stage": 1,
+   "badges": [
+    "Sciences Animales",
+    "Premiers Soins"
+   ]
+  },
+  {
+   "id": "p4-9",
+   "name": "Jason Gergi",
+   "role": "",
+   "stage": 0,
+   "badges": []
+  },
+  {
+   "id": "p4-10",
+   "name": "Lucas Tawk",
+   "role": "",
+   "stage": 0,
+   "badges": []
+  },
+  {
+   "id": "p4-11",
+   "name": "Carl Chalhoub",
+   "role": "",
+   "stage": 0,
+   "badges": []
+  }
+ ],
+ "meetings": [
+  {
+   "date": "2026-10-10",
+   "present": [
+    "p4-1",
+    "p4-2",
+    "p4-3",
+    "p4-4",
+    "p4-6",
+    "p4-7",
+    "p4-8",
+    "p4-9",
+    "p4-11"
+   ]
+  },
+  {
+   "date": "2026-10-17",
+   "present": []
+  }
+ ]
+}

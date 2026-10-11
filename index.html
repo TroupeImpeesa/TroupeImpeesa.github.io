@@ -45,7 +45,12 @@ header.top .eyebrow{opacity:1;text-shadow:0 1px 6px rgba(0,0,0,.6)}
 .eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:12px;font-weight:700;opacity:.85}
 h1{font-family:var(--display);font-weight:900;letter-spacing:-.01em;font-size:clamp(28px,7.5vw,44px);line-height:1.05;margin:6px 0 4px;text-wrap:balance}
 .sub{opacity:.9;font-size:15px}
-.tabbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding-block:10px;margin-top:8px;background:linear-gradient(var(--bg) 70%,transparent)}
+.tabbar{height:10px}
+.navgrid{display:grid;gap:10px;margin-top:4px}
+.navgrid .tile.wide{padding:14px 16px}
+.navgrid .tile.wide .tcirc{width:56px;height:56px;font-size:30px}
+.navgrid .tsub{display:block;font:400 13px var(--body);color:var(--muted);margin-top:3px}
+.navgrid .evgo{margin-left:auto}
 nav.tabs{position:relative;display:grid;grid-template-columns:repeat(4,1fr);padding:4px;border-radius:999px;background:color-mix(in srgb,var(--fg) 7%,var(--bg));box-shadow:inset 0 0 0 1px var(--line)}
 .tab-ind{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/4);border-radius:999px;background:var(--fg);box-shadow:0 4px 12px color-mix(in srgb,var(--fg) 25%,transparent);transform:translateX(calc(var(--i,0)*100%))}
 nav.tabs button{position:relative;z-index:1;min-width:0;font:700 13px var(--body);letter-spacing:.01em;padding:11px 2px;border:none;background:none;color:var(--muted);border-radius:999px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -314,7 +319,7 @@ function heroTop(){
  return '<header class="top hero" id="show">'+P.map(function(ph,i){return '<img '+(LOADED[i]?'src':'data-src')+'="'+ph.src+'" alt="'+esc(ph.caption||'Photo de la troupe')+'" class="'+(i===slide?'on':'')+'"'+(i===slide?' fetchpriority="high"':' decoding="async"')+'>'}).join('')+'<div class="shade"></div>'+txt+
   '</header>'}
 function header(){return heroTop()+
- '<div class="tabbar"><nav class="tabs" role="tablist"><span class="tab-ind" id="tab-ind" style="--i:'+TABS.indexOf(prevTab)+'"></span>'+[['home','Accueil'],['progress','Troupe'],['events','Calendrier'],['history','Histoire']].map(function(t){return '<button role="tab" id="tab-'+t[0]+'" data-tab="'+t[0]+'" aria-selected="'+(tab===t[0])+'">'+t[1]+'</button>'}).join('')+'</nav></div>'+
+ '<div class="tabbar"></div>'+
  (canEdit&&draftAvail?'<div class="note draftbar"><span>Tu as des modifications non publiées.</span><span><button class="btn" data-act="restore">Récupérer</button> <button class="btn ghost" data-act="nodraft">Ignorer</button></span></div>':'')+
  (S.example?'<div class="note">Les points affichés sont des exemples. '+(canEdit?'Appuie sur <b>Modifier</b> pour les remplacer par les vrais.':'Les chefs ajouteront bientôt les vrais.')+'</div>':'')}
 
@@ -378,6 +383,7 @@ function home(){
  h+=N.length?'<ul class="news">'+N.map(function(n){return '<li><span class="ndate">'+fmtDate(n.date)+'</span><span class="ntext">'+(n.auto?'<span class="ntag">Progression</span> ':'')+linkify(n.text)+'</span>'+(editing?'<button class="x" data-delnews="'+n.id+'" aria-label="Supprimer l’annonce">×</button>':'')+'</li>'}).join('')+'</ul>':'<p class="empty">Aucune annonce pour l’instant.</p>';
  var t=today(),nx=S.events.filter(function(e){return evEnd(e)>=t}).sort(function(a,b){return a.date<b.date?-1:1})[0];
  if(nx){h+='<h2>Prochaine activité</h2>'+evCard(nx,false,false,true);}
+ h+='<h2>Découvrir</h2><div class="navgrid">'+[['progress','🐺','Troupe','Patrouilles, membres et points','var(--navy)'],['events','🗓️','Calendrier','Toutes les activités','var(--p3)'],['history','📜','Histoire','L’histoire de la troupe','var(--p4)']].map(function(x){return '<button class="tile wide" data-nav="'+x[0]+'" style="--gc:'+x[4]+'"><span class="tcirc">'+x[1]+'</span><span class="tname">'+x[2]+'<span class="tsub">'+x[3]+'</span></span><span class="evgo" aria-hidden="true">›</span></button>'}).join('')+'</div>';
  return h}
 
 var ANIMALS=[['poney','🐎'],['requin','🦈'],['castor','🦫'],['boa','🐍']];
@@ -504,6 +510,7 @@ function events(){
  if(past.length) h+='<h2>Passées</h2>'+past.map(function(e){return card(e,true)}).join('');
  return h}
 
+function backHome(){return '<button class="back" data-act="home"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Accueil</span></button>'}
 function histoire(){return '<h2>Histoire</h2><div class="soonbox"><span class="tcirc">📜</span><b>Coming Soon</b></div>'}
 
 function settings(){return editing?'<div class="editbox" style="margin-top:28px"><h4>Infos de la troupe</h4><div class="fields"><input id="set-troop" value="'+esc(S.troop)+'" aria-label="Nom de la troupe"><input id="set-season" value="'+esc(S.season)+'" aria-label="Saison"><button class="btn ghost" data-act="details">Mettre à jour</button></div>'+(S.example?'<div class="fields"><button class="btn ghost" data-act="clear">Supprimer toutes les données d’exemple</button></div>':'')+'<span class="meta">Après « Publier », le site public troupeimpeesa.github.io se met à jour dans l’heure.</span></div>':''}
@@ -511,7 +518,7 @@ function settings(){return editing?'<div class="editbox" style="margin-top:28px"
 function render(){
  var app=document.getElementById('app');
  var keep=editing;
- var body=header()+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():events())+(full?settings():'');
+ var body=header()+(tab==='home'||(tab==='progress'&&(openGroup||openPts))?'':backHome())+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():events())+(full?settings():'');
  editing=keep;
  if(openScout) body+=profile();
  if(openEvent) body+=eventPage();
@@ -527,6 +534,7 @@ document.addEventListener('click',function(ev){
  var b=ev.target.closest('button');
  if(!b){var pt=ev.target.closest('[data-ptab]');if(pt&&!ev.target.closest('input,select,textarea')){go('progress/pts-'+pt.dataset.ptab);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return}
   var evl=ev.target.closest('[data-event]');if(evl){go(tab+'/e-'+evl.dataset.event);var pr=document.querySelector('.profile');if(pr)pr.scrollTop=0}return}
+ if(b.dataset.nav){go(b.dataset.nav);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);if(tab==='progress')leaderRun();return}
  if(b.dataset.group){go('progress/g-'+b.dataset.group);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return}
  if(b.dataset.tab){prevTab=tab;try{history.replaceState(null,'','#'+b.dataset.tab)}catch(e){}route(b.dataset.tab);render();if(tab==='progress')leaderRun();return}
  msg='';
@@ -546,6 +554,7 @@ document.addEventListener('click',function(ev){
  if(a==='closeevent'){return closeView()}
  if(a==='saveevent'){var e=S.events.filter(function(x){return x.id===openEvent})[0];if(e){if(!val('ev-title')||!val('ev-date')){msg='Une activité a besoin d’un titre et d’une date.';return render()}e.title=val('ev-title');e.date=val('ev-date');e.endDate=val('ev-enddate')>e.date?val('ev-enddate'):'';e.time=val('ev-start');e.end=val('ev-end');e.place=val('ev-place');e.note=val('ev-note');e.bring=(document.getElementById('ev-bring')||{}).value||'';e.remarks=(document.getElementById('ev-rem')||{}).value||'';msg='Activité mise à jour. Appuie sur Publier.'}return touch()}
  if(a==='closegroup'){return closeView()}
+ if(a==='home'){if(history.state&&history.state.ia){history.back();return}try{history.replaceState(null,'','#home')}catch(e){}route('home');render();return}
  if(a==='addmeetpts'){var d=val('mp-date');if(!d){msg='Choisis la date de la réunion.';return render()}var any=false;CATS.forEach(function(c){var v=parseInt(val('mp-'+c[0]),10);if(v){S.log.push({id:uid('l'),patrol:openPts,cat:c[0],pts:v,reason:'',date:d});any=true}});if(!any){msg='Entre au moins un nombre de points.';return render()}msg='Points ajoutés. Appuie sur Publier.';return touch()}
  if(a==='closeprofile'){return closeView()}
  if(a==='delface'){delete S.faces[openScout];return touch()}
@@ -619,7 +628,7 @@ if(window.claude&&window.claude.use){
 
 
 
-<meta data-build="4d3a5ab48a5d">
-<script>(function(){var B="4d3a5ab48a5d";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="0a5f9f456a39">
+<script>(function(){var B="0a5f9f456a39";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

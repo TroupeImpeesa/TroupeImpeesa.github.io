@@ -673,10 +673,10 @@ function cpSave(retry){
 function cpMeeting(date,create){var m=cp.data.meetings.filter(function(x){return x.date===date})[0];if(!m&&create){m={date:date,present:[]};cp.data.meetings.push(m)}return m}
 function cpTouch(){cp.dirty=true;cp.msg='';render()}
 var LOCK='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>';
-function cpBtn(gp){return CP_ON?'<button class="cpbtn" data-act="cpopen"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Espace CP</b><span>Présences et progression</span></span><span class="evgo" aria-hidden="true">›</span></button>':''}
+function cpBtn(gp){return CP_ON?'<button class="cpbtn" data-act="cpopen"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Espace CP/SP</b><span>Présences et progression</span></span><span class="evgo" aria-hidden="true">›</span></button>':''}
 function cpPage(){
  var p=pat(openCP),h='<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>'+esc(p.name)+'</span></button>';
- h+='<div class="cphead" style="--gc:'+col(p)+'"><span class="tcirc">'+animalOf(p.name)+'</span><div><div class="gname">Espace CP</div><div class="meta">'+esc(p.name)+'</div></div></div>';
+ h+='<div class="cphead" style="--gc:'+col(p)+'"><span class="tcirc">'+animalOf(p.name)+'</span><div><div class="gname">Espace CP/SP</div><div class="meta">'+esc(p.name)+'</div></div></div>';
  if(!cpAllowed(openCP)){
   return h+'<div class="cpcard"><p class="cplead">Entre le mot de passe de la patrouille '+esc(p.name)+'.</p><div class="fields"><input id="cp-pw" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Mot de passe" aria-label="Mot de passe"><button class="btn" data-act="cpunlock"'+(cp.busy?' disabled':'')+'>'+(cp.busy?'Vérification…':'Ouvrir')+'</button></div>'+(cp.err?'<p class="cperr">'+esc(cp.err)+'</p>':'')+'</div>';
  }
@@ -713,7 +713,7 @@ function cpClick(b){
  if(a==='cpopen'){go('progress/cp-'+openGroup);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return true}
  if(a==='cpunlock'){var pw=val('cp-pw').toLowerCase().replace(/[\s\u2010-\u2015\u2212]+/g,function(x){return /\s/.test(x)?'':'-'});if(!pw)return true;cp.busy=true;cp.err='';render();
   unlock(pw,openCP).then(function(x){cp.token=x.token;cp.scope=x.scope;cp.busy=false;cp.dk=x.dk;cp.data=null;if(cp.relock&&cp.relock.patrol===openCP&&x.token){cp.data=cp.relock;cp.patrol=openCP;cp.dirty=true;cp.relock=null;cp.err='';cp.msg='Mot de passe OK. Appuie sur Enregistrer.';ghJson('data/'+openCP+'.json').then(function(j){cp.sha=j?j.sha:null;return ghJson('data/contacts-'+openCP+'.json')}).then(function(c){cp.csha=c?c.sha:null}).catch(function(){})}render()})
-   .catch(function(e){cp.busy=false;cp.err=e==='nokeys'?'L’espace CP n’est pas encore activé.':'Mot de passe incorrect.';render()});return true}
+   .catch(function(e){cp.busy=false;cp.err=e==='nokeys'?'L’espace CP/SP n’est pas encore activé.':'Mot de passe incorrect.';render()});return true}
  if(a==='cpretry'){cp.err='';cpLoad(openCP);return true}
  if(a==='cpsave'){cpSave(false);return true}
  if(b.dataset.cptab){cp.tab=b.dataset.cptab;cp.del=null;render();return true}
@@ -981,7 +981,9 @@ if(window.claude&&window.claude.use){
 
 
 
-<meta data-build="a97e033c338e">
-<script>(function(){var B="a97e033c338e";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+
+
+<meta data-build="3ce8c6d9828c">
+<script>(function(){var B="3ce8c6d9828c";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

@@ -1,0 +1,127 @@
+{
+ "patrol": "p1",
+ "members": [
+  {
+   "id": "p1-1",
+   "name": "Georges Khadra",
+   "role": "CP",
+   "stage": 3,
+   "badges": [
+    "Ami de Dieu Jaune",
+    "Ami de Dieu Vert",
+    "Animateur",
+    "Chanteur",
+    "Meneur de jeu",
+    "Connaissance du monde",
+    "Explorateur",
+    "Patrimoine",
+    "Sport de balles",
+    "Animaux domestiques",
+    "Botanique",
+    "Campeur",
+    "Cuisinier",
+    "Gérant De Matériel",
+    "Intendant"
+   ]
+  },
+  {
+   "id": "p1-2",
+   "name": "Jawad Obeid",
+   "role": "SP",
+   "stage": 2,
+   "badges": []
+  },
+  {
+   "id": "p1-3",
+   "name": "Georges Haddad",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p1-4",
+   "name": "Michel Bou Fadel",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p1-5",
+   "name": "Peter Jarjour",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p1-6",
+   "name": "Lord Massoud",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p1-7",
+   "name": "Charbel Abbas",
+   "role": "",
+   "stage": 1,
+   "badges": []
+  },
+  {
+   "id": "p1-8",
+   "name": "Jean Paul Gautier",
+   "role": "",
+   "stage": 0,
+   "badges": []
+  },
+  {
+   "id": "p1-9",
+   "name": "Geovani Hajj",
+   "role": "",
+   "stage": 0,
+   "badges": []
+  },
+  {
+   "id": "p1-10",
+   "name": "Oliver Khoury",
+   "role": "",
+   "stage": 0,
+   "badges": []
+  },
+  {
+   "id": "p1-11",
+   "name": "Georgio Zeidouni",
+   "role": "",
+   "stage": 0,
+   "badges": []
+  },
+  {
+   "id": "p1-12",
+   "name": "Anthony Chucry",
+   "role": "",
+   "stage": 0,
+   "badges": []
+  }
+ ],
+ "meetings": [
+  {
+   "date": "2026-10-10",
+   "present": [
+    "p1-1",
+    "p1-2",
+    "p1-3",
+    "p1-4",
+    "p1-5",
+    "p1-6",
+    "p1-7",
+    "p1-8",
+    "p1-10",
+    "p1-11",
+    "p1-12"
+   ]
+  },
+  {
+   "date": "2026-10-17",
+   "present": []
+  }
+ ]
+}

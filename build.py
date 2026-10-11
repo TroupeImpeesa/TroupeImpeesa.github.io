@@ -24,6 +24,9 @@ rest = body[body.index('<div class="wrap" id="app">'):]
 
 m = re.search(r'(id="state">)([\s\S]*?)(</script>)', rest)
 state = json.loads(m.group(2))
+from datamerge import apply_all
+apply_all(state, here)
+
 used = set()
 for ph in state.get("photos", []):
     s = ph.get("src", "")

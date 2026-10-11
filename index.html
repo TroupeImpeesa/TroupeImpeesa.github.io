@@ -629,7 +629,7 @@ function unlock(pw,pid){
     .then(function(buf){var t=new TextDecoder().decode(buf),o;try{o=JSON.parse(t)}catch(e){o={token:t,dk:{}}}return {token:o.token||null,dk:o.dk||{},scope:tries[i][0]}})
     .catch(function(){return attempt(i+1)})}
   return attempt(0)})}
-function gh(path,opt){opt=opt||{};opt.headers={'Accept':'application/vnd.github+json'};if(cp.token)opt.headers.Authorization='Bearer '+cp.token;opt.cache='no-store';return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path,opt)}
+function gh(path,opt){opt=opt||{};opt.headers={'Accept':'application/vnd.github+json'};if(cp.token)opt.headers.Authorization='Bearer '+cp.token;if(opt.body)opt.headers['Content-Type']='application/json';opt.cache='no-store';return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path,opt)}
 function cpAllowed(pid){return !!cp.scope&&(cp.scope==='chef'||cp.scope===pid)}
 function aesKey(pid,use){return crypto.subtle.importKey('raw',u8(cp.dk[pid]),'AES-GCM',false,[use])}
 function decContacts(pid,j){if(!j||!cp.dk[pid])return Promise.resolve({});return aesKey(pid,'decrypt').then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:u8(j.iv)},k,u8(j.ct))}).then(function(b){return JSON.parse(new TextDecoder().decode(b))}).catch(function(){return {}})}
@@ -898,7 +898,7 @@ if(window.claude&&window.claude.use){
 
 
 
-<meta data-build="744a130ff035">
-<script>(function(){var B="744a130ff035";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="c9c99a03dfb2">
+<script>(function(){var B="c9c99a03dfb2";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

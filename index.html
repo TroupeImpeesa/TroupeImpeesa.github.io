@@ -353,6 +353,11 @@ header.top .eyebrow{letter-spacing:.16em;font-weight:600;text-shadow:none}
 .btn{border-radius:12px;font-family:var(--body)}
 input,select,textarea{border-radius:10px;font-family:var(--body)}
 .herd{display:none!important}
+.igrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:18px}
+.igrow .igcard{margin-top:0;min-width:0}
+.online{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:14px;color:var(--fg);background:var(--surface);padding:6px 12px 6px 10px;border-radius:999px;flex:none}
+.online i{width:7px;height:7px;border-radius:50%;background:#2fb365;box-shadow:0 0 0 3px rgba(47,179,101,.18)}
+.online b{font-variant-numeric:tabular-nums;min-width:8px}
 .mphone{font-size:12px;font-weight:600;color:var(--accent);text-decoration:none;white-space:nowrap;margin-top:2px}
 /* ===== Espace CP ===== */
 .cpbtn{display:flex;align-items:center;gap:12px;width:100%;margin-top:12px;padding:14px 16px;border:none;border-radius:18px;background:var(--fg);color:var(--bg);font:inherit;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -506,7 +511,7 @@ function home(){
  }
  if(editing) h+='<div class="editbox"><h4>Photo de l’en-tête</h4><div class="fields"><input id="cv-file" type="file" accept="image/*" aria-label="Choisir la photo de l’en-tête">'+(S.cover?'<button class="btn ghost" data-act="delcover">Retirer</button>':'')+'</div><span class="meta">Une photo large marche mieux (paysage).</span></div>';
  var N=S.news.slice().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:0}).slice(0,30);
- h+='<a class="igcard" href="https://www.instagram.com/troupeimpeesavpj/" aria-label="Instagram @troupeimpeesavpj" target="_blank" rel="noopener"><span class="igic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.8l1.4-2h4.6l1.4 2h1.8A2.5 2.5 0 0 1 20 8.5v9A2.5 2.5 0 0 1 17.5 20h-11A2.5 2.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.6"/></svg></span><b>@troupeimpeesavpj</b></a>';
+ h+='<div class="igrow"><a class="igcard" href="https://www.instagram.com/troupeimpeesavpj/" aria-label="Instagram @troupeimpeesavpj" target="_blank" rel="noopener"><span class="igic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.8l1.4-2h4.6l1.4 2h1.8A2.5 2.5 0 0 1 20 8.5v9A2.5 2.5 0 0 1 17.5 20h-11A2.5 2.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.6"/></svg></span><b>@troupeimpeesavpj</b></a>'+(CP_ON?'<span class="online" id="online" title="Personnes sur le site en ce moment"><i></i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><b id="online-n">'+(ONLINE==null?'·':ONLINE)+'</b></span>':'')+'</div>';
  h+='<h2>Annonces</h2>';
  if(editing) h+='<div class="editbox"><h4>Nouvelle annonce</h4><textarea id="nw-text" rows="3" placeholder="Ex. Réunion samedi à 12h00. Inscription : https://…"></textarea><div class="fields"><input id="nw-date" type="date" value="'+today()+'" style="flex:0 1 170px" aria-label="Date"><button class="btn" data-act="addnews">Ajouter l’annonce</button></div><span class="meta">Les liens (https://…) deviennent cliquables.</span></div>';
  h+=N.length?'<ul class="news">'+N.map(function(n){return '<li><span class="ndate">'+fmtDate(n.date)+'</span><span class="ntext">'+(n.auto?'<span class="ntag">Progression</span> ':'')+linkify(n.text)+'</span>'+(editing?'<button class="x" data-delnews="'+n.id+'" aria-label="Supprimer l’annonce">×</button>':'')+'</li>'}).join('')+'</ul>':'<p class="empty">Aucune annonce pour l’instant.</p>';
@@ -730,6 +735,20 @@ function cpChange(t){
 document.addEventListener('input',function(ev){var t=ev.target;if(t.dataset&&t.dataset.cpq){var q=t.value.trim().toLowerCase();[].forEach.call(t.parentNode.querySelectorAll('.bitem'),function(l){l.style.display=!q||l.dataset.name.indexOf(q)>=0?'':'none'})}});
 window.addEventListener('beforeunload',function(e){if(cp.dirty){e.preventDefault();e.returnValue=''}});
 
+
+/* ===== Visiteurs en ligne (Firebase) ===== */
+var ONLINE=null;
+function presence(){
+ if(!CP_ON||!/github\.io$/.test(location.hostname))return;
+ var V='10.12.2',base='https://www.gstatic.com/firebasejs/'+V+'/';
+ function load(src){return new Promise(function(ok,no){var t=document.createElement('script');t.src=src;t.async=true;t.onload=ok;t.onerror=no;document.head.appendChild(t)})}
+ load(base+'firebase-app-compat.js').then(function(){return load(base+'firebase-database-compat.js')}).then(function(){
+  var app=firebase.initializeApp({apiKey:"AIzaSyAhV_fKJll1oxnyrCJymQOJuceHxPeKqp8",authDomain:"troupe-impeesa.firebaseapp.com",databaseURL:"https://troupe-impeesa-default-rtdb.europe-west1.firebasedatabase.app",projectId:"troupe-impeesa",appId:"1:916383056692:web:e832acceb60a2b2bb3db61"});
+  var db=firebase.database(app),me=db.ref('online/'+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
+  db.ref('.info/connected').on('value',function(s){if(s.val()===true){me.onDisconnect().remove();me.set(true)}});
+  db.ref('online').on('value',function(s){ONLINE=Math.max(1,s.numChildren());var n=document.getElementById('online-n');if(n)n.textContent=ONLINE});
+ }).catch(function(){var o=document.getElementById('online');if(o)o.style.display='none'});
+}
 function profile(){
  var s=S.scouts.filter(function(x){return x.id===openScout})[0]; if(!s) return '';
  var p=pat(s.patrol),M=S.meetings.slice().sort(function(a,b){return a.date<b.date?-1:1}).filter(function(m){return m.patrols.indexOf(s.patrol)>=0&&m.date<=today()});
@@ -878,6 +897,7 @@ function publish(){
 
 render();
 loadPublicData();
+presence();
 if(tab==='progress')setTimeout(leaderRun,400);
 if(window.claude&&window.claude.use){
  window.claude.use('assets').then(function(ns){assetsNs=ns}).catch(function(){});
@@ -902,7 +922,7 @@ if(window.claude&&window.claude.use){
 
 
 
-<meta data-build="44354ac447f3">
-<script>(function(){var B="44354ac447f3";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="4bc4fd343bbd">
+<script>(function(){var B="4bc4fd343bbd";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

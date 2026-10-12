@@ -353,6 +353,9 @@ header.top .eyebrow{letter-spacing:.16em;font-weight:600;text-shadow:none}
 .btn{border-radius:12px;font-family:var(--body)}
 input,select,textarea{border-radius:10px;font-family:var(--body)}
 .herd{display:none!important}
+.tiles .tile{position:relative}
+.tgo{position:absolute;top:14px;right:16px;font-size:22px;line-height:1;color:var(--muted)}
+.tgo.w{position:static;margin-left:10px}
 .ntext a.inlink{display:inline-block;margin-top:4px;font-weight:700;text-decoration:none;color:var(--accent)}
 .hyear{margin-top:18px}
 .hylab{font-weight:800;font-size:15px;letter-spacing:-.01em;margin:0 2px 8px;display:flex;align-items:center;gap:8px}
@@ -607,9 +610,9 @@ function progress(){
  }
  var pts=points(),cut=pts.indexOf('<h2>Historique des points</h2>');
  var h='<h2>Les patrouilles</h2><div class="meta">Touche une patrouille pour voir ses membres.</div><div class="tiles">';
- if(S.staff&&S.staff.length) h+='<button class="tile wide" data-group="staff" style="--gc:var(--navy)"><span class="tcirc">M</span><span class="tname">Maîtrise<span class="tsub">'+S.staff.length+' chefs</span></span><span class="faces">'+S.staff.map(function(m){return m.photo?'<img src="'+m.photo+'" alt="">':''}).join('')+'</span></button>';
+ if(S.staff&&S.staff.length) h+='<button class="tile wide" data-group="staff" style="--gc:var(--navy)"><span class="tcirc">M</span><span class="tname">Maîtrise<span class="tsub">'+S.staff.length+' chefs</span></span><span class="faces">'+S.staff.map(function(m){return m.photo?'<img src="'+m.photo+'" alt="">':''}).join('')+'</span><span class="tgo w" aria-hidden="true">›</span></button>';
  S.patrols.forEach(function(p){var n=S.scouts.filter(function(s){return s.patrol===p.id}).length;
-  h+='<button class="tile" data-group="'+p.id+'" style="--gc:'+col(p)+'"><span class="tcirc">'+animalOf(p.name)+'</span><span class="tname">'+esc(p.name)+'</span><span class="tcount">'+n+' membre'+(n>1?'s':'')+'</span></button>'});
+  h+='<button class="tile" data-group="'+p.id+'" style="--gc:'+col(p)+'"><span class="tcirc">'+animalOf(p.name)+'</span><span class="tname">'+esc(p.name)+'</span><span class="tcount">'+n+' membre'+(n>1?'s':'')+'</span><span class="tgo" aria-hidden="true">›</span></button>'});
  return h+'</div>'+pts}
 function streakOf(s){var t=today(),M=S.meetings.filter(function(m){return m.patrols.indexOf(s.patrol)>=0&&m.date<=t}).sort(function(a,b){return a.date<b.date?1:-1}),n=0;for(var i=0;i<M.length;i++){if(M[i].present.indexOf(s.id)>=0)n++;else break}return n}
 /* ===== Espace CP : présences et progression enregistrées sur le site ===== */
@@ -1001,7 +1004,8 @@ if(window.claude&&window.claude.use){
 
 
 
-<meta data-build="d6eb66da4c13">
-<script>(function(){var B="d6eb66da4c13";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+
+<meta data-build="11df2c8c6e44">
+<script>(function(){var B="11df2c8c6e44";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

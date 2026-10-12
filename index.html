@@ -353,6 +353,8 @@ header.top .eyebrow{letter-spacing:.16em;font-weight:600;text-shadow:none}
 .btn{border-radius:12px;font-family:var(--body)}
 input,select,textarea{border-radius:10px;font-family:var(--body)}
 .herd{display:none!important}
+.mcard{position:relative}
+.mgo{position:absolute;top:8px;right:10px;font-size:17px;line-height:1;color:var(--muted)}
 .tiles .tile{position:relative}
 .tgo{position:absolute;top:14px;right:16px;font-size:22px;line-height:1;color:var(--muted)}
 .tgo.w{position:static;margin-left:10px}
@@ -604,7 +606,7 @@ function progress(){
  var gp=openGroup&&pat(openGroup);
  if(gp){
   var list=S.scouts.filter(function(s){return s.patrol===gp.id});
-  var rows=list.map(function(s){return '<button class="mcard" data-scout="'+s.id+'">'+avatar(s,'av')+'<span class="mname">'+esc(s.name)+'</span>'+(streakOf(s)?'<span class="mstreak">🔥'+streakOf(s)+'</span>':'')+(s.role?'<span class="mtag role">'+esc(s.role)+'</span>':'<span class="mtag">'+esc(S.stages[s.stage]||'')+'</span>')+'</button>'}).join('');
+  var rows=list.map(function(s){return '<button class="mcard" data-scout="'+s.id+'"><span class="mgo" aria-hidden="true">›</span>'+avatar(s,'av')+'<span class="mname">'+esc(s.name)+'</span>'+(streakOf(s)?'<span class="mstreak">🔥'+streakOf(s)+'</span>':'')+(s.role?'<span class="mtag role">'+esc(s.role)+'</span>':'<span class="mtag">'+esc(S.stages[s.stage]||'')+'</span>')+'</button>'}).join('');
   if(!list.length) rows='<p class="empty" style="padding:14px 16px">Aucun scout dans cette patrouille.</p>';
   return '<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+grp(gp.name,list.length+' membre'+(list.length>1?'s':''),col(gp),rows,animalOf(gp.name),cpBtn(gp));
  }
@@ -1005,7 +1007,8 @@ if(window.claude&&window.claude.use){
 
 
 
-<meta data-build="11df2c8c6e44">
-<script>(function(){var B="11df2c8c6e44";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+
+<meta data-build="4f10467d45a4">
+<script>(function(){var B="4f10467d45a4";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

@@ -80,4 +80,8 @@ fresh = (
 )
 out = out.replace("\n</body>", '\n<meta data-build="' + bid + '">\n' + fresh + "</body>", 1)
 open(os.path.join(here, "index.html"), "w", encoding="utf-8").write(out)
+
+# Separate page with only the Histoire (link for the Instagram bio)
+from histpage import write as write_histoire
+write_histoire(state, here)
 print("index.html", round(len(out.encode()) / 1024), "KB,", len(used), "photos")

@@ -9,6 +9,7 @@ def write(state, here):
     photo = {s["name"].lower(): s["photo"] for s in state.get("staff", []) if s.get("photo")}
     photo.update({k.lower(): v for k, v in (state.get("maitrisePhotos") or {}).items()})
     e = html.escape
+    PCOL = {"poney": "#111111", "boa": "#c62828", "requins": "#2c5d8a", "castor": "#8a6a12"}
     years, used = [], {}
     for i, y in enumerate(L):
         cards = []
@@ -21,7 +22,13 @@ def write(state, here):
                 av = f'<span class="av ini">{e(initials(m["name"]))}</span>'
             cards.append(f'<div class="card">{av}<span class="nm">{e(m["name"])}</span><span class="rl{" ct" if m["role"]=="CT" else ""}">{e(m["role"])}</span></div>')
         now = ' <span class="now">Actuelle</span>' if i == 0 else ""
-        years.append(f'<section><h2>Maîtrise {e(y["year"].replace("-", "–"))}{now}</h2><div class="row" style="--n:{len(y["members"])}">{"".join(cards)}</div></section>')
+        hpb = ""
+        hp = y.get("hp")
+        if hp:
+            img = f'<img class="hpimg" src="{e(hp["photo"])}" alt="Haute Patrouille {e(y["year"])}">' if hp.get("photo") else '<div class="hpimg hpnone">Photo à venir</div>'
+            cells = "".join(f'<div class="hpp"><div class="hpn"><span class="hpl" style="background:{PCOL.get(x["name"].lower(), "var(--navy)")}">{e(x["name"][:1])}</span>{e(x["name"])}</div><div class="hpr"><span>CP</span>{e(x["cp"])}</div><div class="hpr"><span>SP</span>{e(x["sp"])}</div></div>' for x in hp.get("patrols", []))
+            hpb = f'<div class="hpbox"><div class="hplab">Haute Patrouille</div>{img}<div class="hpgrid">{cells}</div></div>'
+        years.append(f'<section><h2>Maîtrise {e(y["year"].replace("-", "–"))}{now}</h2><div class="row" style="--n:{len(y["members"])}">{"".join(cards)}</div>{hpb}</section>')
     troop = e(state.get("troop", "Troupe Impeesa VPJ"))
     page = f'''<!doctype html>
 <html lang="fr">
@@ -55,6 +62,15 @@ h2{{font-size:16px;font-weight:800;letter-spacing:-.01em;margin:0 2px 10px;displ
 .ini{{background:var(--navy);color:#fff;font-weight:700;font-size:17px}}
 .nm{{font-weight:700;font-size:13px;line-height:1.2;overflow-wrap:anywhere}}
 .rl{{font-size:11px;color:var(--muted)}}.rl.ct{{font-weight:800;color:var(--fg)}}
+.hpbox{{margin-top:10px;background:var(--surface);border-radius:18px;padding:12px}}
+.hplab{{font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:2px 4px 10px}}
+.hpimg{{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:12px}}
+.hpnone{{display:flex;align-items:center;justify-content:center;border:1.5px dashed #c7c7cc;color:var(--muted);font-size:14px}}
+.hpgrid{{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}}
+.hpp{{background:var(--bg);border-radius:12px;padding:10px 12px;min-width:0}}
+.hpn{{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;letter-spacing:-.01em;margin-bottom:6px}}
+.hpl{{width:24px;height:24px;border-radius:7px;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;flex:none}}
+.hpr{{display:grid;grid-template-columns:24px 1fr;align-items:baseline;font-size:13px;line-height:1.35;overflow-wrap:anywhere}}.hpr span{{font-size:11px;font-weight:700;color:var(--muted)}}
 footer{{margin-top:36px;text-align:center;color:var(--muted);font-size:12px}}
 </style>
 </head>

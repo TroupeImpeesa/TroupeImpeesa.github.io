@@ -28,6 +28,9 @@ def write(state, here):
             img = f'<img class="hpimg" src="{e(hp["photo"])}" alt="Haute Patrouille {e(y["year"])}">' if hp.get("photo") else '<div class="hpimg hpnone">Photo à venir</div>'
             cells = "".join(f'<div class="hpp"><div class="hpn"><span class="hpl" style="background:{PCOL.get(x["name"].lower(), "var(--navy)")}">{e(x["name"][:1])}</span>{e(x["name"])}</div><div class="hpr"><span>CP</span>{e(x["cp"])}</div><div class="hpr"><span>SP</span>{e(x["sp"])}</div></div>' for x in hp.get("patrols", []))
             hpb = f'<div class="hpbox"><div class="hplab">Haute Patrouille</div>{img}<div class="hpgrid">{cells}</div></div>'
+        tr = y.get("troupe") or {}
+        if tr.get("photo"):
+            hpb += f'<div class="hpbox"><div class="hplab">La Troupe</div><img class="hpimg" src="{e(tr["photo"])}" alt="La Troupe {e(y["year"])}"></div>'
         years.append(f'<section><h2>Maîtrise {e(y["year"].replace("-", "–"))}{now}</h2><div class="row" style="--n:{len(y["members"])}">{"".join(cards)}</div>{hpb}</section>')
     troop = e(state.get("troop", "Troupe Impeesa VPJ"))
     page = f'''<!doctype html>
@@ -36,11 +39,11 @@ def write(state, here):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Histoire · {troop}</title>
-<meta name="description" content="Les maîtrises de la {troop}, année par année.">
+<meta name="description" content="La {troop}, année par année.">
 <meta name="theme-color" content="#1e4636">
 <link rel="icon" type="image/png" href="icon.png"><link rel="apple-touch-icon" href="icon.png">
 <meta property="og:type" content="website"><meta property="og:url" content="https://troupeimpeesa.github.io/histoire.html">
-<meta property="og:title" content="Histoire · {troop}"><meta property="og:description" content="Les maîtrises de la troupe, année par année.">
+<meta property="og:title" content="Histoire · {troop}"><meta property="og:description" content="La troupe, année par année.">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
 <style>
 :root{{--bg:#fff;--surface:#f5f5f7;--fg:#111;--muted:#6e6e73;--accent:#1e4636;--navy:#1e4636;color-scheme:light}}
@@ -79,7 +82,7 @@ footer{{margin-top:36px;text-align:center;color:var(--muted);font-size:12px}}
 <main class="wrap">
 <div class="kick">{troop}</div>
 <h1>Histoire</h1>
-<p class="sub">Les maîtrises de la troupe, année par année.</p>
+<p class="sub">La troupe, année par année.</p>
 {"".join(years)}
 <footer>{troop}</footer>
 </main>

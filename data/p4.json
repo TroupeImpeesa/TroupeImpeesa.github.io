@@ -108,7 +108,13 @@
    "name": "Carl Chalhoub",
    "role": "",
    "stage": 0,
-   "badges": []
+   "badges": [
+    "Intendant",
+    "Sport de balles",
+    "Patrimoine",
+    "Animaux domestiques",
+    "Sciences Animales"
+   ]
   }
  ],
  "meetings": [
@@ -140,5 +146,5 @@
    ]
   }
  ],
- "updated": "2026-10-17T18:33:32.672Z"
+ "updated": "2026-10-17T18:43:49.728Z"
 }

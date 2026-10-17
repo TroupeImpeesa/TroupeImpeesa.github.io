@@ -49,7 +49,7 @@ for ph in state.get("photos", []):
         used.add(ph["src"][len("photos/"):])
 state["cover"] = ""
 for f in os.listdir(os.path.join(here, "photos")):
-    if f not in used:
+    if f not in used and not f.startswith("hp-"):
         os.remove(os.path.join(here, "photos", f))
 
 js = json.dumps(state, ensure_ascii=False).replace("<", "\\u003c")

@@ -451,6 +451,7 @@ var MONTHS=['janv','févr','mars','avr','mai','juin','juil','août','sept','oct'
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function linkify(s){return esc(s).replace(/(https?:\/\/|www\.)[^\s<]*[^\s<.,;:!?)\]'"]/g,function(u){var h=/^https?:/.test(u)?u:'https://'+u;var im=h.match(/troupeimpeesa\.github\.io\/?(?:\?[^#]*)?#(\w+)/);if(im){var nm={home:'Accueil',progress:'Troupe',events:'Calendrier',history:'Histoire'}[im[1]];if(nm)return '<a class="inlink" href="#'+im[1]+'">'+nm+' ›</a>'}return '<a href="'+h+'" target="_blank" rel="noopener">'+u+'</a>'})}
 function evEnd(e){return e.endDate&&e.endDate>e.date?e.endDate:e.date}
+function evOver(e){var d=new Date(),now=today()+'T'+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');return now>evEnd(e)+'T'+(e.end||'23:59')}
 function span(e){var z=evEnd(e);if(z===e.date)return '';var a=e.date.split('-'),b=z.split('-');return a[1]===b[1]?(+a[2])+'–'+(+b[2])+' '+MONTHS[+b[1]-1]:fmtDate(e.date)+' – '+fmtDate(z)}
 function uid(p){return p+Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
 function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
@@ -542,7 +543,7 @@ function home(){
  h+='<h2>Annonces</h2>';
  if(editing) h+='<div class="editbox"><h4>Nouvelle annonce</h4><textarea id="nw-text" rows="3" placeholder="Ex. Réunion samedi à 12h00. Inscription : https://…"></textarea><div class="fields"><input id="nw-date" type="date" value="'+today()+'" style="flex:0 1 170px" aria-label="Date"><button class="btn" data-act="addnews">Ajouter l’annonce</button></div><span class="meta">Les liens (https://…) deviennent cliquables.</span></div>';
  h+=N.length?'<ul class="news">'+N.map(function(n){return '<li><span class="ndate">'+fmtDate(n.date)+'</span><span class="ntext">'+(n.auto?'<span class="ntag">Progression</span> ':'')+linkify(n.text)+'</span>'+(editing?'<button class="x" data-delnews="'+n.id+'" aria-label="Supprimer l’annonce">×</button>':'')+'</li>'}).join('')+'</ul>':'<p class="empty">Aucune annonce pour l’instant.</p>';
- var t=today(),nx=S.events.filter(function(e){return evEnd(e)>=t}).sort(function(a,b){return a.date<b.date?-1:1})[0];
+ var t=today(),nx=S.events.filter(function(e){return !evOver(e)}).sort(function(a,b){return a.date<b.date?-1:1})[0];
  if(nx){h+='<h2>Prochaine activité</h2>'+evCard(nx,false,false,true);}
  h+='<div class="navgrid">'+[['progress','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/></svg>','Troupe','Patrouilles, membres et points','var(--navy)'],['events','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>','Calendrier','Toutes les activités','var(--p3)'],['history','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg>','Histoire','L’histoire de la troupe','var(--p4)']].map(function(x){return '<button class="tile" data-nav="'+x[0]+'" style="--gc:'+x[4]+'"><span class="tcirc">'+x[1]+'</span><span class="tname">'+x[2]+'</span></button>'}).join('')+'</div>';
  return h}
@@ -873,7 +874,7 @@ function eventPage(){
   '<div class="fields"><button class="btn" data-act="saveevent">Enregistrer</button><button class="btn danger" data-delevent="'+e.id+'">Supprimer l’activité</button></div></div>';
  return h+'</div></div>'}
 function events(){
- var t=today(),up=S.events.filter(function(e){return evEnd(e)>=t}).sort(function(a,b){return a.date<b.date?-1:1}),past=S.events.filter(function(e){return evEnd(e)<t}).sort(function(a,b){return a.date<b.date?1:-1});
+ var t=today(),up=S.events.filter(function(e){return !evOver(e)}).sort(function(a,b){return a.date<b.date?-1:1}),past=S.events.filter(function(e){return evOver(e)}).sort(function(a,b){return a.date<b.date?1:-1});
  function card(e,isPast,first){return evCard(e,isPast,first)}
  var h='<h2>À venir</h2>'+(up.length?up.map(function(e,i){return card(e,false,i===0)}).join(''):'<p class="empty">Rien de prévu pour l’instant.</p>');
  if(editing) h+='<div class="editbox"><h4>Ajouter une activité</h4><label class="lbl">Titre<input id="ne-title" placeholder="Ex. Camp d’hiver"></label><div class="fields"><label class="lbl">Date<input id="ne-date" type="date"></label><label class="lbl">Fin (si plusieurs jours)<input id="ne-enddate" type="date"></label></div><div class="fields"><label class="lbl">Début<input id="ne-time" type="time"></label><label class="lbl">Fin<input id="ne-end" type="time"></label></div><label class="lbl">Lieu<input id="ne-place"></label><div class="fields"><button class="btn" data-act="addevent">Ajouter</button></div><span class="meta">Ensuite tu pourras ajouter « À apporter » et les remarques.</span></div>';
@@ -985,6 +986,7 @@ function publish(){
 }
 
 render();
+setInterval(function(){if(!editing&&!openCP&&!openScout&&(tab==='home'||tab==='events')&&!document.hidden&&!(document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)))render()},60000);
 loadPublicData();
 presence();
 if(tab==='progress')setTimeout(leaderRun,400);
@@ -1002,7 +1004,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="e2e4db312eb9">
-<script>(function(){var B="e2e4db312eb9";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="2750cb477d5b">
+<script>(function(){var B="2750cb477d5b";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

@@ -1,0 +1,28 @@
+{
+ "log": [
+  {
+   "id": "l-jota-p4",
+   "patrol": "p4",
+   "cat": "jeux",
+   "pts": 50,
+   "reason": "Défi JOTA-JOTI : 1er",
+   "date": "2026-10-17"
+  },
+  {
+   "id": "l-jota-p2",
+   "patrol": "p2",
+   "cat": "jeux",
+   "pts": 30,
+   "reason": "Défi JOTA-JOTI : 2e",
+   "date": "2026-10-17"
+  },
+  {
+   "id": "l-jota-p3",
+   "patrol": "p3",
+   "cat": "jeux",
+   "pts": 10,
+   "reason": "Défi JOTA-JOTI : 3e",
+   "date": "2026-10-17"
+  }
+ ]
+}

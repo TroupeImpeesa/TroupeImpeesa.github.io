@@ -29,6 +29,11 @@ def apply_patrol(st, d):
 
 
 def apply_all(state, root):
+    pf = os.path.join(root, "data", "points.json")
+    if os.path.exists(pf):
+        d = json.load(open(pf, encoding="utf-8"))
+        if isinstance(d.get("log"), list):
+            state["log"] = d["log"]
     for p in state.get("patrols", []):
         f = os.path.join(root, "data", p["id"] + ".json")
         if os.path.exists(f):

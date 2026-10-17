@@ -64,7 +64,8 @@ h2{{font-size:16px;font-weight:800;letter-spacing:-.01em;margin:0 2px 10px;displ
 .rl{{font-size:11px;color:var(--muted)}}.rl.ct{{font-weight:800;color:var(--fg)}}
 .hpbox{{margin-top:10px;background:var(--surface);border-radius:18px;padding:12px}}
 .hplab{{font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:2px 4px 10px}}
-.hpimg{{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:12px}}
+.hpimg{{display:block;width:100%;height:auto;border-radius:12px}}
+.hpnone{{aspect-ratio:3/2}}
 .hpnone{{display:flex;align-items:center;justify-content:center;border:1.5px dashed #c7c7cc;color:var(--muted);font-size:14px}}
 .hpgrid{{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}}
 .hpp{{background:var(--bg);border-radius:12px;padding:10px 12px;min-width:0}}

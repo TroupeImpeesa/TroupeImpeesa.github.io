@@ -545,7 +545,7 @@ function qBonus(){
  fbLoad().then(function(){var db=firebase.database();return Promise.all([db.ref('quiz/users').once('value'),db.ref('quiz/scores').once('value')])}).then(function(r){
   var U=r[0].val()||{},A=r[1].val()||{},cur=qWeek(),out=[];
   Object.keys(A).sort().forEach(function(w){if(w>=cur||w<QB_FROM)return;var W=A[w]||{};
-   var L=Object.keys(W).map(function(k){return {p:(U[k]||{}).patrol||'',s:W[k].s||0,at:W[k].at||0}}).filter(function(x){return pat(x.p)}).sort(function(a,b){return b.s-a.s||a.at-b.at}).slice(0,10);
+   var L=Object.keys(W).filter(function(k){return U[k]&&U[k].ok===true}).map(function(k){return {p:(U[k]||{}).patrol||'',s:W[k].s||0,at:W[k].at||0}}).filter(function(x){return pat(x.p)}).sort(function(a,b){return b.s-a.s||a.at-b.at}).slice(0,10);
    var c={};L.forEach(function(x){c[x.p]=(c[x.p]||0)+1});
    var d=new Date(w+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+6);var end=d.toISOString().slice(0,10);
    Object.keys(c).forEach(function(pid){out.push({id:'quiz-'+pid+'-'+w,patrol:pid,cat:'jeux',pts:5*c[pid],reason:'Quiz Prêt : '+c[pid]+' scout'+(c[pid]>1?'s':'')+' dans le top 10 (semaine du '+longDate(w)+')',date:end,auto:true})})});
@@ -1006,7 +1006,7 @@ function qBoards(){
 }
 function qBoardRows(){
  var src={};
- Object.keys(QZ.week||{}).forEach(function(k){if(QZ.users[k]&&QZ.users[k].name==='impeesa.admin')return;src[k]=QZ.week[k].s||0});
+ Object.keys(QZ.week||{}).forEach(function(k){var u=QZ.users[k];if(!u||u.ok!==true||u.name==='impeesa.admin')return;src[k]=QZ.week[k].s||0});
  var L=Object.keys(src).map(function(k){var u=QZ.users[k]||{};return {k:k,s:src[k],n:u.name||'?',p:u.patrol||''}}).sort(function(a,b){return b.s-a.s});
  if(!L.length)return '<div class="kcard kc"><b>Personne n’a encore joué cette semaine.</b><span>Sois le premier !</span></div>';
  var rk=0,prev=null;
@@ -1380,7 +1380,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="7a1f70227f50">
-<script>(function(){var B="7a1f70227f50";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="1641f876ac52">
+<script>(function(){var B="1641f876ac52";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

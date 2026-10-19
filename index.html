@@ -426,7 +426,7 @@ body.kahoot .back{color:#fff}body.kahoot .bico{background:rgba(255,255,255,.15);
 .krow{display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:10px;background:#fff;border-radius:8px;padding:10px 14px;box-shadow:0 4px 0 rgba(0,0,0,.2);color:#1b1b1b}
 .krk{width:30px;height:30px;border-radius:50%;background:#efe8f8;color:#46178f;font:900 15px var(--body);display:flex;align-items:center;justify-content:center}
 .k1 .krk{background:#ffd23f;color:#5a4200}.k2 .krk{background:#d9d9e0;color:#444}.k3 .krk{background:#e4a36b;color:#5a2e0a}
-.knm{font-weight:800;min-width:0;overflow-wrap:anywhere}.knm small{display:block;font-weight:600;color:#888;font-size:11px}
+.knm{font-weight:800;min-width:0;overflow-wrap:anywhere}.kpat{display:inline-block;font:800 11px var(--body);font-style:normal;color:#fff;border-radius:999px;padding:2px 8px;margin-left:8px;vertical-align:2px;white-space:nowrap}
 .kpt{font:900 20px var(--display);color:#46178f}
 .kme{outline:3px solid #ffd23f}
 .kb5{font:800 11px var(--body);font-style:normal;background:#26890c;color:#fff;border-radius:999px;padding:2px 7px;margin-right:8px;vertical-align:3px}
@@ -904,7 +904,7 @@ function qBoardRows(){
  var rk=0,prev=null;
  var top=0;
  return '<div class="klb">'+L.map(function(r,i){if(r.s!==prev){rk=i+1;prev=r.s}var p=pat(r.p);var me=QZ.user&&r.k===QZ.user.uid;var bonus=p&&top<10;if(bonus)top++;
-  return '<div class="krow'+(rk<=3?' k'+rk:'')+(me?' kme':'')+'"><span class="krk">'+rk+'</span><span class="knm">'+esc(r.n)+(p?'<small>'+esc(p.name)+'</small>':'<small>Maîtrise</small>')+'</span><span class="kpt">'+(bonus?'<i class="kb5">+5</i>':'')+r.s+'</span></div>'}).join('')+'</div>';
+  return '<div class="krow'+(rk<=3?' k'+rk:'')+(me?' kme':'')+'"><span class="krk">'+rk+'</span><span class="knm">'+esc(r.n)+'<i class="kpat" style="background:'+(p?pdfCol(p):'#46178f')+'">'+(p?esc(p.name):'Maîtrise')+'</i></span><span class="kpt">'+(bonus?'<i class="kb5">+5</i>':'')+r.s+'</span></div>'}).join('')+'</div>';
 }
 function quiz(){
  qInit();
@@ -1261,7 +1261,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="349175dee2d5">
-<script>(function(){var B="349175dee2d5";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="712c330b96ae">
+<script>(function(){var B="712c330b96ae";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

@@ -781,10 +781,11 @@ function acnPw(){var a='abcdefghjkmnpqrstuvwxyz',d='23456789',r=crypto.getRandom
 function acnUser(n){return String(n||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'')}
 function acnBox(){
  if(!ACN.pw)ACN.pw=acnPw();
- var opts='<option value="">Choisis un scout…</option>'+S.patrols.map(function(p){return '<optgroup label="'+esc(p.name)+'">'+S.scouts.filter(function(s){return s.patrol===p.id}).map(function(s){var has=Object.keys(QZ.users||{}).some(function(k){return QZ.users[k].sid===s.id});return '<option value="'+s.id+'"'+(ACN.sid===s.id?' selected':'')+'>'+esc(s.name)+(s.role?' ('+s.role+')':'')+(has?' ✓ a déjà un compte':'')+'</option>'}).join('')+'</optgroup>'}).join('')+'<option value="staff"'+(ACN.sid==='staff'?' selected':'')+'>Maîtrise / autre</option>';
+ var opts='<option value="">Choisis un scout…</option>'+S.patrols.map(function(p){return '<optgroup label="'+esc(p.name)+'">'+S.scouts.filter(function(s){return s.patrol===p.id}).map(function(s){var has=Object.keys(QZ.users||{}).some(function(k){return QZ.users[k].sid===s.id});return '<option value="'+s.id+'"'+(ACN.sid===s.id?' selected':'')+'>'+esc(s.name)+(s.role?' ('+s.role+')':'')+(has?' ✓ a déjà un compte':'')+'</option>'}).join('')+'</optgroup>'}).join('')+'<option value="new"'+(ACN.sid==='new'?' selected':'')+'>➕ Nouveau membre (pas encore dans une patrouille)</option><option value="staff"'+(ACN.sid==='staff'?' selected':'')+'>Maîtrise / autre</option>';
  var h='<div class="kcard kadm"><b>➕ Créer un compte</b>'+
   '<label class="lbl">Pour qui ?<select id="acn-s" data-acn="s">'+opts+'</select></label>'+
-  (ACN.sid==='staff'?'<label class="lbl">Prénom et nom<input id="acn-n" data-acn="n" value="'+esc(ACN.name)+'" maxlength="20"></label>':'')+
+  (ACN.sid==='staff'||ACN.sid==='new'?'<label class="lbl">Prénom et nom<input id="acn-n" data-acn="n" value="'+esc(ACN.name)+'" maxlength="20"></label>':'')+
+  (ACN.sid==='new'?'<label class="lbl">Patrouille<select id="acn-pt" data-acn="pt"><option value="">Choisis…</option>'+S.patrols.map(function(p){return '<option value="'+p.id+'"'+(ACN.patrol===p.id?' selected':'')+'>'+esc(p.name)+'</option>'}).join('')+'</select></label><label class="lbl">Rôle<select id="acn-r" data-acn="r">'+[['','Scout'],['CP','CP'],['SP','SP']].map(function(x){return '<option value="'+x[0]+'"'+(ACN.role===x[0]?' selected':'')+'>'+x[1]+'</option>'}).join('')+'</select></label>':'')+
   (ACN.sid?'<label class="lbl">Nom d’utilisateur<input id="acn-u" value="'+esc(ACN.u)+'" autocapitalize="none" autocorrect="off" spellcheck="false"></label>'+
    '<label class="lbl">Mot de passe<input id="acn-p" value="'+esc(ACN.pw)+'" autocapitalize="none" autocorrect="off" spellcheck="false"></label>'+
    '<span class="kwarn">'+(ACN.role==='Maîtrise'?'Maîtrise : accès à tout l’Espace CP/SP et aux points.':ACN.role==='CP'||ACN.role==='SP'?ACN.role+' : accès à l’Espace CP/SP de sa patrouille.':'Scout : peut jouer au quiz et voir son profil.')+'</span>'+
@@ -797,8 +798,11 @@ function acnChange(t){
  if(!t.dataset||!t.dataset.acn)return false;
  if(t.dataset.acn==='s'){var v=t.value;ACN.sid=v;ACN.done=null;ACN.msg='';ACN.pw=acnPw();
   if(v==='staff'){ACN.name='';ACN.u='';ACN.role='Maîtrise';ACN.patrol=''}
+  else if(v==='new'){ACN.name='';ACN.u='';ACN.role='';ACN.patrol=''}
   else{var s=S.scouts.filter(function(x){return x.id===v})[0];if(s){ACN.name=s.name;ACN.u=acnUser(s.name);ACN.role=s.role||'';ACN.patrol=s.patrol}}
   render();return true}
+ if(t.dataset.acn==='pt'){ACN.patrol=t.value;return true}
+ if(t.dataset.acn==='r'){ACN.role=t.value;render();return true}
  if(t.dataset.acn==='n'){ACN.name=t.value.trim();ACN.u=acnUser(ACN.name);var u=document.getElementById('acn-u');if(u)u.value=ACN.u;return true}
  return false;
 }
@@ -820,19 +824,30 @@ function acnKeys(u,pw,role,patrol){
   var K=JSON.parse(b64d(r[0].content));K['u:'+u]=r[1];
   return fetch(url,{method:'PUT',headers:hdr(),body:JSON.stringify({message:'Compte '+u+' : accès Espace CP/SP',content:b64e(JSON.stringify(K,null,1)),sha:r[0].sha,branch:'main'})}).then(function(x){if(!x.ok)throw x.status})});
 }
+function acnMember(name){
+ if(ACN.sid!=='new')return Promise.resolve(ACN.sid==='staff'?'staff:'+name:ACN.sid);
+ if(!ACCK||ACCK.scope!=='chef'||!ACCK.token)return Promise.reject('nokey');
+ var pid=ACN.patrol,url='https://api.github.com/repos/'+REPO+'/contents/data/'+pid+'.json';
+ function hdr(){return {'Accept':'application/vnd.github+json','Authorization':'Bearer '+ACCK.token,'Content-Type':'application/json'}}
+ return fetch(url+'?ref=main',{headers:hdr(),cache:'no-store'}).then(function(r){if(!r.ok)throw r.status;return r.json()}).then(function(j){
+  var d=JSON.parse(b64d(j.content)),n=0;d.members.concat(S.scouts.filter(function(x){return x.patrol===pid})).forEach(function(m){var k=+String(m.id).split('-')[1];if(k>n)n=k});
+  var id=pid+'-'+(n+1);d.members.push({id:id,name:name,role:ACN.role||'',stage:0,badges:[]});d.updated=new Date().toISOString();
+  return fetch(url,{method:'PUT',headers:hdr(),body:JSON.stringify({message:'Nouveau membre : '+name,content:b64e(JSON.stringify(d,null,1)),sha:j.sha,branch:'main'})}).then(function(x){if(!x.ok)throw x.status;applyPatrol(d);return id})});
+}
 function acnCreate(){
- var u=acnUser(val('acn-u')),pw=val('acn-p'),name=ACN.sid==='staff'?val('acn-n'):ACN.name;
+ var u=acnUser(val('acn-u')),pw=val('acn-p'),name=ACN.sid==='staff'||ACN.sid==='new'?val('acn-n'):ACN.name;
+ if(ACN.sid==='new'&&!ACN.patrol){ACN.msg='Choisis la patrouille.';render();return}
  if(!name){ACN.msg='Écris le prénom et le nom.';render();return}
  if(u.length<3){ACN.msg='Nom d’utilisateur trop court.';render();return}
  if(pw.length<6){ACN.msg='Le mot de passe doit avoir au moins 6 caractères.';render();return}
  ACN.busy=true;ACN.msg='';render();
- var KEY='AIzaSyAhV_fKJll1oxnyrCJymQOJuceHxPeKqp8';
- fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key='+KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:u+QZ_DOM,password:pw,returnSecureToken:true})}).then(function(r){return r.json()}).then(function(j){
+ var KEY='AIzaSyAhV_fKJll1oxnyrCJymQOJuceHxPeKqp8',SID;
+ acnMember(name).then(function(sid){SID=sid;return fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key='+KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:u+QZ_DOM,password:pw,returnSecureToken:true})})}).then(function(r){return r.json()}).then(function(j){
   if(!j.localId)throw (j.error&&/EMAIL_EXISTS/.test(j.error.message))?'exists':'fail';
-  var prof={name:name.slice(0,20),patrol:ACN.patrol||'',role:ACN.role||'',sid:ACN.sid==='staff'?'staff:'+name:ACN.sid,ok:true};
+  var prof={name:name.slice(0,20),patrol:ACN.patrol||'',role:ACN.role||'',sid:SID,ok:true};
   return firebase.database().ref('quiz/users/'+j.localId).set(prof).then(function(){QZ.users[j.localId]=prof;return acnKeys(u,pw,ACN.role,ACN.patrol).catch(function(){ACN.msg='Compte créé, mais l’accès à l’Espace CP/SP n’a pas pu être ajouté. Dis-le à Claude.'})})
  }).then(function(){ACN.done={name:name,u:u,pw:pw};ACN.busy=false;ACN.sid='';ACN.pw='';render()})
- .catch(function(e){ACN.busy=false;ACN.msg=e==='exists'?'Ce nom d’utilisateur existe déjà. Choisis-en un autre (ex. ajoute un chiffre).':'Échec. Vérifie ta connexion et réessaie.';render()});
+ .catch(function(e){ACN.busy=false;ACN.msg=e==='nokey'?'Reconnecte-toi en admin avec le mot de passe de la maîtrise.':e==='exists'?'Ce nom d’utilisateur existe déjà. Choisis-en un autre (ex. ajoute un chiffre).':'Échec. Vérifie ta connexion et réessaie.';render()});
 }
 
 function adminPage(){
@@ -1468,7 +1483,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="931af3b1495f">
-<script>(function(){var B="931af3b1495f";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="243260d64fa6">
+<script>(function(){var B="243260d64fa6";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

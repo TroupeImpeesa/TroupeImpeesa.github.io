@@ -429,6 +429,9 @@ body.kahoot .back{color:#fff}body.kahoot .bico{background:rgba(255,255,255,.15);
 .knm{font-weight:800;min-width:0;overflow-wrap:anywhere}.kpat{display:inline-block;font:800 11px var(--body);font-style:normal;color:#fff;border-radius:999px;padding:2px 8px;margin-left:8px;vertical-align:2px;white-space:nowrap}
 .kpt{font:900 20px var(--display);color:#46178f}
 .kme{outline:3px solid #ffd23f}
+.acct{position:absolute;top:14px;right:14px;z-index:3;border:none;border-radius:999px;background:rgba(255,255,255,.92);color:#111;font:700 13px var(--body);padding:8px 14px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.acct.me{width:42px;height:42px;padding:0;border-radius:50%;background:var(--accent);color:#fff;font:800 15px var(--body);border:2px solid #fff}
+.mine{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px}.mine>span{font-weight:700;margin-right:auto}.mine .pdfbtn{margin-top:0}
 .kadm{margin-bottom:14px;gap:8px}.kadm>b{font-size:16px}
 .kadr{display:flex;align-items:center;gap:6px;background:#f6f2fb;border-radius:8px;padding:8px 10px}.kadr .knm{flex:1}
 .kab{border:none;border-radius:6px;font:800 13px var(--body);padding:8px 10px;color:#fff;cursor:pointer}.kab.ok{background:#26890c}.kab.no{background:#e21b3c}.kab:disabled{opacity:.5}
@@ -507,7 +510,7 @@ body.kahoot .back{color:#fff}body.kahoot .bico{background:rgba(255,255,255,.15);
 (function(){
 function load(){var x=JSON.parse(document.getElementById('state').textContent);x.meetings=x.meetings||[];x.photos=x.photos||[];x.news=x.news||[];x.faces=x.faces||{};return x}
 var S=load(),curM=null,slide=0,openScout=null,openEvent=null;
-var TABS=['home','progress','events','history','quiz'];
+var TABS=['home','progress','events','history','quiz','login','me'];
 var tab='home',openGroup=null,openPts=null;
 function route(h){h=(h==null?(location.hash||'#home').slice(1):h).split('/');var t=h[0]==='points'?'progress':h[0];if(TABS.indexOf(t)<0)t='home';tab=t;openGroup=null;openPts=null;openScout=null;openEvent=null;openCP=null;var x=h[1]||'';
  if(t==='progress'){if(x.indexOf('g-')===0)openGroup=x.slice(2);else if(x.indexOf('cp-')===0&&pat(x.slice(3))){openCP=x.slice(3);openGroup=openCP}else if(x.indexOf('pts-')===0)openPts=x.slice(4);else if(x.indexOf('s-')===0){var sc=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc){openScout=sc.id;openGroup=sc.patrol}}}
@@ -558,11 +561,11 @@ function slideImg(i){var el=document.getElementById('show');return el?el.querySe
 function preload(i){var im=slideImg(i);LOADED[i]=true;if(im&&!im.getAttribute('src')&&im.dataset.src)im.src=im.dataset.src;return im}
 function heroTop(){
  var P=S.photos,txt='<div class="htext"><div class="eyebrow">'+esc(S.season)+'</div><h1>'+esc(S.troop)+'</h1></div>';
- if(!P.length) return '<header class="top"'+(S.cover?' style="background-image:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.7)),url('+S.cover+')"':'')+'>'+txt+'</header>';
+ if(!P.length) return '<header class="top"'+(S.cover?' style="background-image:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.7)),url('+S.cover+')"':'')+'>'+txt+acctBtn()+'</header>';
  if(firstPick){slide=Math.floor(Math.random()*P.length);firstPick=false}
  if(slide>=P.length) slide=0;
  LOADED[slide]=true;
- return '<header class="top hero" id="show">'+P.map(function(ph,i){return '<img '+(LOADED[i]?'src':'data-src')+'="'+ph.src+'" alt="'+esc(ph.caption||'Photo de la troupe')+'" class="'+(i===slide?'on':'')+'"'+(i===slide?' fetchpriority="high"':' decoding="async"')+'>'}).join('')+'<div class="shade"></div>'+txt+
+ return '<header class="top hero" id="show">'+P.map(function(ph,i){return '<img '+(LOADED[i]?'src':'data-src')+'="'+ph.src+'" alt="'+esc(ph.caption||'Photo de la troupe')+'" class="'+(i===slide?'on':'')+'"'+(i===slide?' fetchpriority="high"':' decoding="async"')+'>'}).join('')+'<div class="shade"></div>'+txt+acctBtn()+
   '</header>'}
 function header(){return heroTop()+
  '<div class="tabbar"></div>'+
@@ -714,9 +717,96 @@ function streakOf(s){var t=today(),M=S.meetings.filter(function(m){return m.patr
 /* ===== Espace CP : présences et progression enregistrées sur le site ===== */
 var CP_ON=/github\.io$/.test(location.hostname)||location.hostname==='localhost'||location.hostname==='127.0.0.1';
 var REPO='TroupeImpeesa/TroupeImpeesa.github.io',BADGES=[],openCP;
+/* ===== Comptes du site (Firebase Auth) ===== */
+var ACC=null,ACCK=null,ACCF={busy:false,msg:''},ACM={busy:false,msg:'',n:0,t:0};
+try{var _a=JSON.parse(localStorage.getItem('ti-acc')||'null');if(_a){ACC=_a.a||null;ACCK=_a.k||null}}catch(e){}
+function accSave(){try{if(ACC)localStorage.setItem('ti-acc',JSON.stringify({a:ACC,k:ACCK}));else localStorage.removeItem('ti-acc')}catch(e){}}
+function accApply(){if(typeof cp==='undefined'||!cp||!ACCK)return;cp.token=ACCK.token;cp.dk=ACCK.dk||{};cp.scope=ACCK.scope}
+function accIni(n){return String(n||'?').split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w.charAt(0)}).join('').toUpperCase()}
+function acctBtn(){
+ if(!CP_ON)return '';
+ if(ACC)return '<button class="acct me" data-act="acct" aria-label="Mon profil">'+esc(accIni(ACC.name))+'</button>';
+ return '<button class="acct" data-act="acct">Se connecter</button>';
+}
+function accFromProfile(u,v){
+ ACC={uid:u.uid,u:u.email.split('@')[0],name:v.name||u.email.split('@')[0],sid:v.sid||'',patrol:v.patrol||'',role:v.role||''};accSave();
+}
+function accLogout(){try{firebase.auth().signOut()}catch(e){}ACC=null;ACCK=null;accSave();cpLock();go('home')}
+function accDecrypt(uname,pw){
+ return fetch('data/keys.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(K){var e=K['u:'+uname];if(!e)return null;
+  return crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey'])
+   .then(function(base){return crypto.subtle.deriveKey({name:'PBKDF2',salt:u8(e.salt),iterations:e.it,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt'])})
+   .then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:u8(e.iv)},k,u8(e.ct))})
+   .then(function(b){return JSON.parse(new TextDecoder().decode(b))}).catch(function(){return null})}).catch(function(){return null});
+}
+function loginPage(){
+ if(ACC)return '<h2>Mon compte</h2><div class="cpcard"><p class="cplead">Tu es connecté en tant que <b>'+esc(ACC.name)+'</b>.</p><button class="btn ghost" data-act="acclogout">Se déconnecter</button></div>';
+ return '<h2>Se connecter</h2><div class="meta" style="margin:-4px 0 10px">Utilise le nom d’utilisateur et le mot de passe que la maîtrise t’a donnés.</div>'+
+  '<div class="cpcard"><label class="lbl">Nom d’utilisateur<input id="acc-u" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="ex. joegeagea"></label>'+
+  '<label class="lbl">Mot de passe<input id="acc-p" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Mot de passe"></label>'+
+  '<button class="btn" data-act="acclogin"'+(ACCF.busy?' disabled':'')+'>'+(ACCF.busy?'Connexion…':'Se connecter')+'</button>'+(ACCF.msg?'<p class="cperr">'+esc(ACCF.msg)+'</p>':'')+'</div>';
+}
+function mePage(){
+ if(!ACC)return loginPage();
+ var p=pat(ACC.patrol),staff=ACC.sid.indexOf('staff:')===0||ACC.role==='Maîtrise',st=staff?(S.staff||[]).filter(function(m){return m.name===ACC.name})[0]:null;
+ return '<div class="phero" style="--pc:'+(p?col(p):'var(--navy)')+';margin-top:14px"><span class="pav">'+(st&&st.photo?'<img src="'+st.photo+'" alt="">':esc(accIni(ACC.name)))+'</span><div class="pid"><div class="ptag">'+(staff?'Maîtrise'+(st?' · '+esc(st.role):''):esc(p?p.name:''))+'</div><h2 class="pname2">'+esc(ACC.name)+'</h2></div></div>'+
+  '<div class="cplist" style="margin-top:12px">'+
+  (ACCK?'<button class="cpbtn" data-nav="progress"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Espace CP/SP</b><span>'+(ACCK.scope==='chef'?'Toutes les patrouilles':'Patrouille '+esc((pat(ACCK.scope)||{}).name||''))+'</span></span><span class="evgo" aria-hidden="true">›</span></button>':'')+
+  '<button class="tile wide qtile" data-nav="quiz" style="margin-top:4px"><span class="qbig">Quiz <span>Prêt!</span></span></button>'+
+  '<button class="btn ghost" data-act="acclogout" style="margin-top:6px">Se déconnecter</button></div>';
+}
+function accClick(b){
+ var a=b.dataset.act;
+ if(a==='acct'){if(!ACC){go('login');return true}if(ACC.sid&&S.scouts.some(function(s){return s.id===ACC.sid}))go('progress/s-'+ACC.sid);else go('me');return true}
+ if(a==='acclogout'){accLogout();return true}
+ if(a==='acclogin'){
+  var raw=val('acc-u'),u=qUname(raw).replace(/[._-]/g,''),pw=(document.getElementById('acc-p')||{}).value||'';
+  if(raw.trim().toLowerCase()===QZ_ADMIN)u=QZ_ADMIN;
+  if(!u||!pw){ACCF.msg='Entre ton nom d’utilisateur et ton mot de passe.';render();return true}
+  ACCF.busy=true;ACCF.msg='';render();
+  fbAuth().then(function(){return firebase.auth().signInWithEmailAndPassword(u+QZ_DOM,pw)}).then(function(c){
+   return Promise.all([firebase.database().ref('quiz/users/'+c.user.uid).once('value'),accDecrypt(u,pw)]).then(function(r){
+    accFromProfile(c.user,r[0].val()||{});ACCK=r[1]?{token:r[1].token,dk:r[1].dk||{},scope:r[1].scope}:null;accSave();accApply();
+    ACCF.busy=false;ACCF.msg='';qInit();go('home')})
+  }).catch(function(e){ACCF.busy=false;var c=(e&&e.code)||'';ACCF.msg=/wrong-password|user-not-found|invalid-credential|invalid-login|invalid-email/.test(c)?'Nom d’utilisateur ou mot de passe incorrect.':c.indexOf('too-many')>=0?'Trop d’essais. Réessaie dans quelques minutes.':'Erreur. Vérifie ta connexion et réessaie.';render()});
+  return true}
+ if(a==='accmake'){accMake();return true}
+ return false;
+}
+/* Admin : créer tous les comptes à partir de la liste chiffrée */
+function accMake(){
+ var pw=(document.getElementById('acm-pw')||{}).value||'';if(!pw){ACM.msg='Entre le mot de passe de la maîtrise.';render();return}
+ ACM.busy=true;ACM.msg='Déchiffrement…';render();
+ fetch('data/accounts.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(e){
+  return crypto.subtle.importKey('raw',new TextEncoder().encode(pw.trim().toLowerCase()),'PBKDF2',false,['deriveKey'])
+   .then(function(base){return crypto.subtle.deriveKey({name:'PBKDF2',salt:u8(e.salt),iterations:e.it,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt'])})
+   .then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:u8(e.iv)},k,u8(e.ct))}).then(function(b){return JSON.parse(new TextDecoder().decode(b))})
+ }).then(function(L){
+  ACM.t=L.length;ACM.n=0;var fail=[],KEY='AIzaSyAhV_fKJll1oxnyrCJymQOJuceHxPeKqp8',db=firebase.database();
+  function call(ep,body){return fetch('https://identitytoolkit.googleapis.com/v1/accounts:'+ep+'?key='+KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json()})}
+  function one(i){
+   if(i>=L.length){ACM.busy=false;ACM.msg=fail.length?('Terminé, sauf : '+fail.join(', ')):'✓ Les '+L.length+' comptes sont prêts !';qBoards();render();return}
+   var a=L[i],em=a.u+QZ_DOM;ACM.msg='Création '+(i+1)+' / '+L.length+' : '+a.name;render();
+   call('signUp',{email:em,password:a.pw,returnSecureToken:true}).then(function(j){
+    if(j.localId)return j.localId;
+    if(j.error&&/EMAIL_EXISTS/.test(j.error.message))return call('signInWithPassword',{email:em,password:a.pw,returnSecureToken:true}).then(function(k){return k.localId||null});
+    return null}).then(function(uid){
+     if(!uid){fail.push(a.name);return}
+     return db.ref('quiz/users/'+uid).set({name:a.name,patrol:a.patrol||'',role:a.role||'',sid:a.sid||'',ok:true});
+    }).catch(function(){fail.push(a.name)}).then(function(){ACM.n=i+1;setTimeout(function(){one(i+1)},350)})
+  }
+  one(0);
+ }).catch(function(){ACM.busy=false;ACM.msg='Mot de passe incorrect.';render()});
+}
+function accMakeBox(){
+ return '<div class="kcard kadm"><b>🔑 Créer les comptes du site</b><span class="kwarn">Crée les comptes de tous les scouts et de la maîtrise (noms d’utilisateur et mots de passe envoyés par Claude). À faire une seule fois.</span>'+
+  '<input id="acm-pw" type="password" placeholder="Mot de passe de la maîtrise" autocapitalize="none">'+
+  '<button class="kbtn kgo" data-act="accmake"'+(ACM.busy?' disabled':'')+'>'+(ACM.busy?'Création en cours…':'Créer les comptes')+'</button>'+(ACM.msg?'<span>'+esc(ACM.msg)+'</span>':'')+'</div>';
+}
+
 var cp={token:null,dk:{},contacts:{},csha:null,cdirty:false,scope:null,patrol:null,data:null,sha:null,tab:'pres',date:today(),open:null,msg:'',err:'',busy:false,dirty:false,del:null};
 try{sessionStorage.removeItem('ti-cp')}catch(e){}
-function cpLock(){if(typeof cp==='undefined'||!cp)return;cp.token=null;cp.scope=null;cp.dk={};cp.data=null;cp.contacts={};cp.dirty=false;cp.cdirty=false;cp.err='';cp.msg='';cp.relock=null;cp.open=null;cp.del=null;cp.tab='pres'}
+function cpLock(){if(typeof cp==='undefined'||!cp)return;cp.token=null;cp.scope=null;cp.dk={};cp.data=null;cp.contacts={};cp.dirty=false;cp.cdirty=false;cp.err='';cp.msg='';cp.relock=null;cp.open=null;cp.del=null;cp.tab='pres';accApply()}
 function u8(b){var s=atob(b),a=new Uint8Array(s.length);for(var i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a}
 function b64e(str){return btoa(unescape(encodeURIComponent(str)))}
 function b64d(b){return decodeURIComponent(escape(atob(String(b).replace(/\s/g,''))))}
@@ -785,12 +875,12 @@ function lastPres(gp){var t=today(),ids={};S.scouts.forEach(function(x){if(x.pat
  if(!M)return '<div class="lpres"><div class="lpt"><b>Dernière réunion</b><span class="meta">Pas encore de présences</span></div></div>';
  var k=M.present.filter(function(i){return ids[i]}).length,pc=n?Math.round(k/n*100):0;
  return '<div class="lpres" style="--gc:'+col(gp)+'"><div class="lpt"><b>Dernière réunion</b><span class="meta">'+esc(longDate(M.date))+'</span></div><div class="lpn"><b>'+k+'</b><span>/ '+n+' présents</span></div><div class="lpbar"><i style="width:'+pc+'%"></i></div></div>'}
-function cpBtn(gp){return CP_ON?'<button class="cpbtn" data-act="cpopen"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Espace CP/SP</b><span>Présences et progression</span></span><span class="evgo" aria-hidden="true">›</span></button>':''}
+function cpBtn(gp){return CP_ON&&cpAllowed(gp.id)?'<button class="cpbtn" data-act="cpopen"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Espace CP/SP</b><span>Présences et progression</span></span><span class="evgo" aria-hidden="true">›</span></button>':''}
 function cpPage(){
  var p=pat(openCP),h='<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>'+esc(p.name)+'</span></button>';
  h+='<div class="cphead" style="--gc:'+col(p)+'"><span class="tcirc">'+animalOf(p.name)+'</span><div><div class="gname">Espace CP/SP</div><div class="meta">'+esc(p.name)+'</div></div></div>';
  if(!cpAllowed(openCP)){
-  return h+'<div class="cpcard"><p class="cplead">Entre le mot de passe de la patrouille '+esc(p.name)+'.</p><div class="fields"><input id="cp-pw" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Mot de passe" aria-label="Mot de passe"><button class="btn" data-act="cpunlock"'+(cp.busy?' disabled':'')+'>'+(cp.busy?'Vérification…':'Ouvrir')+'</button></div>'+(cp.err?'<p class="cperr">'+esc(cp.err)+'</p>':'')+'</div>';
+  return h+'<div class="cpcard"><p class="cplead">'+(ACC?'Réservé au CP et au SP de la patrouille '+esc(p.name)+', et à la maîtrise.':'Connecte-toi avec ton compte de CP ou de SP pour ouvrir l’espace.')+'</p>'+(ACC?'':'<button class="btn" data-nav="login">Se connecter</button>')+'</div>';
  }
  if(!cp.data||cp.patrol!==openCP){if(!cp.busy&&!cp.err)setTimeout(function(){cpLoad(openCP)},0);return h+'<div class="cpcard">'+(cp.err?'<p class="cperr">'+esc(cp.err)+'</p><button class="btn" data-act="cpretry">Réessayer</button>':'<p class="meta">Chargement…</p>')+'</div>'}
  var D=cp.data;
@@ -885,12 +975,12 @@ function qInit(){
  QZ.busy=true;
  fetch('data/quiz.json',{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){QZ.data=j}).catch(function(){QZ.data={weeks:{}}})
  .then(fbAuth).then(function(){
-  firebase.auth().onAuthStateChanged(function(u){QZ.user=u;QZ.ok=null;QZ.admin=false;QZ.msg='';QZ.ready=true;QZ.busy=false;QZ.mine=null;QZ.started=false;if(u)qMe();qBoards();if(tab==='quiz')render()});
+  firebase.auth().onAuthStateChanged(function(u){if(!u&&ACC){ACC=null;ACCK=null;accSave();cpLock();if(tab!=='quiz')render()}QZ.user=u;QZ.ok=null;QZ.admin=false;QZ.msg='';QZ.ready=true;QZ.busy=false;QZ.mine=null;QZ.started=false;if(u)qMe();qBoards();render()});
  }).catch(function(){QZ.busy=false;QZ.err='net';if(tab==='quiz')render()});
 }
 function qMe(){
  var db=firebase.database(),u=QZ.user,w=qWeek();
- db.ref('quiz/users/'+u.uid).once('value').then(function(s){var v=s.val()||{};QZ.name=v.name||u.email.split('@')[0];QZ.patrol=v.patrol||'';QZ.ok=v.ok===true;QZ.admin=u.email===QZ_ADMIN+QZ_DOM;if(tab==='quiz')render()});
+ db.ref('quiz/users/'+u.uid).once('value').then(function(s){var v=s.val()||{};QZ.name=v.name||u.email.split('@')[0];QZ.patrol=v.patrol||'';QZ.ok=v.ok===true;if(u.email!==QZ_ADMIN+QZ_DOM){var _k=ACCK;accFromProfile(u,v);ACCK=_k;accSave()}QZ.admin=u.email===QZ_ADMIN+QZ_DOM;if(tab==='quiz')render()});
  db.ref('quiz/starts/'+w+'/'+u.uid).once('value').then(function(s){QZ.started=s.exists();if(tab==='quiz')render()});
 }
 function qBoards(){
@@ -920,17 +1010,10 @@ function quiz(){
  if(QZ.play)return h+qPlay();
  var set=qSet();
  if(!QZ.user){
-  var su=QZ.mode==='signup';
-  h+='<div class="kcard"><div class="kseg" role="tablist"><button role="tab" aria-selected="'+(!su)+'" data-act="qmode" data-m="login">Se connecter</button><button role="tab" aria-selected="'+su+'" data-act="qmode" data-m="signup">Créer un compte</button></div>'+
-   '<label class="lbl">Nom d’utilisateur<input id="qz-u" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20" placeholder="ex. georges.k"></label>'+
-   '<label class="lbl">Mot de passe<input id="qz-p" type="password" autocomplete="'+(su?'new-password':'current-password')+'" placeholder="6 caractères minimum"></label>'+
-   (su?'<label class="lbl">Ta patrouille<select id="qz-pt"><option value="">Choisis…</option>'+S.patrols.map(function(p){return '<option value="'+p.id+'">'+esc(p.name)+'</option>'}).join('')+'<option value="x">Maîtrise / autre</option></select></label>':'')+
-   '<button class="kbtn" data-act="'+(su?'qsignup':'qlogin')+'"'+(QZ.busy?' disabled':'')+'>'+(QZ.busy?'Patiente…':su?'Créer mon compte':'Se connecter')+'</button>'+
-   (QZ.msg?'<p class="kerr">'+esc(QZ.msg)+'</p>':'')+
-   (su?'<span class="meta">Retiens bien ton mot de passe : tu en auras besoin chaque fois que tu te connectes sur un nouveau téléphone.</span>':'')+'</div>';
+  h+='<div class="kcard kc"><b>Connecte-toi pour jouer</b><span>Utilise le compte que la maîtrise t’a donné.</span><button class="kbtn kgo" data-nav="login">Se connecter</button></div>';
  }else{
   h+='<div class="khello"><span>Salut <b>'+esc(QZ.name)+'</b> 👋</span><button class="klink" data-act="qlogout">Se déconnecter</button></div>';
-  if(QZ.admin)h+=qAdmin();
+  if(QZ.admin)h+=accMakeBox()+qAdmin();
   else if(QZ.ok===null)h+='<div class="kload"><i></i><i></i><i></i><i></i></div>';
   else if(!QZ.ok&&!QZ.admin)h+='<div class="kcard kc"><b>⏳ Compte en attente d’approbation</b><span>La maîtrise doit approuver ton compte avant que tu puisses jouer. Reviens un peu plus tard !</span><button class="kbtn" data-act="qcheck">Vérifier</button></div>';
   else if(!set)h+='<div class="kcard kc"><b>Pas de quiz cette semaine.</b><span>Reviens lundi pour le prochain !</span></div>';
@@ -975,7 +1058,7 @@ function qClick(b){
  if(a==='qretry'){QZ.err='';QZ.ready=false;render();return true}
  if(a==='qmode'){QZ.mode=b.dataset.m;QZ.msg='';render();return true}
  if(a==='qlb'){QZ.lb=b.dataset.m;render();return true}
- if(a==='qlogout'){firebase.auth().signOut();QZ.done=null;return true}
+ if(a==='qlogout'){QZ.done=null;accLogout();return true}
  if(a==='qlogin'||a==='qsignup'){
   var raw=val('qz-u'),u=qUname(raw),pw=(document.getElementById('qz-p')||{}).value||'',pt=val('qz-pt');
   if(u.length<3){QZ.msg='Choisis un nom d’utilisateur d’au moins 3 lettres (lettres, chiffres, point).';render();return true}
@@ -1083,12 +1166,14 @@ function ptsSave(retry){
 function ptsTop(){
  if(!CP_ON||editing)return '';
  if(pts.ok)return '';
- if(!pts.open)return '<button class="cpbtn" data-act="ptsopen" style="margin-top:12px"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Modifier les points</b><span>Réservé aux chefs</span></span><span class="evgo" aria-hidden="true">›</span></button>';
+ if(!(ACCK&&ACCK.scope==='chef'))return '';
+ if(!pts.open)return '<button class="cpbtn" data-act="ptsacc" style="margin-top:12px"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Modifier les points</b><span>Réservé aux chefs</span></span><span class="evgo" aria-hidden="true">›</span></button>';
  return '<div class="cpcard"><p class="cplead">Entre le mot de passe pour modifier les points.</p><div class="fields"><input id="pts-pw" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Mot de passe" aria-label="Mot de passe"><button class="btn" data-act="ptsunlock"'+(pts.busy?' disabled':'')+'>'+(pts.busy?'Vérification…':'Ouvrir')+'</button></div>'+(pts.err?'<p class="cperr">'+esc(pts.err)+'</p>':'')+'</div>';
 }
 function ptsBar(){return pts.ok&&!editing?'<div class="cpsave"><span class="msg'+(pts.err?' cperr':'')+'" role="status">'+esc(pts.err||pts.msg||(pts.dirty?'Modifications non enregistrées':'Tout est enregistré'))+'</span><button class="btn" data-act="ptssave"'+(pts.dirty&&!pts.busy?'':' disabled')+'>'+(pts.busy?'Enregistrement…':'Enregistrer')+'</button></div>':''}
 function ptsClick(b){
  var a=b.dataset.act;
+ if(a==='ptsacc'){if(ACCK&&ACCK.scope==='chef'){pts.token=ACCK.token;ptsLoad()}return true}
  if(a==='ptsopen'){pts.open=true;pts.err='';render();var i=document.getElementById('pts-pw');if(i)i.focus();return true}
  if(a==='ptsunlock'){var pw=val('pts-pw').toLowerCase().replace(/[\s‐-―−]+/g,function(x){return /\s/.test(x)?'':'-'});if(!pw)return true;pts.busy=true;pts.err='';render();
   unlock(pw,'pts').then(function(x){if(!x.token)throw 'notok';if(x.scope!=='pts'&&x.scope!=='chef')throw 'bad';pts.token=x.token;pts.busy=false;ptsLoad()})
@@ -1103,7 +1188,7 @@ function profile(){
  var pres=M.filter(function(m){return m.present.indexOf(s.id)>=0}).length;
  var roleTxt=s.role==='CP'?'Chef de patrouille':s.role==='SP'?'Second de patrouille':'Scout';
  var h='<div class="profile" role="dialog" aria-modal="true" aria-label="Fiche de '+esc(s.name)+'"><div class="pwrap">'+
-  '<div class="prow">'+'<button class="back" data-act="closeprofile"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+(CP_ON?'<button class="pdfbtn" data-pdf="'+s.id+'">'+DLICON+'<span>Exporter en PDF</span></button>':'')+'</div>'+
+  '<div class="prow">'+'<button class="back" data-act="closeprofile"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+(CP_ON?'<button class="pdfbtn" data-pdf="'+s.id+'">'+DLICON+'<span>Exporter en PDF</span></button>':'')+'</div>'+(ACC&&ACC.sid===s.id?'<div class="mine"><span>C’est ton profil 👋</span>'+(ACCK?'<button class="pdfbtn" data-nav="progress/cp-'+s.patrol+'">Espace CP/SP</button>':'')+'<button class="pdfbtn" data-act="acclogout">Se déconnecter</button></div>':'')+
   '<div class="phero" style="--pc:'+col(p)+'">'+avatar(s,'pav')+'<div class="pid"><div class="ptag">'+esc(p?p.name:'')+' · '+roleTxt+'</div><h2 class="pname2">'+esc(s.name)+'</h2></div></div>'+
   '<div class="stats"><div class="stat"><b>'+esc(S.stages[s.stage]||'')+'</b><span>Étape</span></div><div class="stat"><b class="big">'+(s.badges||0)+'</b><span>Badges</span></div><div class="stat"><b class="big">'+(M.length?Math.round(pres/M.length*100)+'%':'–')+'</b><span>Présence'+(M.length?' ('+pres+'/'+M.length+')':'')+'</span></div></div>'+
   (M.length?(function(){var k=streakOf(s);return k?'<div class="streak"><span class="sn">🔥 '+k+'</span><span class="st">Série de présence<small>'+k+' réunion'+(k>1?'s':'')+' d’affilée</small></span></div>':'<div class="streak off"><span class="sn">0</span><span class="st">Série de présence<small>Viens à la prochaine réunion pour la lancer</small></span></div>'})():'')+
@@ -1167,7 +1252,7 @@ function render(){
  var app=document.getElementById('app');
  var keep=editing;
  try{document.body.classList.toggle('kahoot',tab==='quiz')}catch(e){}
- var body=header()+(tab==='home'||(tab==='progress'&&(openGroup||openPts))?'':backHome())+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():tab==='quiz'?quiz():events())+(full?settings():'');
+ var body=header()+(tab==='home'||(tab==='progress'&&(openGroup||openPts))?'':backHome())+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():tab==='quiz'?quiz():tab==='login'?loginPage():tab==='me'?mePage():events())+(full?settings():'');
  editing=keep;
  if(openScout) body+=profile();
  if(openEvent) body+=eventPage();
@@ -1183,6 +1268,7 @@ document.addEventListener('click',function(ev){
  var b=ev.target.closest('button');
  if(b&&cpClick(b))return;
  if(b&&ptsClick(b))return;
+ if(b&&accClick(b))return;
  if(b&&qClick(b))return;
  if(!b){var pt=ev.target.closest('[data-ptab]');if(pt&&!ev.target.closest('input,select,textarea')){go('progress/pts-'+pt.dataset.ptab);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return}
   var evl=ev.target.closest('[data-event]');if(evl){go(tab+'/e-'+evl.dataset.event);var pr=document.querySelector('.profile');if(pr)pr.scrollTop=0}return}
@@ -1266,6 +1352,7 @@ setInterval(function(){if(!editing&&!openCP&&!openScout&&(tab==='home'||tab==='e
 loadPublicData();
 presence();
 qBonus();
+if(CP_ON&&/github\.io$|localhost/.test(location.hostname))qInit();
 if(tab==='progress')setTimeout(leaderRun,400);
 if(window.claude&&window.claude.use){
  window.claude.use('assets').then(function(ns){assetsNs=ns}).catch(function(){});
@@ -1280,7 +1367,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="a36d0614c1ba">
-<script>(function(){var B="a36d0614c1ba";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="98135104d216">
+<script>(function(){var B="98135104d216";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

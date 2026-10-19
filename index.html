@@ -585,11 +585,6 @@ body.kahoot .acct{background:#fff;color:#46178f}body.kahoot .acct.me{background:
 .pinfo .lbl:first-child{grid-column:1/-1}
 
 
-
-/* Commissaire : lecture seule */
-body.viewonly .cpsave,body.viewonly .tbuy,body.viewonly [data-act="cpall"],body.viewonly [data-act="cpdelmeet"],body.viewonly [data-act="cpadd"],body.viewonly #cp-new,body.viewonly [data-cpdel],body.viewonly .ostep,body.viewonly [data-act="qstart"],body.viewonly .ptsbar{display:none!important}
-body.viewonly [data-cpbadge],body.viewonly [data-cpinfo],body.viewonly [data-cpatt],body.viewonly [data-cpstage],body.viewonly [data-cprole],body.viewonly .bitem,body.viewonly #app input:not(#cp-date):not(#cp-re):not([data-cpq]),body.viewonly #app select,body.viewonly #app textarea{pointer-events:none}body.viewonly #app input:not(#cp-date):not(#cp-re):not([data-cpq]){background:transparent;border-color:transparent}
-.qvq{display:grid;gap:4px;padding:10px 0;border-top:1px solid #eee;text-align:left}.qvq b{font-size:14px}.qvo{font-size:13px;color:#666;padding:2px 8px;border-radius:6px}.qvo.ok{background:#e3f4dc;color:#1d6b0a;font-weight:700}
 </style>
 </head>
 <body>
@@ -634,7 +629,7 @@ function qBonus(){
    var c={};L.forEach(function(x){c[x.p]=(c[x.p]||0)+1});
    var d=new Date(w+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+6);var end=d.toISOString().slice(0,10);
    Object.keys(c).forEach(function(pid){out.push({id:'quiz-'+pid+'-'+w,patrol:pid,cat:'jeux',pts:5*c[pid],reason:'Quiz Prêt : '+c[pid]+' scout'+(c[pid]>1?'s':'')+' dans le top 10 (semaine du '+longDate(w)+')',date:end,auto:true})})});
-  QLOG=out;if(out.length&&!QZ.play)render();
+  QLOG=out;if(out.length)render();
  }).catch(function(){});
 }
 function totals(){var t={};S.patrols.forEach(function(p){t[p.id]=0});allLog().forEach(function(l){if(l.patrol in t)t[l.patrol]+=Number(l.pts)||0});return t}
@@ -658,9 +653,7 @@ function heroTop(){
   '</header>'}
 /* ===== Commandes Coop ===== */
 var COOP=null,ORD={my:null,done:{},dirty:false,busy:false,msg:'',open:{},size:{},all:null,alldone:null,exp:{},tbusy:false,tmsg:''};
-function isView(){return !!ACC&&ACC.role==='Commissaire'}
-function viewBlocked(b){var d=b.dataset||{};return /^(cpall|cpdelmeet|cpadd|cpsave|cpunlock|osave|ptssave|ptsopen|ptsunlock|ptsacc|qstart|qok|qno|acncreate)$/.test(d.act||'')||d.cpatt!=null||d.cpstage!=null||b.hasAttribute('data-cprole')||d.cpdel!=null||d.oq!=null||d.tbuy!=null}
-function isChef(){return !!ACC&&(ACC.role==='Maîtrise'||ACC.u===QZ_ADMIN||isView())}
+function isChef(){return !!ACC&&(ACC.role==='Maîtrise'||ACC.u===QZ_ADMIN)}
 function coopLoad(){if(COOP)return Promise.resolve(COOP);return fetch('data/coop.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){COOP=j;return j})}
 function coopItem(id){var f=null;(COOP?COOP.cats:[]).forEach(function(c){c.items.forEach(function(i){if(i.id===id)f=i})});return f}
 function okey(id,sz){return sz?id+'|'+sz:id}
@@ -679,7 +672,6 @@ function ordInit(){
  .catch(function(){ORD.busy=false;ORD.my={};ORD.msg='Impossible de charger. Vérifie ta connexion.';render()});
 }
 function orderPage(){
- if(isView())return '<h2>Ma commande</h2><div class="cpcard"><p class="cplead">Les commandes sont faites par les scouts. Tu peux tout voir dans <b>Commande troupe</b>.</p><button class="btn" data-nav="orders">Commande troupe</button></div>';
  if(!ACC)return '<h2>Ma commande</h2><div class="cpcard"><p class="cplead">Connecte-toi pour faire ta commande.</p><button class="btn" data-nav="login">Se connecter</button></div>';
  ordInit();
  var h='<h2>Ma commande</h2><div class="meta" style="margin:-4px 0 12px">Choisis ce que tu veux de la Coop des Scouts du Liban. La maîtrise s’occupe de l’acheter.</div>';
@@ -753,9 +745,10 @@ function ordClick(b){
 }
 function ordChange(t){if(t.dataset&&t.dataset.osize){ORD.size[t.dataset.osize]=t.value;render();return true}return false}
 /* ===== Installations 3D (rondins, brelages) ===== */
-var INST={data:{},loaded:false,busy:false,msg:''};
+var INST={data:{},loaded:false,busy:false,msg:'',draft:null};
 var NODET=[['carre','Brelage carré',4],['x','Brelage en X',4],['rond','Brelage rond',3],['cabestan','Nœud de cabestan',1]];
-function instCan(pid){return !!ACCK&&(ACCK.scope==='chef'||ACCK.scope===pid)}
+function instSee(pid){return !!ACCK&&(ACCK.scope==='chef'||ACCK.scope===pid)}
+function instCan(pid){return pid==='draft'||instSee(pid)}
 function instLoad(){
  if(INST.busy)return;INST.busy=true;
  Promise.all(S.patrols.map(function(p){return fetch('data/inst-'+p.id+'.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():{items:[]}}).catch(function(){return {items:[]}})}))
@@ -766,11 +759,12 @@ function instPage(){
  if(!INST.loaded)instLoad();
  var h='<h2>Installations</h2><div class="meta" style="margin:-4px 0 12px">Les installations de camp de chaque patrouille, en 3D : rondins, brelages et mesures.</div>';
  if(!INST.loaded)return h+'<p class="meta">Chargement…</p>';
- h+=S.patrols.map(function(p){var L=(INST.data[p.id]||{items:[]}).items;
+ h+='<div class="ocat"><div class="ocath static"><span class="hpl" style="background:#6e6e73">✎</span><b>Brouillon</b></div><div class="olist"><span class="meta" style="padding:0 6px">Pour tout le monde : dessine librement pour t’entraîner. Le brouillon n’est pas enregistré.</span><button class="btn ghost" data-iopen="draft|">'+(INST.draft&&INST.draft.logs.length?'Continuer le brouillon':'Ouvrir le brouillon')+'</button></div></div>';
+ h+=S.patrols.filter(function(p){return instSee(p.id)}).map(function(p){var L=(INST.data[p.id]||{items:[]}).items;
   return '<div class="ocat"><div class="ocath static"><span class="hpl" style="background:'+col(p)+'">'+esc(p.name.charAt(0))+'</span><b>'+esc(p.name)+'</b></div><div class="olist">'+
    (L.length?L.map(function(it){var len=0;(it.logs||[]).forEach(function(l){len+=instLen(l)});return '<button class="ilink" data-iopen="'+p.id+'|'+it.id+'"><b>'+esc(it.name||'Sans nom')+'</b><span class="meta">'+(it.logs||[]).length+' rondins · '+(it.nodes||[]).length+' brelages · '+fmtM(len)+' de bois</span><span class="evgo">›</span></button>'}).join(''):'<span class="meta" style="padding:4px 6px">Pas encore d’installation.</span>')+
    (instCan(p.id)?'<button class="btn ghost" data-inew="'+p.id+'">+ Nouvelle installation</button>':'')+'</div></div>'}).join('');
- if(!ACCK)h+='<p class="meta">Les CP, les SP et la maîtrise peuvent dessiner les installations de leur patrouille après s’être connectés.</p>';
+ if(!S.patrols.some(function(p){return instSee(p.id)}))h+='<p class="meta">Les installations des patrouilles sont visibles seulement par leur CP, leur SP et la maîtrise.</p>';
  return h;
 }
 function instLen(l){var dx=l.b[0]-l.a[0],dy=l.b[1]-l.a[1],dz=l.b[2]-l.a[2];return Math.sqrt(dx*dx+dy*dy+dz*dz)}
@@ -780,10 +774,11 @@ function three(){if(T3P)return T3P;function ld(s){return new Promise(function(ok
 /* --- Éditeur --- */
 var ED=null;window.__ed=function(){return ED};
 function instOpen(pid,id){
- var src=id?((INST.data[pid]||{items:[]}).items.filter(function(x){return x.id===id})[0]):null;
- var it=src?JSON.parse(JSON.stringify(src)):{id:'i'+Date.now().toString(36),name:'',logs:[],nodes:[]};
+ if(pid!=='draft'&&!instSee(pid))return;
+ var src=pid==='draft'?INST.draft:id?((INST.data[pid]||{items:[]}).items.filter(function(x){return x.id===id})[0]):null;
+ var it=src?JSON.parse(JSON.stringify(src)):{id:'i'+Date.now().toString(36),name:pid==='draft'?'Brouillon':'',logs:[],nodes:[]};
  var can=instCan(pid);
- var ov=document.createElement('div');ov.className='ied';ov.innerHTML='<div class="iedtop"><button class="iedx" data-e="close">✕</button>'+(can?'<input class="iedname" placeholder="Nom (ex. Table de patrouille)" value="'+esc(it.name||'')+'">':'<b class="iedname">'+esc(it.name||'Installation')+'</b>')+'<button class="iedx" data-e="pdf">PDF</button>'+(can?'<button class="iedsave" data-e="save">Enregistrer</button>':'')+'</div><div class="iedcv"><div class="iedload">Chargement de la 3D…</div></div><div class="iedinfo"></div>'+
+ var ov=document.createElement('div');ov.className='ied';ov.innerHTML='<div class="iedtop"><button class="iedx" data-e="close">✕</button>'+(can?'<input class="iedname" placeholder="Nom (ex. Table de patrouille)" value="'+esc(it.name||'')+'">':'<b class="iedname">'+esc(it.name||'Installation')+'</b>')+'<button class="iedx" data-e="pdf">PDF</button>'+(can&&pid!=='draft'?'<button class="iedsave" data-e="save">Enregistrer</button>':'')+'</div><div class="iedcv"><div class="iedload">Chargement de la 3D…</div></div><div class="iedinfo"></div>'+
   (can?'<div class="iedbar"><button data-m="pole" class="on">Poteau</button><button data-m="log">Rondin</button><button data-m="node">Brelage</button><button data-m="sel">Choisir</button><button data-e="undo">↶</button></div>':'')+'<button class="iedmat" data-e="mat">Matériel & mesures</button><div class="iedsheet" hidden></div>';
  document.body.appendChild(ov);document.body.style.overflow='hidden';
  ED={pid:pid,it:it,can:can,ov:ov,mode:can?'pole':'sel',poleL:2.5,depth:0.4,first:null,sel:null,hist:[],dirty:false,saving:false};
@@ -892,7 +887,7 @@ function edClick(e){
  e.stopPropagation();var b=e.target.closest('button');if(!b||!ED)return;var a=b.dataset.e,m=b.dataset.m;
  if(m){ED.mode=m;ED.first=null;ED.second=null;ED.sel=null;edBuild();edInfo();return}
  var sel=ED.sel,L=sel&&sel.t==='log'?ED.it.logs.filter(function(x){return x.id===sel.id})[0]:null;
- if(a==='close'){if(ED.dirty&&ED.can&&!confirmClose())return;edClose();return}
+ if(a==='close'){if(ED.pid==='draft'){INST.draft=JSON.parse(JSON.stringify(ED.it));edClose();return}if(ED.dirty&&ED.can&&!confirmClose())return;edClose();return}
  if(a==='mat'){var sh=ED.ov.querySelector('.iedsheet');sh.hidden=!sh.hidden;if(!sh.hidden)sh.innerHTML=edMat();return}
  if(a==='undo'){var p=ED.hist.pop();if(p){var o=JSON.parse(p);ED.it.logs=o.logs;ED.it.nodes=o.nodes;ED.sel=null;ED.first=null;ED.dirty=true;edBuild();edInfo()}return}
  if(a==='pl-'||a==='pl+'){ED.poleL=Math.max(0.5,Math.min(8,Math.round((ED.poleL+(a==='pl+'?0.25:-0.25))*100)/100));edInfo();return}
@@ -913,7 +908,7 @@ function edClick(e){
 function confirmClose(){var b=ED.ov.querySelector('[data-e="close"]');if(b.dataset.sure)return true;b.dataset.sure=1;b.textContent='Fermer sans enregistrer ?';setTimeout(function(){if(b){delete b.dataset.sure;b.textContent='✕'}},3000);return false}
 function edClose(){if(!ED)return;try{ED.R&&ED.R.dispose()}catch(e){}window.removeEventListener('resize',edResize);ED.ov.remove();document.body.style.overflow='';ED=null;render()}
 function edSave(){
- if(!ED.can||ED.saving)return;var btn=ED.ov.querySelector('.iedsave');if(!ED.it.name.trim()){ED.msg='Donne un nom à l’installation.';edInfo();ED.ov.querySelector('.iedname').focus();return}
+ if(!ED.can||ED.saving||ED.pid==='draft')return;var btn=ED.ov.querySelector('.iedsave');if(!ED.it.name.trim()){ED.msg='Donne un nom à l’installation.';edInfo();ED.ov.querySelector('.iedname').focus();return}
  ED.saving=true;btn.textContent='…';var pid=ED.pid,R4=function(x){return x.map(function(v){return Math.round(v*1000)/1000})};
  var clean={id:ED.it.id,name:ED.it.name.trim().slice(0,40),logs:ED.it.logs.map(function(l){return {id:l.id,a:R4(l.a),b:R4(l.b)}}),nodes:ED.it.nodes.map(function(n){return {id:n.id,p:R4(n.p),logs:n.logs,type:n.type}}),by:ACC?ACC.name:'',updated:new Date().toISOString()};
  var url='https://api.github.com/repos/'+REPO+'/contents/data/inst-'+pid+'.json',hd={'Accept':'application/vnd.github+json','Authorization':'Bearer '+ACCK.token,'Content-Type':'application/json'};
@@ -1016,9 +1011,9 @@ var IINST='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="c
 function menuBtn(){return '<button class="hamb" data-act="menu" aria-label="Menu" aria-expanded="'+MENU+'"><span></span><span></span><span></span></button>'}
 function drawer(){if(!MENU)return '';
  return '<div class="drw-bg" data-act="menuclose"></div><nav class="drw" aria-label="Menu"><div class="drwh">'+(ACC?'<button class="drwme" data-act="acct">'+accAv('drwi')+'<span><b>'+esc(ACC.name)+'</b><span>Voir mon profil</span></span></button>':'<button class="drwme" data-menunav="login"><span class="drwi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span><b>Se connecter</b><span>Avec ton compte</span></span></button>')+'<button class="drwx" data-act="menuclose" aria-label="Fermer">×</button></div>'+
-  NAVL.slice(0,2).concat([['inst',IINST,'Installations']],NAVL.slice(2)).concat(ACC&&ACC.u!==QZ_ADMIN&&!isView()?[['order',ICART,'Ma commande']]:[]).concat(isChef()?[['orders',IBOX,'Commande troupe']]:[]).map(function(x){return '<button class="drwl'+(tab===x[0]?' on':'')+'" data-menunav="'+x[0]+'"><span class="drwi">'+x[1]+'</span>'+esc(x[2])+'</button>'}).join('')+
+  NAVL.slice(0,2).concat([['inst',IINST,'Installations']],NAVL.slice(2)).concat(ACC&&ACC.u!==QZ_ADMIN?[['order',ICART,'Ma commande']]:[]).concat(isChef()?[['orders',IBOX,'Commande troupe']]:[]).map(function(x){return '<button class="drwl'+(tab===x[0]?' on':'')+'" data-menunav="'+x[0]+'"><span class="drwi">'+x[1]+'</span>'+esc(x[2])+'</button>'}).join('')+
   '</nav>'}
-function header(){return '<div class="acbar">'+menuBtn()+(CP_ON?acctBtn():'<span style="flex:1"></span>')+'</div>'+drawer()+(tab==='quiz'?'':heroTop())+
+function header(){return '<div class="acbar">'+menuBtn()+(CP_ON?acctBtn():'<span style="flex:1"></span>')+'</div>'+drawer()+heroTop()+
  '<div class="tabbar"></div>'+
  (canEdit&&draftAvail?'<div class="note draftbar"><span>Tu as des modifications non publiées.</span><span><button class="btn" data-act="restore">Récupérer</button> <button class="btn ghost" data-act="nodraft">Ignorer</button></span></div>':'')+
  (S.example?'<div class="note">Les points affichés sont des exemples. '+(canEdit?'Appuie sur <b>Modifier</b> pour les remplacer par les vrais.':'Les chefs ajouteront bientôt les vrais.')+'</div>':'')}
@@ -1044,7 +1039,7 @@ function showSlide(i){
  var c=document.getElementById('show-cap'); if(c) c.textContent=S.photos[slide].caption||'';
 }
 var reduce=false;try{reduce=matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}
-if(!reduce) setInterval(function(){if(!document.hidden&&tab!=='quiz'&&S.photos.length>1){showSlide(nextSlide());setTimeout(function(){preload(peekNext())},1200)}},5000);
+if(!reduce) setInterval(function(){if(!document.hidden&&S.photos.length>1){showSlide(nextSlide());setTimeout(function(){preload(peekNext())},1200)}},5000);
 setTimeout(function(){if(S.photos.length>1)preload(peekNext())},1500);
 function shrink(f,max,q){return new Promise(function(res){
  var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){
@@ -1215,14 +1210,14 @@ function acnUser(n){return String(n||'').normalize('NFD').replace(/[̀-ͯ]/g,'')
 function acnBox(){
  if(!ACN.pw)ACN.pw=acnPw();
  var HAS={};Object.keys(QZ.users||{}).forEach(function(k){if(QZ.users[k].sid)HAS[QZ.users[k].sid]=1});
- var opts='<option value="">Choisis…</option>'+S.patrols.map(function(p){var L=S.scouts.filter(function(s){return s.patrol===p.id&&!HAS[s.id]});return L.length?'<optgroup label="'+esc(p.name)+' (sans compte)">'+L.map(function(s){return '<option value="'+s.id+'"'+(ACN.sid===s.id?' selected':'')+'>'+esc(s.name)+(s.role?' ('+s.role+')':'')+'</option>'}).join('')+'</optgroup>':''}).join('')+'<option value="new"'+(ACN.sid==='new'?' selected':'')+'>➕ Nouveau membre (pas encore dans une patrouille)</option><option value="staff"'+(ACN.sid==='staff'?' selected':'')+'>Maîtrise / autre</option><option value="comm"'+(ACN.sid==='comm'?' selected':'')+'>Commissaire (lecture seule)</option>';
+ var opts='<option value="">Choisis…</option>'+S.patrols.map(function(p){var L=S.scouts.filter(function(s){return s.patrol===p.id&&!HAS[s.id]});return L.length?'<optgroup label="'+esc(p.name)+' (sans compte)">'+L.map(function(s){return '<option value="'+s.id+'"'+(ACN.sid===s.id?' selected':'')+'>'+esc(s.name)+(s.role?' ('+s.role+')':'')+'</option>'}).join('')+'</optgroup>':''}).join('')+'<option value="new"'+(ACN.sid==='new'?' selected':'')+'>➕ Nouveau membre (pas encore dans une patrouille)</option><option value="staff"'+(ACN.sid==='staff'?' selected':'')+'>Maîtrise / autre</option>';
  var h='<div class="kcard kadm"><b>➕ Créer un compte</b><span class="kwarn">Seulement pour les nouveaux membres et ceux qui n’ont pas encore de compte.</span>'+
   '<label class="lbl">Pour qui ?<select id="acn-s" data-acn="s">'+opts+'</select></label>'+
-  (ACN.sid==='staff'||ACN.sid==='new'||ACN.sid==='comm'?'<label class="lbl">Prénom et nom<input id="acn-n" data-acn="n" value="'+esc(ACN.name)+'" maxlength="20"></label>':'')+
+  (ACN.sid==='staff'||ACN.sid==='new'?'<label class="lbl">Prénom et nom<input id="acn-n" data-acn="n" value="'+esc(ACN.name)+'" maxlength="20"></label>':'')+
   (ACN.sid==='new'?'<label class="lbl">Patrouille<select id="acn-pt" data-acn="pt"><option value="">Choisis…</option>'+S.patrols.map(function(p){return '<option value="'+p.id+'"'+(ACN.patrol===p.id?' selected':'')+'>'+esc(p.name)+'</option>'}).join('')+'</select></label><label class="lbl">Rôle<select id="acn-r" data-acn="r">'+[['','Scout'],['CP','CP'],['SP','SP']].map(function(x){return '<option value="'+x[0]+'"'+(ACN.role===x[0]?' selected':'')+'>'+x[1]+'</option>'}).join('')+'</select></label>':'')+
   (ACN.sid?'<label class="lbl">Nom d’utilisateur<input id="acn-u" value="'+esc(ACN.u)+'" autocapitalize="none" autocorrect="off" spellcheck="false"></label>'+
    '<label class="lbl">Mot de passe<input id="acn-p" value="'+esc(ACN.pw)+'" autocapitalize="none" autocorrect="off" spellcheck="false"></label>'+
-   '<span class="kwarn">'+(ACN.role==='Commissaire'?'Commissaire : peut tout voir (Espace CP/SP, commande troupe, quiz, points), mais ne peut rien modifier.':ACN.role==='Maîtrise'?'Maîtrise : accès à tout l’Espace CP/SP et aux points.':ACN.role==='CP'||ACN.role==='SP'?ACN.role+' : accès à l’Espace CP/SP de sa patrouille.':'Scout : peut jouer au quiz et voir son profil.')+'</span>'+
+   '<span class="kwarn">'+(ACN.role==='Maîtrise'?'Maîtrise : accès à tout l’Espace CP/SP et aux points.':ACN.role==='CP'||ACN.role==='SP'?ACN.role+' : accès à l’Espace CP/SP de sa patrouille.':'Scout : peut jouer au quiz et voir son profil.')+'</span>'+
    '<button class="kbtn kgo" data-act="acncreate"'+(ACN.busy?' disabled':'')+'>'+(ACN.busy?'Création…':'Créer le compte')+'</button>':'')+
   (ACN.msg?'<p class="kerr">'+esc(ACN.msg)+'</p>':'');
  if(ACN.done)h+='<div class="acdone"><b>✓ Compte créé pour '+esc(ACN.done.name)+'</b><span>Nom d’utilisateur : <code>'+esc(ACN.done.u)+'</code></span><span>Mot de passe : <code>'+esc(ACN.done.pw)+'</code></span><a class="kbtn" style="background:#25d366;text-align:center;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent('Ton compte pour le site de la troupe 👉 https://troupeimpeesa.github.io\nNom d’utilisateur : '+ACN.done.u+'\nMot de passe : '+ACN.done.pw)+'">Envoyer sur WhatsApp</a></div>';
@@ -1232,7 +1227,6 @@ function acnChange(t){
  if(!t.dataset||!t.dataset.acn)return false;
  if(t.dataset.acn==='s'){var v=t.value;ACN.sid=v;ACN.done=null;ACN.msg='';ACN.pw=acnPw();
   if(v==='staff'){ACN.name='';ACN.u='';ACN.role='Maîtrise';ACN.patrol=''}
-  else if(v==='comm'){ACN.name='';ACN.u='';ACN.role='Commissaire';ACN.patrol=''}
   else if(v==='new'){ACN.name='';ACN.u='';ACN.role='';ACN.patrol=''}
   else{var s=S.scouts.filter(function(x){return x.id===v})[0];if(s){ACN.name=s.name;ACN.u=acnUser(s.name);ACN.role=s.role||'';ACN.patrol=s.patrol}}
   render();return true}
@@ -1250,17 +1244,17 @@ function acnEnc(pw,obj){
   .then(function(ct){return {salt:b(salt),iv:b(iv),ct:b(ct),it:IT}});
 }
 function acnKeys(u,pw,role,patrol){
- if(!(role==='Maîtrise'||role==='CP'||role==='SP'||role==='Commissaire'))return Promise.resolve();
+ if(!(role==='Maîtrise'||role==='CP'||role==='SP'))return Promise.resolve();
  if(!ACCK||ACCK.scope!=='chef'||!ACCK.token)return Promise.reject('nokey');
- var view=role==='Commissaire',dk=role==='Maîtrise'||view?ACCK.dk:{},scope=view?'view':role==='Maîtrise'?'chef':patrol;if(role!=='Maîtrise'&&!view)dk[patrol]=ACCK.dk[patrol];
+ var dk=role==='Maîtrise'?ACCK.dk:{},scope=role==='Maîtrise'?'chef':patrol;if(role!=='Maîtrise')dk[patrol]=ACCK.dk[patrol];
  function hdr(){return {'Accept':'application/vnd.github+json','Authorization':'Bearer '+ACCK.token,'Content-Type':'application/json'}}
  var url='https://api.github.com/repos/'+REPO+'/contents/data/keys.json';
- return Promise.all([fetch(url+'?ref=main',{headers:hdr(),cache:'no-store'}).then(function(r){if(!r.ok)throw r.status;return r.json()}),acnEnc(pw,{token:view?null:ACCK.token,dk:dk,scope:scope})]).then(function(r){
+ return Promise.all([fetch(url+'?ref=main',{headers:hdr(),cache:'no-store'}).then(function(r){if(!r.ok)throw r.status;return r.json()}),acnEnc(pw,{token:ACCK.token,dk:dk,scope:scope})]).then(function(r){
   var K=JSON.parse(b64d(r[0].content));K['u:'+u]=r[1];
   return fetch(url,{method:'PUT',headers:hdr(),body:JSON.stringify({message:'Compte '+u+' : accès Espace CP/SP',content:b64e(JSON.stringify(K,null,1)),sha:r[0].sha,branch:'main'})}).then(function(x){if(!x.ok)throw x.status})});
 }
 function acnMember(name){
- if(ACN.sid!=='new')return Promise.resolve(ACN.sid==='staff'?'staff:'+name:ACN.sid==='comm'?'comm:'+name:ACN.sid);
+ if(ACN.sid!=='new')return Promise.resolve(ACN.sid==='staff'?'staff:'+name:ACN.sid);
  if(!ACCK||ACCK.scope!=='chef'||!ACCK.token)return Promise.reject('nokey');
  var pid=ACN.patrol,url='https://api.github.com/repos/'+REPO+'/contents/data/'+pid+'.json';
  function hdr(){return {'Accept':'application/vnd.github+json','Authorization':'Bearer '+ACCK.token,'Content-Type':'application/json'}}
@@ -1270,7 +1264,7 @@ function acnMember(name){
   return fetch(url,{method:'PUT',headers:hdr(),body:JSON.stringify({message:'Nouveau membre : '+name,content:b64e(JSON.stringify(d,null,1)),sha:j.sha,branch:'main'})}).then(function(x){if(!x.ok)throw x.status;applyPatrol(d);return id})});
 }
 function acnCreate(){
- var u=acnUser(val('acn-u')),pw=val('acn-p'),name=ACN.sid==='staff'||ACN.sid==='new'||ACN.sid==='comm'?val('acn-n'):ACN.name;
+ var u=acnUser(val('acn-u')),pw=val('acn-p'),name=ACN.sid==='staff'||ACN.sid==='new'?val('acn-n'):ACN.name;
  if(ACN.sid==='new'&&!ACN.patrol){ACN.msg='Choisis la patrouille.';render();return}
  if(!name){ACN.msg='Écris le prénom et le nom.';render();return}
  if(u.length<3){ACN.msg='Nom d’utilisateur trop court.';render();return}
@@ -1294,7 +1288,7 @@ function mePage(){
  if(!ACC)return loginPage();
  if(ACC.u===QZ_ADMIN){qInit();return adminPage()}
  var p=pat(ACC.patrol),staff=ACC.sid.indexOf('staff:')===0||ACC.role==='Maîtrise',st=staff?(S.staff||[]).filter(function(m){return m.name===ACC.name})[0]:null;
- return '<div class="phero" style="--pc:'+(p?col(p):'var(--navy)')+';margin-top:14px"><span class="pav">'+(st&&st.photo?'<img src="'+st.photo+'" alt="">':esc(accIni(ACC.name)))+'</span><div class="pid"><div class="ptag">'+(isView()?'Commissaire · lecture seule':staff?'Maîtrise'+(st?' · '+esc(st.role):''):esc(p?p.name:''))+'</div><h2 class="pname2">'+esc(ACC.name)+'</h2></div></div>'+
+ return '<div class="phero" style="--pc:'+(p?col(p):'var(--navy)')+';margin-top:14px"><span class="pav">'+(st&&st.photo?'<img src="'+st.photo+'" alt="">':esc(accIni(ACC.name)))+'</span><div class="pid"><div class="ptag">'+(staff?'Maîtrise'+(st?' · '+esc(st.role):''):esc(p?p.name:''))+'</div><h2 class="pname2">'+esc(ACC.name)+'</h2></div></div>'+
   '<div class="cplist" style="margin-top:12px">'+
   '<button class="tile wide qtile" data-nav="quiz" style="margin-top:4px"><span class="qbig">Quiz <span>Prêt!</span></span></button>'+
   '<button class="btn ghost" data-act="acclogout" style="margin-top:6px">Se déconnecter</button></div>';
@@ -1354,7 +1348,6 @@ function accMakeBox(){
 
 var cp={token:null,dk:{},contacts:{},csha:null,cdirty:false,scope:null,patrol:null,data:null,sha:null,tab:'pres',date:today(),open:null,msg:'',err:'',busy:false,dirty:false,del:null};
 try{sessionStorage.removeItem('ti-cp')}catch(e){}
-setTimeout(accApply,0);
 function cpLock(){if(typeof cp==='undefined'||!cp)return;cp.token=null;cp.scope=null;cp.dk={};cp.data=null;cp.contacts={};cp.dirty=false;cp.cdirty=false;cp.err='';cp.msg='';cp.relock=null;cp.open=null;cp.del=null;cp.tab='pres';accApply()}
 function u8(b){var s=atob(b),a=new Uint8Array(s.length);for(var i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a}
 function b64e(str){return btoa(unescape(encodeURIComponent(str)))}
@@ -1391,7 +1384,7 @@ function unlock(pw,pid){
     .catch(function(){return attempt(i+1)})}
   return attempt(0)})}
 function gh(path,opt){opt=opt||{};opt.headers={'Accept':'application/vnd.github+json'};if(cp.token)opt.headers.Authorization='Bearer '+cp.token;if(opt.body)opt.headers['Content-Type']='application/json';opt.cache='no-store';return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path,opt)}
-function cpAllowed(pid){return !!cp.scope&&(cp.scope==='chef'||cp.scope==='view'||cp.scope===pid)}
+function cpAllowed(pid){return !!cp.scope&&(cp.scope==='chef'||cp.scope===pid)}
 function aesKey(pid,use){return crypto.subtle.importKey('raw',u8(cp.dk[pid]),'AES-GCM',false,[use])}
 function decContacts(pid,j){if(!j||!cp.dk[pid])return Promise.resolve({});return aesKey(pid,'decrypt').then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:u8(j.iv)},k,u8(j.ct))}).then(function(b){return JSON.parse(new TextDecoder().decode(b))}).catch(function(){return {}})}
 function encContacts(pid,obj){var iv=crypto.getRandomValues(new Uint8Array(12));return aesKey(pid,'encrypt').then(function(k){return crypto.subtle.encrypt({name:'AES-GCM',iv:iv},k,new TextEncoder().encode(JSON.stringify(obj)))}).then(function(ct){function b(x){var s='',a=new Uint8Array(x);for(var i=0;i<a.length;i++)s+=String.fromCharCode(a[i]);return btoa(s)}return {iv:b(iv),ct:b(ct)}})}
@@ -1424,12 +1417,12 @@ function lastPres(gp){var t=today(),ids={};S.scouts.forEach(function(x){if(x.pat
  if(!M)return '<div class="lpres"><div class="lpt"><b>Dernière réunion</b><span class="meta">Pas encore de présences</span></div></div>';
  var k=M.present.filter(function(i){return ids[i]}).length,pc=n?Math.round(k/n*100):0;
  return '<div class="lpres" style="--gc:'+col(gp)+'"><div class="lpt"><b>Dernière réunion</b><span class="meta">'+esc(longDate(M.date))+'</span></div><div class="lpn"><b>'+k+'</b><span>/ '+n+' présents</span></div><div class="lpbar"><i style="width:'+pc+'%"></i></div></div>'}
-function cpBtn(gp){var ok=cpAllowed(gp.id)||(ACC&&!ACCK&&(ACC.role==='Maîtrise'||ACC.role==='Commissaire'||((ACC.role==='CP'||ACC.role==='SP')&&ACC.patrol===gp.id)||ACC.u===QZ_ADMIN));return CP_ON?'<button class="cpbtn '+(ok?'cpon':'cpoff')+'" data-act="cpopen"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Espace CP/SP</b><span>'+(ok?'Tu as accès':'Réservé au CP, au SP et à la maîtrise')+'</span></span><span class="evgo" aria-hidden="true">›</span></button>':''}
+function cpBtn(gp){var ok=cpAllowed(gp.id)||(ACC&&!ACCK&&(ACC.role==='Maîtrise'||((ACC.role==='CP'||ACC.role==='SP')&&ACC.patrol===gp.id)||ACC.u===QZ_ADMIN));return CP_ON?'<button class="cpbtn '+(ok?'cpon':'cpoff')+'" data-act="cpopen"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Espace CP/SP</b><span>'+(ok?'Tu as accès':'Réservé au CP, au SP et à la maîtrise')+'</span></span><span class="evgo" aria-hidden="true">›</span></button>':''}
 function cpPage(){
  var p=pat(openCP),h='<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>'+esc(p.name)+'</span></button>';
- h+='<div class="cphead" style="--gc:'+col(p)+'"><span class="tcirc">'+animalOf(p.name)+'</span><div><div class="gname">Espace CP/SP</div><div class="meta">'+esc(p.name)+'</div></div></div>'+(isView()?'<div class="note">👁 Mode lecture : tu peux tout voir, mais rien modifier.</div>':'');
+ h+='<div class="cphead" style="--gc:'+col(p)+'"><span class="tcirc">'+animalOf(p.name)+'</span><div><div class="gname">Espace CP/SP</div><div class="meta">'+esc(p.name)+'</div></div></div>';
  if(!cpAllowed(openCP)){
-  var mayHave=ACC&&!ACCK&&(ACC.role==='Maîtrise'||ACC.role==='Commissaire'||((ACC.role==='CP'||ACC.role==='SP')&&ACC.patrol===openCP)||ACC.u===QZ_ADMIN);
+  var mayHave=ACC&&!ACCK&&(ACC.role==='Maîtrise'||((ACC.role==='CP'||ACC.role==='SP')&&ACC.patrol===openCP)||ACC.u===QZ_ADMIN);
   if(mayHave)return h+'<div class="cpcard"><p class="cplead">Confirme ton mot de passe pour ouvrir l’espace.</p><div class="fields"><input id="cp-re" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Ton mot de passe"><button class="btn" data-act="cpre"'+(cp.busy?' disabled':'')+'>'+(cp.busy?'Vérification…':'Ouvrir')+'</button></div>'+(cp.err?'<p class="cperr">'+esc(cp.err)+'</p>':'')+'</div>';
   return h+'<div class="cpcard"><p class="cplead">'+(ACC?'Réservé au CP et au SP de la patrouille '+esc(p.name)+', et à la maîtrise.':'Connecte-toi avec ton compte de CP ou de SP pour ouvrir l’espace.')+'</p>'+(ACC?'':'<button class="btn" data-nav="login">Se connecter</button>')+'</div>';
  }
@@ -1567,7 +1560,6 @@ function quiz(){
  }else{
   h+='<div class="khello"><span>Salut <b>'+esc(QZ.name)+'</b> 👋</span></div>';
   if(QZ.admin)h+='<div class="kcard kc"><b>Compte de gestion</b><span>Le quiz est pour les scouts. Tes outils sont dans ton espace admin.</span><button class="kbtn" data-nav="me">Espace admin</button></div>';
-  else if(isView())h+=qViewBox(set);
   else if(QZ.ok===null)h+='<div class="kload"><i></i><i></i><i></i><i></i></div>';
   else if(!QZ.ok&&!QZ.admin)h+='<div class="kcard kc"><b>⏳ Compte en attente d’approbation</b><span>La maîtrise doit approuver ton compte avant que tu puisses jouer. Reviens un peu plus tard !</span><button class="kbtn" data-act="qcheck">Vérifier</button></div>';
   else if(!set)h+='<div class="kcard kc"><b>Pas de quiz cette semaine.</b><span>Reviens lundi pour le prochain !</span></div>';
@@ -1587,15 +1579,13 @@ function qPlay(){
  return '<div class="kplay"><div class="ktop"><span class="kn">'+(P.i+1)+' / '+set.qs.length+'</span><span class="ktm" id="qz-left">'+left+'</span><span class="ksc">'+P.s+' pts</span></div><div class="kbar"><i id="qz-bar" style="width:'+(left/QZ_T*100)+'%"></i></div>'+
   '<div class="kqq">'+esc(q.q)+'</div>'+fb+'<div class="kopts">'+q.o.map(function(o,i){var c='';if(P.pick!=null){c=i===ans?' right':' dim';if(i===P.pick&&i!==ans)c=' wrong'}return '<button class="kopt ko'+i+c+'" data-act="qpick" data-i="'+i+'"'+(P.pick!=null?' disabled':'')+'><span class="ksh">'+KSH[i]+'</span><span>'+esc(o)+'</span></button>'}).join('')+'</div></div>';
 }
-function qViewBox(set){if(!set)return '<div class="kcard kc"><b>Pas de quiz cette semaine.</b></div>';return '<div class="kcard"><span class="kwk">Semaine du '+esc(longDate(qWeek()))+' · lecture seule</span><b class="kth">'+esc(set.title||'Quiz de la semaine')+'</b>'+set.qs.map(function(q,i){return '<div class="qvq"><b>'+(i+1)+'. '+esc(q.q)+'</b>'+q.o.map(function(o,k){return '<span class="qvo'+(k===q.a?' ok':'')+'">'+(k===q.a?'✓ ':'')+esc(o)+'</span>'}).join('')+'</div>'}).join('')+'</div>'}
 var QTIMER=null;
-function qDraw(){var el=document.querySelector('.kplay');if(el&&QZ.play&&tab==='quiz')el.outerHTML=qPlay();else render()}
 function qTick(){clearInterval(QTIMER);QTIMER=setInterval(function(){var P=QZ.play;if(!P||P.pick!=null)return;var left=QZ_T-(Date.now()-P.t0)/1000;var e=document.getElementById('qz-left'),b=document.getElementById('qz-bar');if(e)e.textContent=Math.max(0,Math.ceil(left));if(b)b.style.width=Math.max(0,left/QZ_T*100)+'%';if(left<=0)qAnswer(-1)},250)}
 function qAnswer(i){
  var P=QZ.play,set=qSet(),q=set.qs[P.i],ans=(q.a+4-((P.i*7+3)%4))%4;if(P.pick!=null)return;
  P.pick=i;P.last=0;if(i===ans){P.n++;P.last=100+Math.round(50*Math.max(0,QZ_T-(Date.now()-P.t0)/1000)/QZ_T);P.s+=P.last}
- qDraw();
- setTimeout(function(){P.i++;P.pick=null;P.t0=Date.now();if(P.i>=set.qs.length)qFinish();else qDraw()},1500);
+ render();
+ setTimeout(function(){P.i++;P.pick=null;P.t0=Date.now();if(P.i>=set.qs.length)qFinish();else render()},1500);
 }
 function qFinish(){
  clearInterval(QTIMER);var P=QZ.play,res={s:P.s,n:P.n,at:firebase.database.ServerValue.TIMESTAMP};QZ.play=null;QZ.done={s:P.s,n:P.n};render();
@@ -1809,7 +1799,7 @@ function settings(){return editing?'<div class="editbox" style="margin-top:28px"
 function render(){
  var app=document.getElementById('app');
  var keep=editing;
- try{document.body.classList.toggle('viewonly',isView());document.body.classList.toggle('kahoot',tab==='quiz');document.body.classList.toggle('lgpage',tab==='login'&&!ACC)}catch(e){}
+ try{document.body.classList.toggle('kahoot',tab==='quiz');document.body.classList.toggle('lgpage',tab==='login'&&!ACC)}catch(e){}
  var body=header()+(tab==='home'||(tab==='progress'&&(openGroup||openPts))?'':backHome())+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():tab==='quiz'?quiz():tab==='login'?loginPage():tab==='me'?mePage():tab==='inst'?instPage():tab==='order'?orderPage():tab==='orders'?troupeOrderPage():events())+(full?settings():'');
  editing=keep;
  if(openScout) body+=profile();
@@ -1824,7 +1814,6 @@ function val(id){var e=document.getElementById(id);return e?e.value.trim():''}
 document.addEventListener('click',function(ev){
  if(ev.target.closest('a'))return;
  var b=ev.target.closest('button');
- if(b&&isView()&&viewBlocked(b)){ev.preventDefault();return}
  if(b&&cpClick(b))return;
  if(b&&ptsClick(b))return;
  if(b&&b.dataset.act==='menu'){MENU=true;render();return}
@@ -1883,7 +1872,6 @@ document.addEventListener('keydown',function(ev){var t=ev.target;if(ev.key==='En
 window.addEventListener('popstate',function(){route();render()});
 document.addEventListener('change',function(ev){
  var t=ev.target;
- if(isView()&&t.closest&&t.closest('#app')&&!(t.id==='cp-date'||t.id==='cp-re'||(t.dataset&&t.dataset.cpq))){if(t.type==='checkbox')t.checked=!t.checked;return}
  if(cpChange(t))return;
  if(acnChange(t))return;
  if(ordChange(t))return;
@@ -1936,7 +1924,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="9bd29a1646b0">
-<script>(function(){var B="9bd29a1646b0";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="bfc53fba9cd4">
+<script>(function(){var B="bfc53fba9cd4";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

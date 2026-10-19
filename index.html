@@ -1014,11 +1014,13 @@ function lastPres(gp){var t=today(),ids={};S.scouts.forEach(function(x){if(x.pat
  if(!M)return '<div class="lpres"><div class="lpt"><b>Dernière réunion</b><span class="meta">Pas encore de présences</span></div></div>';
  var k=M.present.filter(function(i){return ids[i]}).length,pc=n?Math.round(k/n*100):0;
  return '<div class="lpres" style="--gc:'+col(gp)+'"><div class="lpt"><b>Dernière réunion</b><span class="meta">'+esc(longDate(M.date))+'</span></div><div class="lpn"><b>'+k+'</b><span>/ '+n+' présents</span></div><div class="lpbar"><i style="width:'+pc+'%"></i></div></div>'}
-function cpBtn(gp){var ok=cpAllowed(gp.id);return CP_ON?'<button class="cpbtn '+(ok?'cpon':'cpoff')+'" data-act="cpopen"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Espace CP/SP</b><span>'+(ok?'Tu as accès':'Réservé au CP, au SP et à la maîtrise')+'</span></span><span class="evgo" aria-hidden="true">›</span></button>':''}
+function cpBtn(gp){var ok=cpAllowed(gp.id)||(ACC&&!ACCK&&(ACC.role==='Maîtrise'||((ACC.role==='CP'||ACC.role==='SP')&&ACC.patrol===gp.id)||ACC.u===QZ_ADMIN));return CP_ON?'<button class="cpbtn '+(ok?'cpon':'cpoff')+'" data-act="cpopen"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Espace CP/SP</b><span>'+(ok?'Tu as accès':'Réservé au CP, au SP et à la maîtrise')+'</span></span><span class="evgo" aria-hidden="true">›</span></button>':''}
 function cpPage(){
  var p=pat(openCP),h='<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>'+esc(p.name)+'</span></button>';
  h+='<div class="cphead" style="--gc:'+col(p)+'"><span class="tcirc">'+animalOf(p.name)+'</span><div><div class="gname">Espace CP/SP</div><div class="meta">'+esc(p.name)+'</div></div></div>';
  if(!cpAllowed(openCP)){
+  var mayHave=ACC&&!ACCK&&(ACC.role==='Maîtrise'||((ACC.role==='CP'||ACC.role==='SP')&&ACC.patrol===openCP)||ACC.u===QZ_ADMIN);
+  if(mayHave)return h+'<div class="cpcard"><p class="cplead">Confirme ton mot de passe pour ouvrir l’espace.</p><div class="fields"><input id="cp-re" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Ton mot de passe"><button class="btn" data-act="cpre"'+(cp.busy?' disabled':'')+'>'+(cp.busy?'Vérification…':'Ouvrir')+'</button></div>'+(cp.err?'<p class="cperr">'+esc(cp.err)+'</p>':'')+'</div>';
   return h+'<div class="cpcard"><p class="cplead">'+(ACC?'Réservé au CP et au SP de la patrouille '+esc(p.name)+', et à la maîtrise.':'Connecte-toi avec ton compte de CP ou de SP pour ouvrir l’espace.')+'</p>'+(ACC?'':'<button class="btn" data-nav="login">Se connecter</button>')+'</div>';
  }
  if(!cp.data||cp.patrol!==openCP){if(!cp.busy&&!cp.err)setTimeout(function(){cpLoad(openCP)},0);return h+'<div class="cpcard">'+(cp.err?'<p class="cperr">'+esc(cp.err)+'</p><button class="btn" data-act="cpretry">Réessayer</button>':'<p class="meta">Chargement…</p>')+'</div>'}
@@ -1055,6 +1057,8 @@ function cpClick(b){
  if(a==='cpunlock'){var pw=val('cp-pw').toLowerCase().replace(/[\s\u2010-\u2015\u2212]+/g,function(x){return /\s/.test(x)?'':'-'});if(!pw)return true;cp.busy=true;cp.err='';render();
   unlock(pw,openCP).then(function(x){cp.token=x.token;cp.scope=x.scope;cp.busy=false;cp.dk=x.dk;cp.data=null;if(cp.relock&&cp.relock.patrol===openCP&&x.token){cp.data=cp.relock;cp.patrol=openCP;cp.dirty=true;cp.relock=null;cp.err='';cp.msg='Mot de passe OK. Appuie sur Enregistrer.';ghJson('data/'+openCP+'.json').then(function(j){cp.sha=j?j.sha:null;return ghJson('data/contacts-'+openCP+'.json')}).then(function(c){cp.csha=c?c.sha:null}).catch(function(){})}render()})
    .catch(function(e){cp.busy=false;cp.err=e==='nokeys'?'L’espace CP/SP n’est pas encore activé.':'Mot de passe incorrect.';render()});return true}
+ if(a==='cpre'){var pw=(document.getElementById('cp-re')||{}).value||'';if(!pw)return true;cp.busy=true;cp.err='';render();
+  (ACC.u===QZ_ADMIN?unlock(pw.trim().toLowerCase(),'pts').then(function(x){return x&&x.token?{token:x.token,dk:x.dk,scope:'chef'}:null}).catch(function(){return null}):accDecrypt(ACC.u,pw.trim())).then(function(o){cp.busy=false;if(!o){cp.err='Mot de passe incorrect.';render();return}ACCK={token:o.token,dk:o.dk||{},scope:o.scope};accSave();accApply();cp.data=null;render()});return true}
  if(a==='cpretry'){cp.err='';cpLoad(openCP);return true}
  if(a==='cpsave'){cpSave(false);return true}
  if(b.dataset.cptab){cp.tab=b.dataset.cptab;cp.del=null;render();return true}
@@ -1514,7 +1518,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="3be5b1a9b685">
-<script>(function(){var B="3be5b1a9b685";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="979373b50249">
+<script>(function(){var B="979373b50249";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

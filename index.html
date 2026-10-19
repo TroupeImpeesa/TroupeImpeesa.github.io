@@ -602,7 +602,7 @@ var tab='home',openGroup=null,openPts=null;
 function route(h){h=(h==null?(location.hash||'#home').slice(1):h).split('/');var t=h[0]==='points'?'progress':h[0];if(TABS.indexOf(t)<0)t='home';tab=t;openGroup=null;openPts=null;openScout=null;openEvent=null;openCP=null;var x=h[1]||'';
  if(t==='progress'){if(x.indexOf('g-')===0)openGroup=x.slice(2);else if(x.indexOf('cp-')===0&&pat(x.slice(3))){openCP=x.slice(3);openGroup=openCP}else if(x.indexOf('pts-')===0)openPts=x.slice(4);else if(x.indexOf('s-')===0){var sc=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc){openScout=sc.id;openGroup=sc.patrol}}}
  if(x.indexOf('e-')===0&&S.events.some(function(e){return e.id===x.slice(2)}))openEvent=x.slice(2);
- if(!openCP)cpLock();if(!openPts)ptsLock();if(typeof ORD!=='undefined'&&ORD){if(t==='orders'&&!ORD.tbusy)ORD.all=null;if(t==='order'&&!ORD.dirty)ORD.my=null}}
+ if(!openCP)cpLock();if(!openPts)ptsLock();if(typeof ORD!=='undefined'&&ORD){if(t==='orders'&&!ORD.tbusy){ORD.all=null;ORD.tmsg=''}if(t==='order'&&!ORD.dirty)ORD.my=null}}
 function go(h){try{history.pushState({ia:1},'','#'+h)}catch(e){}route(h);render()}
 function closeView(){if(history.state&&history.state.ia){history.back();return}var h=tab;if((openScout||openCP)&&openGroup)h='progress/g-'+openGroup;try{history.replaceState(null,'','#'+h)}catch(e){}route(h);render()}
 route();
@@ -700,10 +700,11 @@ function ordSave(){
  .catch(function(){ORD.busy=false;ORD.msg='Échec de l’enregistrement. Réessaie.';render()});
 }
 /* --- Commande de la troupe (maîtrise / admin) --- */
+function fbUserReady(){return new Promise(function(ok){var a=firebase.auth();if(a.currentUser)return ok(a.currentUser);var done=false,off=a.onAuthStateChanged(function(u){if(u&&!done){done=true;off();ok(u)}});setTimeout(function(){if(!done){done=true;off();ok(null)}},8000)})}
 function tordLoad(){
  ORD.tbusy=true;ORD.tmsg='';
- Promise.all([coopLoad(),fbAuth()]).then(function(){var db=firebase.database();return Promise.all([db.ref('orders').once('value'),db.ref('ordersDone').once('value')])})
- .then(function(r){ORD.all=r[0].val()||{};ORD.alldone=r[1].val()||{};ORD.tbusy=false;render()}).catch(function(){ORD.tbusy=false;ORD.all={};ORD.alldone={};ORD.tmsg='Impossible de charger. Vérifie que les règles Firebase sont à jour.';render()});
+ Promise.all([coopLoad(),fbAuth()]).then(fbUserReady).then(function(){var db=firebase.database();return Promise.all([db.ref('orders').once('value'),db.ref('ordersDone').once('value')])})
+ .then(function(r){ORD.all=r[0].val()||{};ORD.alldone=r[1].val()||{};ORD.tbusy=false;render()}).catch(function(){ORD.tbusy=false;ORD.all=null;ORD.alldone=null;ORD.tmsg='Impossible de charger. Vérifie que les règles Firebase sont à jour.';render()});
 }
 function tordAgg(){
  var A={};Object.keys(ORD.all||{}).forEach(function(uid){var o=ORD.all[uid]||{},it=o.items||{},dn=(ORD.alldone||{})[uid]||{};
@@ -713,7 +714,7 @@ function tordAgg(){
 function troupeOrderPage(){
  if(typeof ORD==='undefined'||!ORD){setTimeout(render,0);return '<p class="meta">Chargement…</p>'}
  if(!isChef())return '<h2>Commande de la troupe</h2><div class="cpcard"><p class="cplead">Réservé à la maîtrise.</p></div>';
- if(ORD.all===null&&!ORD.tbusy)setTimeout(tordLoad,0);
+ if(ORD.all===null&&!ORD.tbusy&&!ORD.tmsg)setTimeout(tordLoad,0);
  var h='<div class="prow"><h2>Commande de la troupe</h2><button class="pdfbtn" data-act="treload">Actualiser</button></div><div class="meta" style="margin:-4px 0 12px">Tout ce que les scouts ont demandé à la Coop. Touche un article pour voir qui l’a demandé, puis coche <b>Acheté</b> et <b>Reçu</b>.</div>';
  if(ORD.all===null||!COOP)return h+'<p class="meta">'+esc(ORD.tmsg||'Chargement…')+'</p>';
  var A=tordAgg(),tot=0,totl=0,lines=0;
@@ -1660,7 +1661,7 @@ function visDev(){var u=navigator.userAgent||'',d=/iPad/.test(u)?'iPad':/iPhone/
 function visTick(){if(!VREF)return;var n=ACC?ACC.name:'',k=n+'|'+tab;if(k===VSENT)return;var first=!VSENT;VSENT=k;var o={n:n,t:tab,d:visDev()};if(first)o.at=firebase.database.ServerValue.TIMESTAMP;VREF.update(o).catch(function(){})}
 var VTAB={home:'Accueil',progress:'Troupe',events:'Calendrier',history:'Histoire',quiz:'Quiz Prêt',login:'Connexion',me:'Profil',order:'Commande',orders:'Commande troupe',inst:'Installations'};
 function visCan(){return !!ACC&&(ACC.u==='pierresassine'||ACC.u===QZ_ADMIN)}
-function visListen(){if(VIS.on)return;VIS.on=true;fbAuth().then(function(){firebase.database().ref('visitors').on('value',function(s){VIS.list=s.val()||{};VIS.err='';var e=document.getElementById('online-n');if(e&&visNum()!=null)e.textContent=visNum();if(VIS.open)render()},function(){VIS.on=false;VIS.err='Ajoute la règle « visitors » dans Firebase pour voir la liste.';if(VIS.open)render()})}).catch(function(){VIS.on=false})}
+function visListen(){if(VIS.on)return;VIS.on=true;fbAuth().then(fbUserReady).then(function(){firebase.database().ref('visitors').on('value',function(s){VIS.list=s.val()||{};VIS.err='';var e=document.getElementById('online-n');if(e&&visNum()!=null)e.textContent=visNum();if(VIS.open)render()},function(){VIS.on=false;VIS.err='Ajoute la règle « visitors » dans Firebase pour voir la liste.';if(VIS.open)render()})}).catch(function(){VIS.on=false})}
 function visCount(){if(!VIS.list)return null;var L=Object.keys(VIS.list).map(function(k){return VIS.list[k]||{}}).filter(function(v){return v.d}),nm={},na=0;L.forEach(function(v){if(v.n)nm[v.n]=1;else na++});return Object.keys(nm).length+na}
 function visNum(){var c=visCan()?visCount():null;return c!=null?Math.max(1,c):ONLINE}
 function visSheet(){
@@ -1970,7 +1971,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="c7651954d937">
-<script>(function(){var B="c7651954d937";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="101b01c29bb7">
+<script>(function(){var B="101b01c29bb7";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

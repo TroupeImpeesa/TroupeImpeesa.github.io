@@ -672,7 +672,9 @@ function ordInit(){
  .catch(function(){ORD.busy=false;ORD.my={};ORD.msg='Impossible de charger. Vérifie ta connexion.';render()});
 }
 function orderPage(){
- if(!ACC)return '<h2>Ma commande</h2><div class="cpcard"><p class="cplead">Connecte-toi pour faire ta commande.</p><button class="btn" data-nav="login">Se connecter</button></div>';
+ if(!ACC){var hv='<h2>Commande Coop</h2><div class="cpcard" style="margin-bottom:12px"><p class="cplead">Regarde ce qu’il y a à la Coop. Pour commander, connecte-toi avec ton compte.</p><button class="btn" data-nav="login">Se connecter</button></div>';
+  if(!COOP){coopLoad().then(function(){if(tab==='order')render()}).catch(function(){});return hv+'<p class="meta">Chargement…</p>'}
+  return hv+COOP.cats.map(function(c,ci){var op=!!ORD.open[ci];return '<div class="ocat"><button class="ocath" data-ocat="'+ci+'"><b>'+esc(c.name)+'</b><span class="meta">'+c.items.length+'</span><span class="ochev'+(op?' on':'')+'">›</span></button>'+(op?'<div class="olist">'+c.items.map(function(i){return '<div class="oitem"><div class="oin"><b>'+esc(i.name)+'</b><span>'+pmoney(i)+(i.sizes?' · tailles : '+esc(i.sizes.join(', ')):'')+'</span></div></div>'}).join('')+'</div>':'')+'</div>'}).join('')}
  ordInit();
  var h='<h2>Ma commande</h2><div class="meta" style="margin:-4px 0 12px">Choisis ce que tu veux de la Coop des Scouts du Liban. La maîtrise s’occupe de l’acheter.</div>';
  if(ORD.my===null||!COOP)return h+'<p class="meta">Chargement…</p>';
@@ -760,7 +762,8 @@ function instPage(){
  var h='<h2>Installations</h2><div class="meta" style="margin:-4px 0 12px">Les installations de camp de chaque patrouille, en 3D : rondins, brelages et mesures.</div>';
  if(!INST.loaded)return h+'<p class="meta">Chargement…</p>';
  h+='<div class="ocat"><div class="ocath static"><span class="hpl" style="background:#6e6e73">✎</span><b>Brouillon</b></div><div class="olist"><span class="meta" style="padding:0 6px">Pour tout le monde : dessine librement pour t’entraîner. Le brouillon n’est pas enregistré.</span><button class="btn ghost" data-iopen="draft|">'+(INST.draft&&INST.draft.logs.length?'Continuer le brouillon':'Ouvrir le brouillon')+'</button></div></div>';
- h+=S.patrols.filter(function(p){return instSee(p.id)}).map(function(p){var L=(INST.data[p.id]||{items:[]}).items;
+ h+=S.patrols.map(function(p){var L=(INST.data[p.id]||{items:[]}).items;
+  if(!instSee(p.id))return '<div class="ocat" style="opacity:.65"><div class="ocath static" style="box-sizing:border-box;padding-bottom:14px"><span class="hpl" style="background:'+col(p)+'">'+esc(p.name.charAt(0))+'</span><b>'+esc(p.name)+'</b><span class="meta" style="white-space:nowrap;flex:none">🔒 CP/SP</span></div></div>';
   return '<div class="ocat"><div class="ocath static"><span class="hpl" style="background:'+col(p)+'">'+esc(p.name.charAt(0))+'</span><b>'+esc(p.name)+'</b></div><div class="olist">'+
    (L.length?L.map(function(it){var len=0;(it.logs||[]).forEach(function(l){len+=instLen(l)});return '<button class="ilink" data-iopen="'+p.id+'|'+it.id+'"><b>'+esc(it.name||'Sans nom')+'</b><span class="meta">'+(it.logs||[]).length+' rondins · '+(it.nodes||[]).length+' brelages · '+fmtM(len)+' de bois</span><span class="evgo">›</span></button>'}).join(''):'<span class="meta" style="padding:4px 6px">Pas encore d’installation.</span>')+
    (instCan(p.id)?'<button class="btn ghost" data-inew="'+p.id+'">+ Nouvelle installation</button>':'')+'</div></div>'}).join('');
@@ -1011,7 +1014,7 @@ var IINST='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="c
 function menuBtn(){return '<button class="hamb" data-act="menu" aria-label="Menu" aria-expanded="'+MENU+'"><span></span><span></span><span></span></button>'}
 function drawer(){if(!MENU)return '';
  return '<div class="drw-bg" data-act="menuclose"></div><nav class="drw" aria-label="Menu"><div class="drwh">'+(ACC?'<button class="drwme" data-act="acct">'+accAv('drwi')+'<span><b>'+esc(ACC.name)+'</b><span>Voir mon profil</span></span></button>':'<button class="drwme" data-menunav="login"><span class="drwi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span><b>Se connecter</b><span>Avec ton compte</span></span></button>')+'<button class="drwx" data-act="menuclose" aria-label="Fermer">×</button></div>'+
-  NAVL.slice(0,2).concat([['inst',IINST,'Installations']],NAVL.slice(2)).concat(ACC&&ACC.u!==QZ_ADMIN?[['order',ICART,'Ma commande']]:[]).concat(isChef()?[['orders',IBOX,'Commande troupe']]:[]).map(function(x){return '<button class="drwl'+(tab===x[0]?' on':'')+'" data-menunav="'+x[0]+'"><span class="drwi">'+x[1]+'</span>'+esc(x[2])+'</button>'}).join('')+
+  NAVL.slice(0,2).concat([['inst',IINST,'Installations']],NAVL.slice(2)).concat(!ACC?[['order',ICART,'Commande Coop']]:ACC.u!==QZ_ADMIN?[['order',ICART,'Ma commande']]:[]).concat(isChef()?[['orders',IBOX,'Commande troupe']]:[]).map(function(x){return '<button class="drwl'+(tab===x[0]?' on':'')+'" data-menunav="'+x[0]+'"><span class="drwi">'+x[1]+'</span>'+esc(x[2])+'</button>'}).join('')+
   '</nav>'}
 function header(){return '<div class="acbar">'+menuBtn()+(CP_ON?acctBtn():'<span style="flex:1"></span>')+'</div>'+drawer()+heroTop()+
  '<div class="tabbar"></div>'+
@@ -1924,7 +1927,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="bfc53fba9cd4">
-<script>(function(){var B="bfc53fba9cd4";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="76f40b221de7">
+<script>(function(){var B="76f40b221de7";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

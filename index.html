@@ -1648,8 +1648,8 @@ function visSheet(){
  if(VIS.err)return h+'<p class="meta">'+esc(VIS.err)+'</p></div>';
  if(!VIS.list)return h+'<p class="meta">Chargement…</p></div>';
  var L=Object.keys(VIS.list).map(function(k){return VIS.list[k]||{}}).filter(function(v){return v.d}),named={},na=0,now=Date.now();
- L.forEach(function(v){if(!v.n){na++;return}var o=named[v.n];if(!o||(v.at||0)<(o.at||0))named[v.n]={n:v.n,t:v.t,at:v.at||now}});
- var N=Object.keys(named).map(function(k){return named[k]}).sort(function(a,b){return a.at-b.at});
+ var nn=0;L.forEach(function(v){if(!v.n){na++;return}nn++;var o=named[v.n];if(!o||(v.at||0)<(o.at||0))named[v.n]={n:v.n,t:v.t,at:v.at||now}});
+ if(ONLINE!=null)na=Math.max(na,ONLINE-nn);var N=Object.keys(named).map(function(k){return named[k]}).sort(function(a,b){return a.at-b.at});
  h+='<div class="vissec">Avec un compte · '+N.length+'</div>'+(N.length?N.map(function(v){var m=Math.max(0,Math.round((now-v.at)/60000));return '<div class="visrow"><span class="drwi acav">'+esc(accIni(v.n))+'</span><span class="visn"><b>'+esc(v.n)+'</b><span>'+esc(VTAB[v.t]||v.t||'')+'</span></span><span class="vist">'+(m<1?'à l’instant':m<60?m+' min':Math.floor(m/60)+' h '+(m%60))+'</span></div>'}).join(''):'<p class="meta" style="margin:4px 0">Personne pour l’instant.</p>');
  h+='<div class="vissec">Sans compte</div><div class="visanon"><b>'+na+'</b><span>visiteur'+(na>1?'s':'')+' sans compte en ce moment</span></div>';
  return h+'</div>'}
@@ -1659,7 +1659,7 @@ function presence(){
   var db=firebase.database(app),me=db.ref('online/'+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
   VREF=db.ref('visitors/'+me.key);VSENT='';
   db.ref('.info/connected').on('value',function(s){if(s.val()===true){me.onDisconnect().remove();me.set(true);VREF.onDisconnect().remove();VSENT='';visTick()}});
-  db.ref('online').on('value',function(s){ONLINE=Math.max(1,s.numChildren());var n=document.getElementById('online-n');if(n)n.textContent=ONLINE});
+  db.ref('online').on('value',function(s){ONLINE=Math.max(1,s.numChildren());var n=document.getElementById('online-n');if(n)n.textContent=ONLINE;if(VIS.open)render()});
  }).catch(function(){var o=document.getElementById('online');if(o)o.style.display='none'});
 }
 function pdfCol(p){var v='';try{v=getComputedStyle(document.documentElement).getPropertyValue('--p'+((p&&p.c)||1)).trim()}catch(e){}if(!/^#[0-9a-f]{6}$/i.test(v))v={1:'#111111',2:'#c62828',3:'#2c5d8a',4:'#8a6a12'}[(p&&p.c)||1]||'#1e4636';return v}
@@ -1949,7 +1949,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="620b375d5f34">
-<script>(function(){var B="620b375d5f34";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="27a7dabcd43c">
+<script>(function(){var B="27a7dabcd43c";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

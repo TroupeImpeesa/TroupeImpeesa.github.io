@@ -478,9 +478,10 @@ body.kahoot .hamb{background:rgba(255,255,255,.14)}body.kahoot .hamb span{backgr
 .iedsave{border:none;background:#1e4636;color:#fff;border-radius:10px;font:800 14px var(--body);padding:10px 14px;cursor:pointer}
 .iedcv{flex:1;position:relative;overflow:hidden;touch-action:none}.iedcv canvas{display:block}
 .iedload{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#555}
-.iedinfo{background:#fff;padding:10px 12px;font-size:14px;line-height:1.5;min-height:44px;border-top:1px solid #e3e5e8}
+.iedinfo{max-height:40vh;overflow:auto;background:#fff;padding:10px 12px;font-size:14px;line-height:1.5;min-height:44px;border-top:1px solid #e3e5e8}
 .iedmsg{color:#1368ce;font-weight:700}
-.iedbtns{display:inline-flex;gap:4px;align-items:center;margin-left:4px;vertical-align:middle}.iedbtns button{border:none;background:#f0f0f3;border-radius:8px;padding:5px 9px;font:700 13px var(--body);cursor:pointer;color:#111}.iedbtns button.d{background:#fde7e9;color:#c62828}
+.iedbtns{display:inline-flex;gap:4px;align-items:center;margin-left:4px;vertical-align:middle}.iedbtns button{border:none;background:#f0f0f3;border-radius:8px;padding:5px 9px;font:700 13px var(--body);cursor:pointer;color:#111}.iedbtns button.g{background:#1e4636;color:#fff}.okc{color:#26890c}.dpl{display:inline-block;background:#f0f0f3;border-radius:6px;padding:1px 6px;margin:2px 2px 0 0;font-size:13px}.ieddist{width:64px;padding:4px 6px;font-size:14px;border-radius:6px;border:1px solid #ccc}.iedfrom{width:auto;padding:4px;font-size:14px;border-radius:6px}
+.iedbtns button.d{background:#fde7e9;color:#c62828}
 .iedbar{display:grid;grid-template-columns:repeat(4,1fr) 48px;gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));background:#fff}
 .iedbar button{border:none;border-radius:10px;background:#f0f0f3;font:800 13px var(--body);padding:12px 4px;cursor:pointer;color:#111}.iedbar button.on{background:#1e4636;color:#fff}
 .iedmat{position:absolute;right:12px;top:calc(70px + env(safe-area-inset-top,0px));z-index:3;border:none;border-radius:999px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.15);font:700 13px var(--body);padding:9px 14px;cursor:pointer;color:#111}
@@ -807,7 +808,9 @@ function edBuild(){
  ED.it.logs.forEach(function(l){var a=V(l.a),b=V(l.b),len=a.distanceTo(b),m=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.045,len,14),ED.sel&&ED.sel.t==='log'&&ED.sel.id===l.id?woodS:wood);
   m.position.copy(a.clone().add(b).multiplyScalar(0.5));m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),b.clone().sub(a).normalize());m.userData={t:'log',id:l.id};G.add(m)});
  ED.it.nodes.forEach(function(n){var m=new THREE.Mesh(new THREE.SphereGeometry(0.075,16,12),ED.sel&&ED.sel.t==='node'&&ED.sel.id===n.id?ropeS:rope);m.position.copy(V(n.p));m.userData={t:'node',id:n.id};G.add(m)});
- if(ED.first){var mk=new THREE.Mesh(new THREE.SphereGeometry(0.06,12,10),new THREE.MeshBasicMaterial({color:0x1368ce}));mk.position.copy(V(ED.first.p));G.add(mk)}
+ [ED.first,ED.second].forEach(function(P){if(!P)return;var mk=new THREE.Mesh(new THREE.SphereGeometry(0.06,12,10),new THREE.MeshBasicMaterial({color:0x1368ce}));mk.position.copy(V(P.p));G.add(mk)});
+ if(ED.first&&ED.second){var A=V(ED.first.p),B=V(ED.second.p),gl=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,A.distanceTo(B),10),new THREE.MeshBasicMaterial({color:0x1368ce,transparent:true,opacity:0.45}));gl.position.copy(A.clone().add(B).multiplyScalar(0.5));gl.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),B.clone().sub(A).normalize());G.add(gl)}
+ ED.it.logs.forEach(function(l,i){if(!isPole(l.id))return;var c=document.createElement('canvas');c.width=64;c.height=32;var x=c.getContext('2d');x.fillStyle='rgba(255,255,255,.9)';x.fillRect(0,0,64,32);x.fillStyle='#111';x.font='bold 20px sans-serif';x.textAlign='center';x.fillText('P'+(i+1),32,23);var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false}));sp.scale.set(0.36,0.18,1);sp.position.set(l.b[0],Math.max(l.a[1],l.b[1])+0.2,l.b[2]);G.add(sp)});
 }
 function edHit(e){var r=ED.R.domElement.getBoundingClientRect(),v=new THREE.Vector2((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1),rc=new THREE.Raycaster();rc.setFromCamera(v,ED.cam);
  var h=rc.intersectObjects(ED.grp.children.concat([ED.g]),false).filter(function(x){return x.object.userData.t||x.object===ED.g});return h[0]||null}
@@ -825,25 +828,42 @@ function edTap(e){
   if(ud.t==='log'){var l=ED.it.logs.filter(function(x){return x.id===ud.id})[0];pt=axisPoint(l,h.point);on=l.id}
   else if(ud.t==='node'){var n=ED.it.nodes.filter(function(x){return x.id===ud.id})[0];pt=V(n.p);on=n.logs[0]}
   else{pt=new THREE.Vector3(snap(h.point.x,0.1),0,snap(h.point.z,0.1))}
-  if(!ED.first){ED.first={p:[pt.x,pt.y,pt.z],on:on};ED.msg='Maintenant touche l’autre bout (un autre rondin ou le sol).';edBuild();edInfo();return}
-  var A=V(ED.first.p),B=pt.clone();if(A.distanceTo(B)<0.15){ED.msg='Les deux bouts sont trop proches.';edInfo();return}
-  var dir=B.clone().sub(A).normalize(),ea=ED.first.on?0.15:0.3,eb=on?0.15:0.3,a=A.clone().sub(dir.clone().multiplyScalar(ea)),b=B.clone().add(dir.clone().multiplyScalar(eb));
-  push();var id=nid();ED.it.logs.push({id:id,a:[a.x,a.y,a.z],b:[b.x,b.y,b.z]});
-  [[ED.first.on,A],[on,B]].forEach(function(x){if(x[0])ED.it.nodes.push({id:nid(),p:[x[1].x,x[1].y,x[1].z],logs:[x[0],id],type:'carre'})});
-  ED.first=null;ED.sel={t:'log',id:id};ED.msg='Rondin ajouté avec ses brelages.';edBuild();edInfo();return}
+  var P={p:[pt.x,pt.y,pt.z],on:on};
+  if(!ED.first){ED.first=P;ED.second=null;edBuild();edInfo();return}
+  if(!ED.second){ED.second=P;if(isPole(P.on)&&Math.abs(P.p[1]-ED.first.p[1])<0.08)P.p[1]=ED.first.p[1];edBuild();edInfo();return}
+  ED.second=P;edBuild();edInfo();return}
  if(ED.mode==='node'){
   if(ud.t==='node'){var nn=ED.it.nodes.filter(function(x){return x.id===ud.id})[0],i=NODET.map(function(t){return t[0]}).indexOf(nn.type);push();nn.type=NODET[(i+1)%NODET.length][0];ED.sel={t:'node',id:nn.id};ED.msg='Brelage : '+NODET[(i+1)%NODET.length][1];edBuild();edInfo();return}
   if(ud.t==='log'){var lg=ED.it.logs.filter(function(x){return x.id===ud.id})[0],q=axisPoint(lg,h.point);push();var n2={id:nid(),p:[q.x,q.y,q.z],logs:[lg.id],type:'cabestan'};ED.it.nodes.push(n2);ED.sel={t:'node',id:n2.id};ED.msg='Nœud ajouté. Touche-le pour changer le type.';edBuild();edInfo();return}
   ED.msg='Touche un rondin pour ajouter un nœud, ou un nœud pour changer son type.';edInfo()}
 }
+function isPole(id){var l=id&&ED.it.logs.filter(function(x){return x.id===id})[0];return !!l&&Math.abs(l.a[0]-l.b[0])<1e-6&&Math.abs(l.a[2]-l.b[2])<1e-6}
+function logAng(a,b){var dx=b[0]-a[0],dy=b[1]-a[1],dz=b[2]-a[2],L=Math.sqrt(dx*dx+dy*dy+dz*dz);return L?Math.round(Math.asin(Math.abs(dy)/L)*180/Math.PI):0}
+function angTxt(d){return d<=1?'0° · <b class="okc">horizontal ✓</b>':d>=89?'90° · <b class="okc">vertical ✓</b>':d+'°'}
+function edMake(){
+ var F=ED.first,P2=ED.second,A=V(F.p),B=V(P2.p);if(A.distanceTo(B)<0.15){ED.msg='Les deux bouts sont trop proches.';edInfo();return}
+ var dir=B.clone().sub(A).normalize(),ea=F.on?0.15:0.3,eb=P2.on?0.15:0.3,a=A.clone().sub(dir.clone().multiplyScalar(ea)),b=B.clone().add(dir.clone().multiplyScalar(eb));
+ push();var id=nid();ED.it.logs.push({id:id,a:[a.x,a.y,a.z],b:[b.x,b.y,b.z]});
+ [[F.on,A],[P2.on,B]].forEach(function(x){if(x[0])ED.it.nodes.push({id:nid(),p:[x[1].x,x[1].y,x[1].z],logs:[x[0],id],type:'carre'})});
+ ED.first=null;ED.second=null;ED.sel={t:'log',id:id};ED.msg='Rondin ajouté avec ses brelages.';edBuild();edInfo();
+}
+function ptTxt(P,k){if(isPole(P.on))return 'sur le poteau, à <span class="iedbtns"><button data-e="h'+k+'-">−5</button><b>'+fmtM(P.p[1])+'</b><button data-e="h'+k+'+">+5</button></span> du sol';return P.on?'sur un rondin, à '+fmtM(P.p[1])+' du sol':'dans le sol (piquet)'}
 function edInfo(){
  if(!ED)return;var el=ED.ov.querySelector('.iedinfo'),s='';
  ED.ov.querySelectorAll('.iedbar [data-m]').forEach(function(b){b.classList.toggle('on',b.dataset.m===ED.mode)});
  var sel=ED.sel,L=sel&&sel.t==='log'?ED.it.logs.filter(function(x){return x.id===sel.id})[0]:null,N=sel&&sel.t==='node'?ED.it.nodes.filter(function(x){return x.id===sel.id})[0]:null;
- if(L){var len=instLen(L);s='<b>Rondin : '+fmtM(len)+'</b>'+(L.a[1]<-0.01||L.b[1]<-0.01?' · planté '+Math.round(-Math.min(L.a[1],L.b[1])*100)+' cm':'')+' · haut : '+fmtM(Math.max(L.a[1],L.b[1]))+(ED.can?' <span class="iedbtns"><button data-e="shorter">−10 cm</button><button data-e="longer">+10 cm</button><button data-e="del" class="d">Supprimer</button></span>':'')}
- else if(N){var t=NODET.filter(function(x){return x[0]===N.type})[0];s='<b>'+t[1]+'</b> · à '+fmtM(N.p[1])+' du sol'+(ED.can?' <span class="iedbtns"><button data-e="ntype">Changer</button><button data-e="del" class="d">Supprimer</button></span>':'')}
+ if(L){var len=instLen(L);var poles=ED.it.logs.filter(function(x){return x.id!==L.id&&isPole(x.id)});s='<b>Rondin : '+fmtM(len)+'</b> · angle '+angTxt(logAng(L.a,L.b))+(L.a[1]<-0.01||L.b[1]<-0.01?' · planté '+Math.round(-Math.min(L.a[1],L.b[1])*100)+' cm':'')+' · haut : '+fmtM(Math.max(L.a[1],L.b[1]))+(ED.can?' <span class="iedbtns"><button data-e="shorter">−10 cm</button><button data-e="longer">+10 cm</button><button data-e="del" class="d">Supprimer</button></span>':'')+
+  (isPole(L.id)&&poles.length?'<br>Distance aux autres poteaux : '+poles.map(function(o,i){var d=Math.hypot(o.a[0]-L.a[0],o.a[2]-L.a[2]);return '<span class="dpl">P'+(ED.it.logs.indexOf(o)+1)+' : '+fmtM(d)+'</span>'}).join(' ')+
+   (ED.can&&!ED.it.nodes.some(function(n){return n.logs.indexOf(L.id)>=0})?'<br><span class="iedbtns">Mettre à <input class="ieddist" type="number" step="0.1" min="0.2" inputmode="decimal" value="'+(Math.round(Math.hypot(poles[0].a[0]-L.a[0],poles[0].a[2]-L.a[2])*10)/10)+'"> m de <select class="iedfrom">'+poles.map(function(o){return '<option value="'+o.id+'">P'+(ED.it.logs.indexOf(o)+1)+'</option>'}).join('')+'</select><button data-e="setdist" class="g">OK</button></span>':ED.can?'<br><span class="meta">Pour déplacer ce poteau, enlève d’abord ses brelages.</span>':''):'')}
+ else if(N){var t=NODET.filter(function(x){return x[0]===N.type})[0];var nl=N.logs.map(function(id){return ED.it.logs.filter(function(x){return x.id===id})[0]}).filter(Boolean),na='';if(nl.length>=2){var d1=V(nl[0].b).sub(V(nl[0].a)).normalize(),d2=V(nl[1].b).sub(V(nl[1].a)).normalize(),an=Math.round(Math.acos(Math.min(1,Math.abs(d1.dot(d2))))*180/Math.PI);na=' · angle entre les rondins : '+(an>=89?'90° <b class="okc">perpendiculaire ✓</b>':an+'°')}
+  s='<b>'+t[1]+'</b> · à '+fmtM(N.p[1])+' du sol'+na+(ED.can?' <span class="iedbtns"><button data-e="ntype">Changer</button><button data-e="del" class="d">Supprimer</button></span>':'')}
  else if(ED.can&&ED.mode==='pole')s='Touche le sol pour planter un poteau. Longueur <span class="iedbtns"><button data-e="pl-">−</button><b>'+fmtM(ED.poleL)+'</b><button data-e="pl+">+</button></span> planté <span class="iedbtns"><button data-e="dp-">−</button><b>'+Math.round(ED.depth*100)+' cm</b><button data-e="dp+">+</button></span>';
- else if(ED.can&&ED.mode==='log')s=ED.first?'Touche l’autre bout du rondin.':'Touche un rondin (ou le sol) pour le 1er bout, puis l’autre bout. Les brelages se mettent tout seuls.';
+ else if(ED.can&&ED.mode==='log'){
+  if(!ED.first)s='Touche un poteau, un rondin ou le sol pour le <b>1er bout</b>.';
+  else{s='<b>Bout 1</b> '+ptTxt(ED.first,1);
+   if(!ED.second)s+='<br>Touche maintenant le <b>2e bout</b>. <span class="iedbtns"><button data-e="cancel" class="d">Annuler</button></span>';
+   else{var A=ED.first.p,B=ED.second.p,dx=B[0]-A[0],dy=B[1]-A[1],dz=B[2]-A[2],dist=Math.sqrt(dx*dx+dy*dy+dz*dz),hd=Math.sqrt(dx*dx+dz*dz);
+    s+='<br><b>Bout 2</b> '+ptTxt(ED.second,2)+'<br>Entre les deux : <b>'+fmtM(dist)+'</b> (au sol '+fmtM(hd)+') · angle '+angTxt(logAng(A,B))+'<br><span class="iedbtns">'+(isPole(ED.second.on)&&logAng(A,B)>1?'<button data-e="flat">Mettre horizontal</button>':'')+'<button data-e="make" class="g">Placer le rondin ('+fmtM(dist+(ED.first.on?0.15:0.3)+(ED.second.on?0.15:0.3))+')</button><button data-e="cancel" class="d">Annuler</button></span>'}}}
  else if(ED.can&&ED.mode==='node')s='Touche un rondin pour ajouter un nœud, ou un nœud existant pour changer son type.';
  else s='Touche un rondin ou un brelage pour voir ses mesures. Glisse pour tourner, pince pour zoomer.';
  if(ED.msg&&!L&&!N)s='<span class="iedmsg">'+esc(ED.msg)+'</span><br>'+s;
@@ -861,7 +881,7 @@ function edMat(){
 }
 function edClick(e){
  e.stopPropagation();var b=e.target.closest('button');if(!b||!ED)return;var a=b.dataset.e,m=b.dataset.m;
- if(m){ED.mode=m;ED.first=null;ED.sel=null;edBuild();edInfo();return}
+ if(m){ED.mode=m;ED.first=null;ED.second=null;ED.sel=null;edBuild();edInfo();return}
  var sel=ED.sel,L=sel&&sel.t==='log'?ED.it.logs.filter(function(x){return x.id===sel.id})[0]:null;
  if(a==='close'){if(ED.dirty&&ED.can&&!confirmClose())return;edClose();return}
  if(a==='mat'){var sh=ED.ov.querySelector('.iedsheet');sh.hidden=!sh.hidden;if(!sh.hidden)sh.innerHTML=edMat();return}
@@ -872,6 +892,11 @@ function edClick(e){
  if(a==='ntype'&&sel){var n=ED.it.nodes.filter(function(x){return x.id===sel.id})[0],i=NODET.map(function(t){return t[0]}).indexOf(n.type);push();n.type=NODET[(i+1)%NODET.length][0];edBuild();edInfo();return}
  if(a==='del'&&sel){push();if(sel.t==='log'){ED.it.logs=ED.it.logs.filter(function(x){return x.id!==sel.id});ED.it.nodes=ED.it.nodes.filter(function(n){n.logs=n.logs.filter(function(id){return id!==sel.id});return n.logs.length})}else ED.it.nodes=ED.it.nodes.filter(function(x){return x.id!==sel.id});ED.sel=null;edBuild();edInfo();return}
  if(a==='save'){edSave();return}
+ if(a==='cancel'){ED.first=null;ED.second=null;edBuild();edInfo();return}
+ if(a==='make'&&ED.first&&ED.second){edMake();return}
+ if(a==='flat'&&ED.second){ED.second.p[1]=ED.first.p[1];edBuild();edInfo();return}
+ if(/^h[12][+-]$/.test(a||'')){var P=a[1]==='1'?ED.first:ED.second,l=P&&ED.it.logs.filter(function(x){return x.id===P.on})[0];if(l){var y=Math.round((P.p[1]+(a[2]==='+'?0.05:-0.05))*100)/100;y=Math.max(Math.max(0,Math.min(l.a[1],l.b[1])),Math.min(Math.max(l.a[1],l.b[1]),y));P.p[1]=y;edBuild();edInfo()}return}
+ if(a==='setdist'&&L){var o=ED.it.logs.filter(function(x){return x.id===ED.ov.querySelector('.iedfrom').value})[0],dd=parseFloat(String(ED.ov.querySelector('.ieddist').value).replace(',','.'));if(!o||!(dd>=0.2))return;var vx=L.a[0]-o.a[0],vz=L.a[2]-o.a[2],cur=Math.hypot(vx,vz)||1;push();var nx=o.a[0]+vx/cur*dd,nz=o.a[2]+vz/cur*dd;L.a[0]=L.b[0]=nx;L.a[2]=L.b[2]=nz;edBuild();edInfo();return}
 }
 function confirmClose(){var b=ED.ov.querySelector('[data-e="close"]');if(b.dataset.sure)return true;b.dataset.sure=1;b.textContent='Fermer sans enregistrer ?';setTimeout(function(){if(b){delete b.dataset.sure;b.textContent='✕'}},3000);return false}
 function edClose(){if(!ED)return;try{ED.R&&ED.R.dispose()}catch(e){}window.removeEventListener('resize',edResize);ED.ov.remove();document.body.style.overflow='';ED=null;render()}
@@ -1803,7 +1828,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="4861cb945423">
-<script>(function(){var B="4861cb945423";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="220ebfa8bdcd">
+<script>(function(){var B="220ebfa8bdcd";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

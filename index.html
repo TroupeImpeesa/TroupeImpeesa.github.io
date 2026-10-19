@@ -468,6 +468,7 @@ body.kahoot .hamb{background:rgba(255,255,255,.14)}body.kahoot .hamb span{backgr
 .tbuy{display:flex;gap:6px;align-items:center}.tbuy input{width:56px;padding:7px 6px;font-size:15px;text-align:center}
 .tname .meta{display:block}.tname>span:nth-child(2){flex:1;min-width:0}
 .mlist{display:grid;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}.tq.ok{background:var(--ok,#2e8b57)}
+.tlist{display:grid;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}.tper{display:flex;align-items:center;gap:6px}.tpn{flex:1;min-width:0;display:grid}.tpn b{font-size:14px}.tchk{display:inline-flex;align-items:center;gap:6px;border:none;background:var(--surface);color:var(--fg);font:700 13px var(--body);padding:8px 10px;border-radius:999px;cursor:pointer}.tchk i{width:16px;height:16px;border-radius:5px;border:2px solid var(--muted);box-sizing:border-box;position:relative;flex:none}.tchk.on{background:var(--accent);color:#fff}.tchk.on i{border-color:#fff;background:#fff}.tchk.on i::after{content:'';position:absolute;left:3.5px;top:0;width:4px;height:8px;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(45deg)}.tchk:disabled{opacity:.5}.tall{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
 .twho{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:13px}.twho>span{background:var(--surface);border-radius:999px;padding:4px 10px}
 .ilink{display:flex;align-items:center;gap:10px;flex-wrap:wrap;width:100%;border:none;background:var(--bg);color:var(--fg);border-radius:12px;padding:12px;text-align:left;cursor:pointer;font:inherit}.ilink b{flex:1 1 60%}.ilink .meta{order:3;flex-basis:100%}.ilink .evgo{margin-left:auto}
 .ocath .hpl{width:26px;height:26px}
@@ -681,7 +682,7 @@ function orderPage(){
  var h='<h2>Ma commande</h2><div class="meta" style="margin:-4px 0 12px">Choisis ce que tu veux de la Coop des Scouts du Liban. La maîtrise s’occupe de l’acheter.</div>';
  if(ORD.my===null||!COOP)return h+'<p class="meta">Chargement…</p>';
  var keys=Object.keys(ORD.my).filter(function(k){return ORD.my[k]>0}),tot=0,totl=0;
- h+='<div class="osum"><b>Ta commande</b>'+(keys.length?keys.map(function(k){var q=ORD.my[k],d=Math.min(q,ORD.done[k]||0);tot+=q*kprice(k);totl+=q*klbp(k);return '<div class="orow2"><span>'+q+' × '+esc(klabel(k))+'</span>'+(d?'<span class="odone">'+(d>=q?'✓ acheté':'✓ '+d+' acheté'+(d>1?'s':''))+'</span>':'<span class="meta">'+kmoney(k,q)+'</span>')+'</div>'}).join('')+'<div class="orow2 otot"><span>Total</span><b>'+tmoney(tot,totl)+'</b></div>':'<span class="meta">Rien pour l’instant. Choisis dans les catégories en dessous.</span>')+'</div>';
+ h+='<div class="osum"><b>Ta commande</b>'+(keys.length?keys.map(function(k){var q=ORD.my[k],d=Math.min(q,ORD.done[k]||0),rc=Math.min(q,ORD.done['r~'+k]||0);tot+=q*kprice(k);totl+=q*klbp(k);return '<div class="orow2"><span>'+q+' × '+esc(klabel(k))+'</span>'+(rc>=q?'<span class="odone">✓ reçu</span>':d?'<span class="odone">'+(d>=q?'✓ acheté':'✓ '+d+' acheté'+(d>1?'s':''))+'</span>':'<span class="meta">'+kmoney(k,q)+'</span>')+'</div>'}).join('')+'<div class="orow2 otot"><span>Total</span><b>'+tmoney(tot,totl)+'</b></div>':'<span class="meta">Rien pour l’instant. Choisis dans les catégories en dessous.</span>')+'</div>';
  h+=COOP.cats.map(function(c,ci){var n=0;c.items.forEach(function(i){Object.keys(ORD.my).forEach(function(k){if(k.split('|')[0]===i.id)n+=ORD.my[k]||0})});var op=!!ORD.open[ci];
   return '<div class="ocat"><button class="ocath" data-ocat="'+ci+'"><b>'+esc(c.name)+'</b>'+(n?'<span class="ocnt">'+n+'</span>':'')+'<span class="ochev'+(op?' on':'')+'">›</span></button>'+(op?'<div class="olist">'+c.items.map(function(i){
    var sz=i.sizes?(ORD.size[i.id]||i.sizes[Math.min(5,i.sizes.length-1)]):'',k=okey(i.id,sz),q=ORD.my[k]||0;
@@ -705,36 +706,49 @@ function tordLoad(){
 }
 function tordAgg(){
  var A={};Object.keys(ORD.all||{}).forEach(function(uid){var o=ORD.all[uid]||{},it=o.items||{},dn=(ORD.alldone||{})[uid]||{};
-  Object.keys(it).forEach(function(k){var q=+it[k]||0,d=Math.min(q,+dn[k]||0);if(q<=0)return;A[k]=A[k]||{k:k,tot:0,done:0,who:[]};A[k].tot+=q;A[k].done+=d;A[k].who.push({uid:uid,name:o.name||'?',patrol:o.patrol||'',q:q,d:d,at:o.at||0})})});
+  Object.keys(it).forEach(function(k){var q=+it[k]||0,d=Math.min(q,+dn[k]||0),r=Math.min(q,+dn['r~'+k]||0);if(q<=0)return;A[k]=A[k]||{k:k,tot:0,done:0,got:0,who:[]};A[k].tot+=q;A[k].done+=d;A[k].got+=r;A[k].who.push({uid:uid,name:o.name||'?',patrol:o.patrol||'',q:q,d:d,r:r,at:o.at||0})})});
  return A;
 }
 function troupeOrderPage(){
  if(!isChef())return '<h2>Commande de la troupe</h2><div class="cpcard"><p class="cplead">Réservé à la maîtrise.</p></div>';
  if(ORD.all===null&&!ORD.tbusy)setTimeout(tordLoad,0);
- var h='<div class="prow"><h2>Commande de la troupe</h2><button class="pdfbtn" data-act="treload">Actualiser</button></div><div class="meta" style="margin:-4px 0 12px">Tout ce que les scouts ont demandé, à acheter à la Coop. Quand tu achètes, écris combien et appuie sur <b>Acheté</b>.</div>';
+ var h='<div class="prow"><h2>Commande de la troupe</h2><button class="pdfbtn" data-act="treload">Actualiser</button></div><div class="meta" style="margin:-4px 0 12px">Tout ce que les scouts ont demandé à la Coop. Touche un article pour voir qui l’a demandé, puis coche <b>Acheté</b> et <b>Reçu</b>.</div>';
  if(ORD.all===null||!COOP)return h+'<p class="meta">'+esc(ORD.tmsg||'Chargement…')+'</p>';
  var A=tordAgg(),tot=0,totl=0,lines=0;
- h+=COOP.cats.map(function(c){var L=[];c.items.forEach(function(i){Object.keys(A).forEach(function(k){if(k.split('|')[0]===i.id&&A[k].tot-A[k].done>0)L.push(A[k])})});if(!L.length)return '';
-  return '<div class="ocat"><div class="ocath static"><b>'+esc(c.name)+'</b></div><div class="olist">'+L.map(function(a){var rem=a.tot-a.done;tot+=rem*kprice(a.k);totl+=rem*klbp(a.k);lines++;var np=a.who.filter(function(w){return w.q>w.d}).length;
-   return '<div class="titem"><div class="trow"><span class="tname" style="cursor:default"><span class="tq">'+rem+'</span><span><b>'+esc(klabel(a.k))+'</b><span class="meta">'+np+' personne'+(np>1?'s':'')+' · '+kmoney(a.k,rem)+'</span></span></span>'+
-    '<span class="tbuy"><input type="number" inputmode="numeric" min="1" max="'+rem+'" placeholder="−" data-tin="'+esc(a.k)+'"><button class="btn sm" data-tbuy="'+esc(a.k)+'"'+(ORD.tbusy?' disabled':'')+'>Acheté</button></span></div>'+'</div>'}).join('')+'</div></div>'}).join('');
- if(!lines)h+='<div class="cpcard"><p class="cplead">Rien à acheter pour l’instant ✓</p></div>';
+ h+=COOP.cats.map(function(c){var L=[];c.items.forEach(function(i){Object.keys(A).forEach(function(k){if(k.split('|')[0]===i.id&&A[k].got<A[k].tot)L.push(A[k])})});if(!L.length)return '';
+  return '<div class="ocat"><div class="ocath static"><b>'+esc(c.name)+'</b></div><div class="olist">'+L.map(function(a){var rem=a.tot-a.done,give=a.tot-a.got;tot+=rem*kprice(a.k);totl+=rem*klbp(a.k);lines++;var ex=!!ORD.exp[a.k],np=a.who.filter(function(w){return w.r<w.q}).length,K=esc(a.k);
+   var h2='<div class="titem"><button class="tname" data-texp="'+K+'"><span class="tq'+(rem?'':' ok')+'">'+(rem||'✓')+'</span><span><b>'+esc(klabel(a.k))+'</b><span class="meta">'+(rem?'à acheter · '+kmoney(a.k,rem):'tout acheté · '+give+' à remettre')+' · '+np+' personne'+(np>1?'s':'')+'</span></span><span class="ochev'+(ex?' on':'')+'">›</span></button>';
+   if(ex){h2+='<div class="tlist">'+a.who.sort(function(x,y){return x.at-y.at}).map(function(w){var b=w.d>=w.q,U=esc(w.uid);
+     return '<div class="tper"'+(w.r>=w.q?' style="opacity:.55"':'')+'><span class="tpn"><b>'+esc(w.name)+'</b><span class="meta">× '+w.q+'</span></span><button class="tchk'+(b?' on':'')+'" data-tb="'+K+'" data-u="'+U+'"'+(ORD.tbusy?' disabled':'')+'><i></i>Acheté</button><button class="tchk'+(w.r>=w.q?' on':'')+'" data-tr="'+K+'" data-u="'+U+'"'+(ORD.tbusy?' disabled':'')+'><i></i>Reçu</button></div>'}).join('')+
+     '<div class="tall"><button class="btn ghost sm" data-tball="'+K+'"'+(rem&&!ORD.tbusy?'':' disabled')+'>Tout acheté</button><button class="btn sm" data-trall="'+K+'"'+(ORD.tbusy?' disabled':'')+'>Tout reçu</button></div></div>'}
+   return h2+'</div>'}).join('')+'</div></div>'}).join('');
+ if(!lines)h+='<div class="cpcard"><p class="cplead">Rien à acheter ni à remettre pour l’instant ✓</p></div>';
  else h+='<div class="osum"><div class="orow2 otot"><span>Total restant à acheter</span><b>'+tmoney(tot,totl)+'</b></div></div>';
- var M=Object.keys(ORD.all||{}).map(function(uid){var o=ORD.all[uid]||{},it=o.items||{},dn=(ORD.alldone||{})[uid]||{},L=Object.keys(it).filter(function(k){return +it[k]>0}).map(function(k){var q=+it[k],d=Math.min(q,+dn[k]||0);return {k:k,q:q,d:d}});return {uid:uid,name:o.name||'?',patrol:o.patrol||'',L:L,rem:L.reduce(function(a,x){return a+(x.q-x.d)},0)}}).filter(function(m){return m.L.length}).sort(function(a,b){return (a.patrol||'z').localeCompare(b.patrol||'z')||a.name.localeCompare(b.name)});
+ var M=Object.keys(ORD.all||{}).map(function(uid){var o=ORD.all[uid]||{},it=o.items||{},dn=(ORD.alldone||{})[uid]||{},L=Object.keys(it).filter(function(k){return +it[k]>0}).map(function(k){var q=+it[k],d=Math.min(q,+dn[k]||0),r=Math.min(q,+dn['r~'+k]||0);return {k:k,q:q,d:d,r:r}});return {uid:uid,name:o.name||'?',patrol:o.patrol||'',L:L,rem:L.reduce(function(a,x){return a+(x.q-x.d)},0)}}).filter(function(m){return m.L.length}).sort(function(a,b){return (a.patrol||'z').localeCompare(b.patrol||'z')||a.name.localeCompare(b.name)});
  if(M.length){h+='<h2>Par membre</h2><div class="ocat"><div class="olist" style="padding-top:10px">'+M.map(function(m){var p=pat(m.patrol),op=!!(ORD.mexp||{})[m.uid],sub=0,subl=0;m.L.forEach(function(x){sub+=x.q*kprice(x.k);subl+=x.q*klbp(x.k)});
-   return '<div class="titem"><button class="tname" data-mexp="'+m.uid+'"><span class="tq'+(m.rem?'':' ok')+'">'+(m.rem||'✓')+'</span><span><b>'+esc(m.name)+(p?' <i class="kpat" style="background:'+pdfCol(p)+'">'+esc(p.name)+'</i>':'')+'</b><span class="meta">'+m.L.length+' article'+(m.L.length>1?'s':'')+' · '+tmoney(sub,subl)+(m.rem?'':' · tout acheté')+'</span></span><span class="ochev'+(op?' on':'')+'">›</span></button>'+
-    (op?'<div class="mlist">'+m.L.map(function(x){return '<div class="orow2"><span>'+x.q+' × '+esc(klabel(x.k))+'</span>'+(x.d>=x.q?'<span class="odone">✓ acheté</span>':x.d?'<span class="odone">✓ '+x.d+' acheté'+(x.d>1?'s':'')+'</span>':'<span class="meta">'+kmoney(x.k,x.q)+'</span>')+'</div>'}).join('')+'</div>':'')+'</div>'}).join('')+'</div></div>'}
+   return '<div class="titem"><button class="tname" data-mexp="'+m.uid+'"><span class="tq'+(m.rem?'':' ok')+'">'+(m.rem||'✓')+'</span><span><b>'+esc(m.name)+(p?' <i class="kpat" style="background:'+pdfCol(p)+'">'+esc(p.name)+'</i>':'')+'</b><span class="meta">'+m.L.length+' article'+(m.L.length>1?'s':'')+' · '+tmoney(sub,subl)+(m.L.every(function(x){return x.r>=x.q})?' · tout reçu':m.rem?'':' · tout acheté')+'</span></span><span class="ochev'+(op?' on':'')+'">›</span></button>'+
+    (op?'<div class="mlist">'+m.L.map(function(x){return '<div class="orow2"><span>'+x.q+' × '+esc(klabel(x.k))+'</span>'+(x.r>=x.q?'<span class="odone">✓ reçu</span>':x.d>=x.q?'<span class="odone">✓ acheté</span>':x.d?'<span class="odone">✓ '+x.d+' acheté'+(x.d>1?'s':'')+'</span>':'<span class="meta">'+kmoney(x.k,x.q)+'</span>')+'</div>'}).join('')+'</div>':'')+'</div>'}).join('')+'</div></div>'}
  if(ORD.tmsg)h+='<p class="cperr">'+esc(ORD.tmsg)+'</p>';
  return h;
 }
-function tordBuy(k){
- var inp=document.querySelector('[data-tin="'+k.replace(/"/g,'\\"')+'"]'),n=Math.abs(parseInt(inp&&inp.value,10)||0);if(!n)return;
- var a=tordAgg()[k];if(!a)return;n=Math.min(n,a.tot-a.done);
- var upd={};a.who.sort(function(x,y){return x.at-y.at}).forEach(function(w){if(n<=0)return;var t=Math.min(n,w.q-w.d);if(t>0){upd['ordersDone/'+w.uid+'/'+k]=w.d+t;n-=t}});
+function tordSet(list){
+ var upd={};list.forEach(function(x){var w=x.w,k=x.k;
+  if(x.b!=null)upd['ordersDone/'+w.uid+'/'+k]=x.b?w.q:null;
+  if(x.r!=null)upd['ordersDone/'+w.uid+'/r~'+k]=x.r?w.q:null});
+ if(!Object.keys(upd).length)return;
  ORD.tbusy=true;ORD.tmsg='';render();
- firebase.database().ref().update(upd).then(function(){Object.keys(upd).forEach(function(p){var s=p.split('/');ORD.alldone[s[1]]=ORD.alldone[s[1]]||{};ORD.alldone[s[1]][s[2]]=upd[p]});ORD.tbusy=false;render()})
- .catch(function(){ORD.tbusy=false;ORD.tmsg='Échec. Vérifie que les règles Firebase sont à jour.';render()});
+ firebase.database().ref().update(upd).then(function(){Object.keys(upd).forEach(function(p){var s=p.split('/'),key=s.slice(2).join('/');ORD.alldone[s[1]]=ORD.alldone[s[1]]||{};if(upd[p]==null)delete ORD.alldone[s[1]][key];else ORD.alldone[s[1]][key]=upd[p]});ORD.tbusy=false;render()})
+ .catch(function(){ORD.tbusy=false;ORD.tmsg='Échec. Vérifie ta connexion et réessaie.';render()});
 }
+function tordTick(d){
+ var k=d.tb||d.tr||d.tball||d.trall,a=tordAgg()[k];if(!a)return;
+ if(d.tb||d.tr){var w=a.who.filter(function(x){return x.uid===d.u})[0];if(!w)return;
+  if(d.tb){var on=w.d<w.q;tordSet([{w:w,k:k,b:on,r:on?null:false}])}
+  else{var on2=w.r<w.q;tordSet([{w:w,k:k,r:on2,b:on2?true:null}])}return}
+ if(d.tball)tordSet(a.who.filter(function(w){return w.d<w.q}).map(function(w){return {w:w,k:k,b:true}}));
+ if(d.trall)tordSet(a.who.filter(function(w){return w.r<w.q}).map(function(w){return {w:w,k:k,b:true,r:true}}));
+}
+
 function ordClick(b){
  var d=b.dataset;
  if(d.ocat!=null){ORD.open[d.ocat]=!ORD.open[d.ocat];render();return true}
@@ -743,7 +757,7 @@ function ordClick(b){
  if(d.act==='treload'){ORD.all=null;tordLoad();render();return true}
  if(d.mexp){ORD.mexp=ORD.mexp||{};ORD.mexp[d.mexp]=!ORD.mexp[d.mexp];render();return true}
  if(d.texp){ORD.exp[d.texp]=!ORD.exp[d.texp];render();return true}
- if(d.tbuy){tordBuy(d.tbuy);return true}
+ if(d.tb||d.tr||d.tball||d.trall){tordTick(d);return true}
  return false;
 }
 function ordChange(t){if(t.dataset&&t.dataset.osize){ORD.size[t.dataset.osize]=t.value;render();return true}return false}
@@ -1950,7 +1964,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="48cb6eb44ddd">
-<script>(function(){var B="48cb6eb44ddd";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="6f0c7986f310">
+<script>(function(){var B="6f0c7986f310";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

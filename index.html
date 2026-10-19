@@ -1282,6 +1282,8 @@ function ptsTop(){
  if(!CP_ON||editing)return '';
  if(pts.ok)return '';
  if(!(ACCK&&ACCK.scope==='chef'))return '';
+ if(!pts.busy&&!pts.err){pts.busy=true;setTimeout(function(){pts.token=ACCK.token;ptsLoad()},0)}
+ return pts.err?'<p class="cperr">'+esc(pts.err)+'</p>':'';
  if(!pts.open)return '<button class="cpbtn" data-act="ptsacc" style="margin-top:12px"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Modifier les points</b><span>Réservé aux chefs</span></span><span class="evgo" aria-hidden="true">›</span></button>';
  return '<div class="cpcard"><p class="cplead">Entre le mot de passe pour modifier les points.</p><div class="fields"><input id="pts-pw" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Mot de passe" aria-label="Mot de passe"><button class="btn" data-act="ptsunlock"'+(pts.busy?' disabled':'')+'>'+(pts.busy?'Vérification…':'Ouvrir')+'</button></div>'+(pts.err?'<p class="cperr">'+esc(pts.err)+'</p>':'')+'</div>';
 }
@@ -1483,7 +1485,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="243260d64fa6">
-<script>(function(){var B="243260d64fa6";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="df62d8ea5387">
+<script>(function(){var B="df62d8ea5387";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

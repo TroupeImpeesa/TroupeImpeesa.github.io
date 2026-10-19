@@ -392,6 +392,23 @@ input,select,textarea{border-radius:10px;font-family:var(--body)}
 .hpn{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;letter-spacing:-.01em;margin-bottom:6px}
 .hpl{width:24px;height:24px;border-radius:7px;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;flex:none}
 .hpr{display:grid;grid-template-columns:24px 1fr;align-items:baseline;font-size:13px;line-height:1.35;overflow-wrap:anywhere}.hpr span{font-size:11px;font-weight:700;color:var(--muted)}
+.qtile{grid-column:1/-1;flex-direction:row;align-items:center;gap:14px;padding:14px 16px}
+.navgrid .qtile .tcirc{margin:0}
+.qhello{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.qlink{border:none;background:none;color:var(--muted);font:600 13px var(--body);text-decoration:underline;cursor:pointer;padding:4px}
+.qstart,.qres{display:grid;gap:8px;background:var(--surface);border-radius:18px;padding:18px}
+.qstart b{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.qres{text-align:center;justify-items:center}.qres b{font-size:38px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.qplay{background:var(--surface);border-radius:18px;padding:16px}
+.qtop{display:flex;justify-content:space-between;font-size:14px;color:var(--muted)}.qtop b{color:var(--fg)}
+.qbar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin:10px 0 4px}.qbar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .25s linear}
+.qq{font-size:18px;font-weight:700;line-height:1.35;margin:14px 2px 14px;letter-spacing:-.01em}
+.qopts{display:grid;gap:8px}
+.qopt{text-align:left;border:1.5px solid var(--line);background:var(--bg);color:var(--fg);border-radius:14px;padding:13px 14px;font:600 15px var(--body);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.qopt:disabled{cursor:default;opacity:1}
+.qopt.ok{background:var(--accent);border-color:var(--accent);color:#fff}
+.qopt.no{background:var(--danger);border-color:var(--danger);color:#fff}
+.row.qme{background:color-mix(in srgb,var(--accent) 10%,transparent)}
 .crown{display:inline-flex;vertical-align:-3px;margin-left:6px;color:#e0a800}
 .mphone{font-size:12px;font-weight:600;color:var(--accent);text-decoration:none;white-space:nowrap;margin-top:2px}
 /* ===== Espace CP ===== */
@@ -447,7 +464,7 @@ input,select,textarea{border-radius:10px;font-family:var(--body)}
 (function(){
 function load(){var x=JSON.parse(document.getElementById('state').textContent);x.meetings=x.meetings||[];x.photos=x.photos||[];x.news=x.news||[];x.faces=x.faces||{};return x}
 var S=load(),curM=null,slide=0,openScout=null,openEvent=null;
-var TABS=['home','progress','events','history'];
+var TABS=['home','progress','events','history','quiz'];
 var tab='home',openGroup=null,openPts=null;
 function route(h){h=(h==null?(location.hash||'#home').slice(1):h).split('/');var t=h[0]==='points'?'progress':h[0];if(TABS.indexOf(t)<0)t='home';tab=t;openGroup=null;openPts=null;openScout=null;openEvent=null;openCP=null;var x=h[1]||'';
  if(t==='progress'){if(x.indexOf('g-')===0)openGroup=x.slice(2);else if(x.indexOf('cp-')===0&&pat(x.slice(3))){openCP=x.slice(3);openGroup=openCP}else if(x.indexOf('pts-')===0)openPts=x.slice(4);else if(x.indexOf('s-')===0){var sc=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc){openScout=sc.id;openGroup=sc.patrol}}}
@@ -556,7 +573,8 @@ function home(){
  h+=N.length?'<ul class="news">'+N.map(function(n){return '<li><span class="ndate">'+fmtDate(n.date)+'</span><span class="ntext">'+(n.auto?'<span class="ntag">Progression</span> ':'')+linkify(n.text)+'</span>'+(editing?'<button class="x" data-delnews="'+n.id+'" aria-label="Supprimer l’annonce">×</button>':'')+'</li>'}).join('')+'</ul>':'<p class="empty">Aucune annonce pour l’instant.</p>';
  var t=today(),nx=S.events.filter(function(e){return !evOver(e)}).sort(function(a,b){return a.date<b.date?-1:1})[0];
  if(nx){h+='<h2>Prochaine activité</h2>'+evCard(nx,false,false,true);}
- h+='<div class="navgrid">'+[['progress','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/></svg>','Troupe','Patrouilles, membres et points','var(--navy)'],['events','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>','Calendrier','Toutes les activités','var(--p3)'],['history','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg>','Histoire','L’histoire de la troupe','var(--p4)']].map(function(x){return '<button class="tile" data-nav="'+x[0]+'" style="--gc:'+x[4]+'"><span class="tcirc">'+x[1]+'</span><span class="tname">'+x[2]+'</span></button>'}).join('')+'</div>';
+ h+='<div class="navgrid">'+[['progress','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/></svg>','Troupe','Patrouilles, membres et points','var(--navy)'],['events','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>','Calendrier','Toutes les activités','var(--p3)'],['history','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg>','Histoire','L’histoire de la troupe','var(--p4)']].map(function(x){return '<button class="tile" data-nav="'+x[0]+'" style="--gc:'+x[4]+'"><span class="tcirc">'+x[1]+'</span><span class="tname">'+x[2]+'</span></button>'}).join('')+
+  '<button class="tile wide qtile" data-nav="quiz"><span class="tcirc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 .9c0 1.7-2.5 2.2-2.5 3.8"/><path d="M12 17.2v.1"/></svg></span><span class="tname">Quiz Prêt<span class="tsub">15 questions chaque semaine · classement</span></span><span class="evgo" aria-hidden="true">›</span></button></div>';
  return h}
 
 var ANIMALS=[['poney','🐎'],['requin','🦈'],['castor','🦫'],['boa','🐍']];
@@ -781,14 +799,140 @@ document.addEventListener('input',function(ev){var t=ev.target;if(t.dataset&&t.d
 window.addEventListener('beforeunload',function(e){if(cp.dirty){e.preventDefault();e.returnValue=''}});
 
 
+/* ===== Quiz Prêt (Firebase Auth + RTDB) ===== */
+var FBP=null,FBAUTH=null;
+function fbLoad(){
+ if(FBP)return FBP;
+ var V='10.12.2',base='https://www.gstatic.com/firebasejs/'+V+'/';
+ function load(src){return new Promise(function(ok,no){var t=document.createElement('script');t.src=src;t.async=true;t.onload=ok;t.onerror=no;document.head.appendChild(t)})}
+ FBP=load(base+'firebase-app-compat.js').then(function(){return load(base+'firebase-database-compat.js')}).then(function(){
+  return firebase.initializeApp({apiKey:"AIzaSyAhV_fKJll1oxnyrCJymQOJuceHxPeKqp8",authDomain:"troupe-impeesa.firebaseapp.com",databaseURL:"https://troupe-impeesa-default-rtdb.europe-west1.firebasedatabase.app",projectId:"troupe-impeesa",appId:"1:916383056692:web:e832acceb60a2b2bb3db61"})});
+ FBP.catch(function(){FBP=null});
+ return FBP;
+}
+function fbAuth(){
+ if(FBAUTH)return FBAUTH;
+ FBAUTH=fbLoad().then(function(app){return new Promise(function(ok,no){if(firebase.auth)return ok(app);var t=document.createElement('script');t.src='https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js';t.onload=function(){ok(app)};t.onerror=no;document.head.appendChild(t)})});
+ FBAUTH.catch(function(){FBAUTH=null});
+ return FBAUTH;
+}
+var QZ={ready:false,err:'',user:null,name:'',patrol:'',data:null,mode:'login',busy:false,msg:'',lb:'week',week:null,all:null,users:{},started:false,play:null,done:null,mine:null};
+var QZ_T=20,QZ_DOM='@quiz.troupeimpeesa.github.io';
+function bDate(d){try{return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Beirut',year:'numeric',month:'2-digit',day:'2-digit'}).format(d||new Date())}catch(e){return today()}}
+function qWeek(){var t=bDate(),d=new Date(t+'T12:00:00Z'),wd=(d.getUTCDay()+6)%7;d.setUTCDate(d.getUTCDate()-wd);return d.toISOString().slice(0,10)}
+function qSet(){return QZ.data&&QZ.data.weeks?QZ.data.weeks[qWeek()]:null}
+function qUname(v){return String(v||'').trim().toLowerCase().replace(/\s+/g,'.').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9._-]/g,'')}
+function qInit(){
+ if(QZ.ready||QZ.busy)return;
+ if(!/github\.io$/.test(location.hostname)&&!/localhost|127\.0\.0\.1/.test(location.hostname)){QZ.err='off';return}
+ QZ.busy=true;
+ fetch('data/quiz.json',{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){QZ.data=j}).catch(function(){QZ.data={weeks:{}}})
+ .then(fbAuth).then(function(){
+  firebase.auth().onAuthStateChanged(function(u){QZ.user=u;QZ.ready=true;QZ.busy=false;QZ.mine=null;QZ.started=false;if(u)qMe();qBoards();if(tab==='quiz')render()});
+ }).catch(function(){QZ.busy=false;QZ.err='net';if(tab==='quiz')render()});
+}
+function qMe(){
+ var db=firebase.database(),u=QZ.user,w=qWeek();
+ db.ref('quiz/users/'+u.uid).once('value').then(function(s){var v=s.val()||{};QZ.name=v.name||u.email.split('@')[0];QZ.patrol=v.patrol||'';if(tab==='quiz')render()});
+ db.ref('quiz/starts/'+w+'/'+u.uid).once('value').then(function(s){QZ.started=s.exists();if(tab==='quiz')render()});
+}
+function qBoards(){
+ var db=firebase.database();
+ db.ref('quiz/users').once('value').then(function(s){QZ.users=s.val()||{};return db.ref('quiz/scores').once('value')}).then(function(s){
+  var all=s.val()||{},w=qWeek();QZ.all=all;QZ.week=all[w]||{};
+  if(QZ.user&&QZ.week[QZ.user.uid])QZ.mine=QZ.week[QZ.user.uid];
+  if(tab==='quiz')render();
+ }).catch(function(){});
+}
+function qBoardRows(){
+ var src={};
+ if(QZ.lb==='week'){Object.keys(QZ.week||{}).forEach(function(k){src[k]=QZ.week[k].s||0})}
+ else{Object.keys(QZ.all||{}).forEach(function(w){var W=QZ.all[w]||{};Object.keys(W).forEach(function(k){src[k]=(src[k]||0)+(W[k].s||0)})})}
+ var L=Object.keys(src).map(function(k){var u=QZ.users[k]||{};return {k:k,s:src[k],n:u.name||'?',p:u.patrol||''}}).sort(function(a,b){return b.s-a.s});
+ if(!L.length)return '<p class="empty">'+(QZ.lb==='week'?'Personne n’a encore joué cette semaine. Sois le premier !':'Pas encore de scores.')+'</p>';
+ var rk=0,prev=null;
+ return '<div class="board">'+L.slice(0,50).map(function(r,i){if(r.s!==prev){rk=i+1;prev=r.s}var p=pat(r.p);var me=QZ.user&&r.k===QZ.user.uid;
+  return '<div class="row'+(rk===1?' first':'')+(me?' qme':'')+'"><span class="rank">'+rk+'</span><span class="pname">'+(p?'<span class="dot" style="background:'+col(p)+'"></span>':'')+esc(r.n)+(me?' <span class="meta">(toi)</span>':'')+'</span><span class="pts">'+r.s+'<small>pts</small></span></div>'}).join('')+'</div>';
+}
+function quiz(){
+ qInit();
+ var h='<h2>Quiz Prêt</h2><div class="meta" style="margin:-4px 0 10px">Chaque semaine, 15 questions sur ton carnet « Prêt ». Un seul essai par semaine !</div>';
+ if(QZ.err==='off')return h+'<div class="soonbox"><b>Le quiz se joue sur le site</b><span>troupeimpeesa.github.io</span></div>';
+ if(QZ.err==='net')return h+'<div class="cpcard"><p class="cperr">Impossible de charger le quiz. Vérifie ta connexion et réessaie.</p><button class="btn" data-act="qretry">Réessayer</button></div>';
+ if(!QZ.ready)return h+'<p class="empty">Chargement…</p>';
+ if(QZ.play)return h+qPlay();
+ var set=qSet();
+ if(!QZ.user){
+  var su=QZ.mode==='signup';
+  h+='<div class="cpcard"><div class="seg" role="tablist"><button role="tab" aria-selected="'+(!su)+'" data-act="qmode" data-m="login">Se connecter</button><button role="tab" aria-selected="'+su+'" data-act="qmode" data-m="signup">Créer un compte</button></div>'+
+   '<label class="lbl">Nom d’utilisateur<input id="qz-u" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20" placeholder="ex. georges.k"></label>'+
+   '<label class="lbl">Mot de passe<input id="qz-p" type="password" autocomplete="'+(su?'new-password':'current-password')+'" placeholder="6 caractères minimum"></label>'+
+   (su?'<label class="lbl">Ta patrouille<select id="qz-pt"><option value="">Choisis…</option>'+S.patrols.map(function(p){return '<option value="'+p.id+'">'+esc(p.name)+'</option>'}).join('')+'<option value="x">Maîtrise / autre</option></select></label>':'')+
+   '<button class="btn" data-act="'+(su?'qsignup':'qlogin')+'"'+(QZ.busy?' disabled':'')+'>'+(QZ.busy?'Patiente…':su?'Créer mon compte':'Se connecter')+'</button>'+
+   (QZ.msg?'<p class="cperr">'+esc(QZ.msg)+'</p>':'')+
+   (su?'<span class="meta">Retiens bien ton mot de passe : tu en auras besoin chaque fois que tu te connectes sur un nouveau téléphone.</span>':'')+'</div>';
+ }else{
+  h+='<div class="qhello"><span>Salut <b>'+esc(QZ.name)+'</b></span><button class="qlink" data-act="qlogout">Se déconnecter</button></div>';
+  if(!set)h+='<div class="cpcard"><b>Pas de quiz cette semaine.</b><span class="meta">Reviens lundi pour le prochain !</span></div>';
+  else if(QZ.done)h+='<div class="qres"><span class="meta">Ton score cette semaine</span><b>'+QZ.done.s+' pts</b><span>'+QZ.done.n+' bonnes réponses sur '+set.qs.length+'</span></div>';
+  else if(QZ.mine)h+='<div class="qres"><span class="meta">Déjà joué cette semaine</span><b>'+QZ.mine.s+' pts</b><span>'+QZ.mine.n+' bonnes réponses sur '+set.qs.length+'. Prochain quiz lundi !</span></div>';
+  else if(QZ.started)h+='<div class="cpcard"><b>Tu as déjà commencé le quiz de cette semaine.</b><span class="meta">Un seul essai par semaine. Prochain quiz lundi !</span></div>';
+  else h+='<div class="qstart"><span class="meta">Semaine du '+esc(longDate(qWeek()))+'</span><b>'+esc(set.title)+'</b><span>'+set.qs.length+' questions · '+QZ_T+' secondes chacune · plus tu réponds vite, plus tu gagnes de points.</span><span class="meta">Attention : une fois commencé, tu ne peux pas recommencer. Ne quitte pas la page.</span><button class="btn" data-act="qstart"'+(QZ.busy?' disabled':'')+'>Commencer le quiz</button>'+(QZ.msg?'<p class="cperr">'+esc(QZ.msg)+'</p>':'')+'</div>';
+ }
+ h+='<h2>Classement</h2><div class="seg" role="tablist" style="margin-bottom:10px"><button role="tab" aria-selected="'+(QZ.lb==='week')+'" data-act="qlb" data-m="week">Cette semaine</button><button role="tab" aria-selected="'+(QZ.lb==='all')+'" data-act="qlb" data-m="all">Général</button></div>'+qBoardRows();
+ return h;
+}
+function qPlay(){
+ var P=QZ.play,set=qSet(),q=set.qs[P.i],ans=(q.a+4-((P.i*7+3)%4))%4;
+ var left=Math.max(0,QZ_T-Math.floor((Date.now()-P.t0)/1000));
+ return '<div class="qplay"><div class="qtop"><span>Question '+(P.i+1)+'/'+set.qs.length+'</span><span><b id="qz-left">'+left+'</b> s · '+P.s+' pts</span></div><div class="qbar"><i id="qz-bar" style="width:'+(left/QZ_T*100)+'%"></i></div>'+
+  '<p class="qq">'+esc(q.q)+'</p><div class="qopts">'+q.o.map(function(o,i){var c='';if(P.pick!=null){if(i===ans)c=' ok';else if(i===P.pick)c=' no'}return '<button class="qopt'+c+'" data-act="qpick" data-i="'+i+'"'+(P.pick!=null?' disabled':'')+'>'+esc(o)+'</button>'}).join('')+'</div></div>';
+}
+var QTIMER=null;
+function qTick(){clearInterval(QTIMER);QTIMER=setInterval(function(){var P=QZ.play;if(!P||P.pick!=null)return;var left=QZ_T-(Date.now()-P.t0)/1000;var e=document.getElementById('qz-left'),b=document.getElementById('qz-bar');if(e)e.textContent=Math.max(0,Math.ceil(left));if(b)b.style.width=Math.max(0,left/QZ_T*100)+'%';if(left<=0)qAnswer(-1)},250)}
+function qAnswer(i){
+ var P=QZ.play,set=qSet(),q=set.qs[P.i],ans=(q.a+4-((P.i*7+3)%4))%4;if(P.pick!=null)return;
+ P.pick=i;if(i===ans){P.n++;P.s+=100+Math.round(50*Math.max(0,QZ_T-(Date.now()-P.t0)/1000)/QZ_T)}
+ render();
+ setTimeout(function(){P.i++;P.pick=null;P.t0=Date.now();if(P.i>=set.qs.length)qFinish();else render()},1100);
+}
+function qFinish(){
+ clearInterval(QTIMER);var P=QZ.play,res={s:P.s,n:P.n,at:firebase.database.ServerValue.TIMESTAMP};QZ.play=null;QZ.done={s:P.s,n:P.n};render();
+ function send(k){firebase.database().ref('quiz/scores/'+qWeek()+'/'+QZ.user.uid).set(res).then(qBoards).catch(function(){if(k<3)setTimeout(function(){send(k+1)},4000)})}
+ var wait=Math.max(0,31000-(Date.now()-P.start));setTimeout(function(){send(0)},wait);
+}
+function qClick(b){
+ var a=b.dataset.act;if(!a||a.charAt(0)!=='q'||a==='qq')return false;
+ if(a==='qretry'){QZ.err='';QZ.ready=false;render();return true}
+ if(a==='qmode'){QZ.mode=b.dataset.m;QZ.msg='';render();return true}
+ if(a==='qlb'){QZ.lb=b.dataset.m;render();return true}
+ if(a==='qlogout'){firebase.auth().signOut();QZ.done=null;return true}
+ if(a==='qlogin'||a==='qsignup'){
+  var raw=val('qz-u'),u=qUname(raw),pw=(document.getElementById('qz-p')||{}).value||'',pt=val('qz-pt');
+  if(u.length<3){QZ.msg='Choisis un nom d’utilisateur d’au moins 3 lettres (lettres, chiffres, point).';render();return true}
+  if(pw.length<6){QZ.msg='Le mot de passe doit avoir au moins 6 caractères.';render();return true}
+  if(a==='qsignup'&&!pt){QZ.msg='Choisis ta patrouille.';render();return true}
+  QZ.busy=true;QZ.msg='';render();
+  var A=firebase.auth(),em=u+QZ_DOM;
+  (a==='qsignup'?A.createUserWithEmailAndPassword(em,pw).then(function(c){return firebase.database().ref('quiz/users/'+c.user.uid).set({name:raw.trim().slice(0,20),patrol:pt==='x'?'':pt}).then(function(){QZ.name=raw.trim().slice(0,20);QZ.patrol=pt})}):A.signInWithEmailAndPassword(em,pw))
+  .then(function(){QZ.busy=false;QZ.msg='';qBoards();render()})
+  .catch(function(e){QZ.busy=false;var c=(e&&e.code)||'';QZ.msg=c.indexOf('email-already-in-use')>=0?'Ce nom d’utilisateur est déjà pris.':/wrong-password|user-not-found|invalid-credential|invalid-login/.test(c)?'Nom d’utilisateur ou mot de passe incorrect.':c.indexOf('operation-not-allowed')>=0?'Le quiz n’est pas encore activé.':c.indexOf('too-many')>=0?'Trop d’essais. Réessaie dans quelques minutes.':'Erreur. Vérifie ta connexion et réessaie.';render()});
+  return true}
+ if(a==='qstart'){
+  var set=qSet();if(!set||!QZ.user)return true;QZ.busy=true;QZ.msg='';render();
+  firebase.database().ref('quiz/starts/'+qWeek()+'/'+QZ.user.uid).set(firebase.database.ServerValue.TIMESTAMP).then(function(){
+   QZ.busy=false;QZ.started=true;QZ.play={i:0,s:0,n:0,pick:null,t0:Date.now(),start:Date.now()};render();qTick()
+  }).catch(function(){QZ.busy=false;QZ.started=true;QZ.msg='';qMe();render()});
+  return true}
+ if(a==='qpick'){qAnswer(+b.dataset.i);return true}
+ return false;
+}
+
 /* ===== Visiteurs en ligne (Firebase) ===== */
 var ONLINE=null;
 function presence(){
  if(!CP_ON||!/github\.io$/.test(location.hostname))return;
- var V='10.12.2',base='https://www.gstatic.com/firebasejs/'+V+'/';
- function load(src){return new Promise(function(ok,no){var t=document.createElement('script');t.src=src;t.async=true;t.onload=ok;t.onerror=no;document.head.appendChild(t)})}
- load(base+'firebase-app-compat.js').then(function(){return load(base+'firebase-database-compat.js')}).then(function(){
-  var app=firebase.initializeApp({apiKey:"AIzaSyAhV_fKJll1oxnyrCJymQOJuceHxPeKqp8",authDomain:"troupe-impeesa.firebaseapp.com",databaseURL:"https://troupe-impeesa-default-rtdb.europe-west1.firebasedatabase.app",projectId:"troupe-impeesa",appId:"1:916383056692:web:e832acceb60a2b2bb3db61"});
+ fbLoad().then(function(app){
   var db=firebase.database(app),me=db.ref('online/'+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
   db.ref('.info/connected').on('value',function(s){if(s.val()===true){me.onDisconnect().remove();me.set(true)}});
   db.ref('online').on('value',function(s){ONLINE=Math.max(1,s.numChildren());var n=document.getElementById('online-n');if(n)n.textContent=ONLINE});
@@ -949,7 +1093,7 @@ function settings(){return editing?'<div class="editbox" style="margin-top:28px"
 function render(){
  var app=document.getElementById('app');
  var keep=editing;
- var body=header()+(tab==='home'||(tab==='progress'&&(openGroup||openPts))?'':backHome())+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():events())+(full?settings():'');
+ var body=header()+(tab==='home'||(tab==='progress'&&(openGroup||openPts))?'':backHome())+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():tab==='quiz'?quiz():events())+(full?settings():'');
  editing=keep;
  if(openScout) body+=profile();
  if(openEvent) body+=eventPage();
@@ -965,6 +1109,7 @@ document.addEventListener('click',function(ev){
  var b=ev.target.closest('button');
  if(b&&cpClick(b))return;
  if(b&&ptsClick(b))return;
+ if(b&&qClick(b))return;
  if(!b){var pt=ev.target.closest('[data-ptab]');if(pt&&!ev.target.closest('input,select,textarea')){go('progress/pts-'+pt.dataset.ptab);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return}
   var evl=ev.target.closest('[data-event]');if(evl){go(tab+'/e-'+evl.dataset.event);var pr=document.querySelector('.profile');if(pr)pr.scrollTop=0}return}
  if(b.dataset.nav){go(b.dataset.nav);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);if(tab==='progress')leaderRun();return}
@@ -1059,7 +1204,8 @@ if(window.claude&&window.claude.use){
 }
 })();
 </script>
-<meta data-build="ea7d6a9b0a2d">
-<script>(function(){var B="ea7d6a9b0a2d";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+
+<meta data-build="8f0bcd44a568">
+<script>(function(){var B="8f0bcd44a568";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

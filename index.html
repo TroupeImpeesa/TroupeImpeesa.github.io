@@ -1350,7 +1350,7 @@ function eventPage(){
  var e=S.events.filter(function(x){return x.id===openEvent})[0]; if(!e) return '';
  var p=e.date.split('-'),bring=lines(e.bring),rem=lines(e.remarks);
  var h='<div class="profile" role="dialog" aria-modal="true" aria-label="'+esc(e.title)+'"><div class="pwrap">'+
-  '<button class="back" data-act="closeevent"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Calendrier</span></button>'+
+  '<button class="back" data-act="closeevent"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>'+(tab==='home'?'Accueil':'Calendrier')+'</span></button>'+
   '<div class="evhero"><div class="cal big"><b>'+MONTHS[+p[1]-1]+'</b><span>'+(+p[2])+'</span></div><div style="min-width:0"><div class="ptag">'+esc(longDate(e.date)+(evEnd(e)!==e.date?' – '+longDate(evEnd(e)):''))+'</div><h2 class="pname2">'+esc(e.title)+'</h2></div></div>'+
   '<div class="evinfo">'+(hours(e)?'<div><span>Horaire</span><b>'+esc(hours(e))+'</b></div>':'')+(e.place?'<div><span>Lieu</span><b>'+linkify(e.place)+'</b></div>':'')+(e.note?'<div><span>Info</span><b>'+linkify(e.note)+'</b></div>':'')+'</div>'+
   (bring.length?'<h3 class="psec">À apporter</h3><ul class="evlist">'+bring.map(function(x){return '<li>'+linkify(x)+'</li>'}).join('')+'</ul>':'')+
@@ -1514,7 +1514,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="ed73011e3b1a">
-<script>(function(){var B="ed73011e3b1a";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="3be5b1a9b685">
+<script>(function(){var B="3be5b1a9b685";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

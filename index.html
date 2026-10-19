@@ -903,7 +903,7 @@ function qBoards(){
 }
 function qBoardRows(){
  var src={};
- Object.keys(QZ.week||{}).forEach(function(k){src[k]=QZ.week[k].s||0});
+ Object.keys(QZ.week||{}).forEach(function(k){if(QZ.users[k]&&QZ.users[k].name==='impeesa.admin')return;src[k]=QZ.week[k].s||0});
  var L=Object.keys(src).map(function(k){var u=QZ.users[k]||{};return {k:k,s:src[k],n:u.name||'?',p:u.patrol||''}}).sort(function(a,b){return b.s-a.s});
  if(!L.length)return '<div class="kcard kc"><b>Personne n’a encore joué cette semaine.</b><span>Sois le premier !</span></div>';
  var rk=0,prev=null;
@@ -931,7 +931,7 @@ function quiz(){
  }else{
   h+='<div class="khello"><span>Salut <b>'+esc(QZ.name)+'</b> 👋</span><button class="klink" data-act="qlogout">Se déconnecter</button></div>';
   if(QZ.admin)h+=qAdmin();
-  if(QZ.ok===null)h+='<div class="kload"><i></i><i></i><i></i><i></i></div>';
+  else if(QZ.ok===null)h+='<div class="kload"><i></i><i></i><i></i><i></i></div>';
   else if(!QZ.ok&&!QZ.admin)h+='<div class="kcard kc"><b>⏳ Compte en attente d’approbation</b><span>La maîtrise doit approuver ton compte avant que tu puisses jouer. Reviens un peu plus tard !</span><button class="kbtn" data-act="qcheck">Vérifier</button></div>';
   else if(!set)h+='<div class="kcard kc"><b>Pas de quiz cette semaine.</b><span>Reviens lundi pour le prochain !</span></div>';
   else if(QZ.done)h+='<div class="kcard kc kres"><span>Ton score cette semaine</span><b>'+QZ.done.s+'</b><span>'+QZ.done.n+' bonnes réponses sur '+set.qs.length+' 🎉</span></div>';
@@ -965,9 +965,9 @@ function qFinish(){
 }
 function alertQ(t){QZ.msg=t;render()}
 function qAdmin(){
- var U=QZ.users||{},P=Object.keys(U).filter(function(k){return U[k].ok!==true}),A=Object.keys(U).filter(function(k){return U[k].ok===true});
+ var U={};Object.keys(QZ.users||{}).forEach(function(k){if(k!==QZ.user.uid)U[k]=QZ.users[k]});var P=Object.keys(U).filter(function(k){return U[k].ok!==true}),A=Object.keys(U).filter(function(k){return U[k].ok===true});
  function row(k,pend){var u=U[k],p=pat(u.patrol);return '<div class="kadr"><span class="knm">'+esc(u.name||'?')+'<i class="kpat" style="background:'+(p?pdfCol(p):'#46178f')+'">'+(p?esc(p.name):'Maîtrise')+'</i></span>'+(pend?'<button class="kab ok" data-act="qok" data-u="'+k+'">Approuver</button>':'')+'<button class="kab no" data-act="qno" data-u="'+k+'">'+(pend?'Refuser':'Retirer')+'</button></div>'}
- return '<div class="kcard kadm"><b>👑 Admin · comptes en attente ('+P.length+')</b>'+(P.length?P.map(function(k){return row(k,true)}).join(''):'<span class="kwarn">Aucun compte en attente.</span>')+
+ return '<div class="kcard kadm"><span class="kwarn">Compte de gestion : il ne joue pas au quiz.</span><b>👑 Comptes en attente ('+P.length+')</b>'+(P.length?P.map(function(k){return row(k,true)}).join(''):'<span class="kwarn">Aucun compte en attente.</span>')+
   '<button class="klink2" data-act="qadm">'+(QZ.admOpen?'Cacher':'Voir')+' les comptes approuvés ('+A.length+')</button>'+(QZ.admOpen?A.map(function(k){return row(k,false)}).join(''):'')+(QZ.msg?'<p class="kerr">'+esc(QZ.msg)+'</p>':'')+'</div>';
 }
 function qClick(b){
@@ -1280,7 +1280,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="e54e026daa2d">
-<script>(function(){var B="e54e026daa2d";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="7a76661cad96">
+<script>(function(){var B="7a76661cad96";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

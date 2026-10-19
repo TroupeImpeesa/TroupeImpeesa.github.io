@@ -1111,7 +1111,7 @@ function quiz(){
  if(!QZ.user){
   h+='<div class="kcard kc"><b>Connecte-toi pour jouer</b><span>Utilise le compte que la maîtrise t’a donné.</span><button class="kbtn kgo" data-nav="login">Se connecter</button></div>';
  }else{
-  h+='<div class="khello"><span>Salut <b>'+esc(QZ.name)+'</b> 👋</span><button class="klink" data-act="qlogout">Se déconnecter</button></div>';
+  h+='<div class="khello"><span>Salut <b>'+esc(QZ.name)+'</b> 👋</span></div>';
   if(QZ.admin)h+='<div class="kcard kc"><b>Compte de gestion</b><span>Le quiz est pour les scouts. Tes outils sont dans ton espace admin.</span><button class="kbtn" data-nav="me">Espace admin</button></div>';
   else if(QZ.ok===null)h+='<div class="kload"><i></i><i></i><i></i><i></i></div>';
   else if(!QZ.ok&&!QZ.admin)h+='<div class="kcard kc"><b>⏳ Compte en attente d’approbation</b><span>La maîtrise doit approuver ton compte avant que tu puisses jouer. Reviens un peu plus tard !</span><button class="kbtn" data-act="qcheck">Vérifier</button></div>';
@@ -1467,7 +1467,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="a74da647d745">
-<script>(function(){var B="a74da647d745";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="925c2c0ba23e">
+<script>(function(){var B="925c2c0ba23e";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

@@ -781,8 +781,9 @@ function acnPw(){var a='abcdefghjkmnpqrstuvwxyz',d='23456789',r=crypto.getRandom
 function acnUser(n){return String(n||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'')}
 function acnBox(){
  if(!ACN.pw)ACN.pw=acnPw();
- var opts='<option value="">Choisis un scout…</option>'+S.patrols.map(function(p){return '<optgroup label="'+esc(p.name)+'">'+S.scouts.filter(function(s){return s.patrol===p.id}).map(function(s){var has=Object.keys(QZ.users||{}).some(function(k){return QZ.users[k].sid===s.id});return '<option value="'+s.id+'"'+(ACN.sid===s.id?' selected':'')+'>'+esc(s.name)+(s.role?' ('+s.role+')':'')+(has?' ✓ a déjà un compte':'')+'</option>'}).join('')+'</optgroup>'}).join('')+'<option value="new"'+(ACN.sid==='new'?' selected':'')+'>➕ Nouveau membre (pas encore dans une patrouille)</option><option value="staff"'+(ACN.sid==='staff'?' selected':'')+'>Maîtrise / autre</option>';
- var h='<div class="kcard kadm"><b>➕ Créer un compte</b>'+
+ var HAS={};Object.keys(QZ.users||{}).forEach(function(k){if(QZ.users[k].sid)HAS[QZ.users[k].sid]=1});
+ var opts='<option value="">Choisis…</option>'+S.patrols.map(function(p){var L=S.scouts.filter(function(s){return s.patrol===p.id&&!HAS[s.id]});return L.length?'<optgroup label="'+esc(p.name)+' (sans compte)">'+L.map(function(s){return '<option value="'+s.id+'"'+(ACN.sid===s.id?' selected':'')+'>'+esc(s.name)+(s.role?' ('+s.role+')':'')+'</option>'}).join('')+'</optgroup>':''}).join('')+'<option value="new"'+(ACN.sid==='new'?' selected':'')+'>➕ Nouveau membre (pas encore dans une patrouille)</option><option value="staff"'+(ACN.sid==='staff'?' selected':'')+'>Maîtrise / autre</option>';
+ var h='<div class="kcard kadm"><b>➕ Créer un compte</b><span class="kwarn">Seulement pour les nouveaux membres et ceux qui n’ont pas encore de compte.</span>'+
   '<label class="lbl">Pour qui ?<select id="acn-s" data-acn="s">'+opts+'</select></label>'+
   (ACN.sid==='staff'||ACN.sid==='new'?'<label class="lbl">Prénom et nom<input id="acn-n" data-acn="n" value="'+esc(ACN.name)+'" maxlength="20"></label>':'')+
   (ACN.sid==='new'?'<label class="lbl">Patrouille<select id="acn-pt" data-acn="pt"><option value="">Choisis…</option>'+S.patrols.map(function(p){return '<option value="'+p.id+'"'+(ACN.patrol===p.id?' selected':'')+'>'+esc(p.name)+'</option>'}).join('')+'</select></label><label class="lbl">Rôle<select id="acn-r" data-acn="r">'+[['','Scout'],['CP','CP'],['SP','SP']].map(function(x){return '<option value="'+x[0]+'"'+(ACN.role===x[0]?' selected':'')+'>'+x[1]+'</option>'}).join('')+'</select></label>':'')+
@@ -1485,7 +1486,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="df62d8ea5387">
-<script>(function(){var B="df62d8ea5387";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="9bb27ac4c217">
+<script>(function(){var B="9bb27ac4c217";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

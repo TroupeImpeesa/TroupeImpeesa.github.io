@@ -578,7 +578,7 @@ var tab='home',openGroup=null,openPts=null;
 function route(h){h=(h==null?(location.hash||'#home').slice(1):h).split('/');var t=h[0]==='points'?'progress':h[0];if(TABS.indexOf(t)<0)t='home';tab=t;openGroup=null;openPts=null;openScout=null;openEvent=null;openCP=null;var x=h[1]||'';
  if(t==='progress'){if(x.indexOf('g-')===0)openGroup=x.slice(2);else if(x.indexOf('cp-')===0&&pat(x.slice(3))){openCP=x.slice(3);openGroup=openCP}else if(x.indexOf('pts-')===0)openPts=x.slice(4);else if(x.indexOf('s-')===0){var sc=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc){openScout=sc.id;openGroup=sc.patrol}}}
  if(x.indexOf('e-')===0&&S.events.some(function(e){return e.id===x.slice(2)}))openEvent=x.slice(2);
- if(!openCP)cpLock();if(!openPts)ptsLock()}
+ if(!openCP)cpLock();if(!openPts)ptsLock();if(t==='orders'&&!ORD.tbusy)ORD.all=null;if(t==='order'&&!ORD.dirty)ORD.my=null}
 function go(h){try{history.pushState({ia:1},'','#'+h)}catch(e){}route(h);render()}
 function closeView(){if(history.state&&history.state.ia){history.back();return}var h=tab;if((openScout||openCP)&&openGroup)h='progress/g-'+openGroup;try{history.replaceState(null,'','#'+h)}catch(e){}route(h);render()}
 route();
@@ -664,7 +664,7 @@ function ordSave(){
  var u=firebase.auth().currentUser;if(!u){ORD.msg='Reconnecte-toi.';render();return}
  var items={};Object.keys(ORD.my).forEach(function(k){if(ORD.my[k]>0)items[k.replace(/[.#$\[\]\/]/g,'_')]=ORD.my[k]});
  ORD.busy=true;ORD.msg='';render();
- firebase.database().ref('orders/'+u.uid).set({name:ACC.name,patrol:ACC.patrol||'',items:items,at:firebase.database.ServerValue.TIMESTAMP}).then(function(){ORD.busy=false;ORD.dirty=false;ORD.msg='Commande enregistrée ✓';render()})
+ firebase.database().ref('orders/'+u.uid).set({name:ACC.name,patrol:ACC.patrol||'',items:items,at:firebase.database.ServerValue.TIMESTAMP}).then(function(){ORD.busy=false;ORD.dirty=false;ORD.all=null;ORD.msg='Commande enregistrée ✓';render()})
  .catch(function(){ORD.busy=false;ORD.msg='Échec de l’enregistrement. Réessaie.';render()});
 }
 /* --- Commande de la troupe (maîtrise / admin) --- */
@@ -681,7 +681,7 @@ function tordAgg(){
 function troupeOrderPage(){
  if(!isChef())return '<h2>Commande de la troupe</h2><div class="cpcard"><p class="cplead">Réservé à la maîtrise.</p></div>';
  if(ORD.all===null&&!ORD.tbusy)setTimeout(tordLoad,0);
- var h='<h2>Commande de la troupe</h2><div class="meta" style="margin:-4px 0 12px">Tout ce que les scouts ont demandé, à acheter à la Coop. Quand tu achètes, écris combien et appuie sur <b>Acheté</b>.</div>';
+ var h='<div class="prow"><h2>Commande de la troupe</h2><button class="pdfbtn" data-act="treload">Actualiser</button></div><div class="meta" style="margin:-4px 0 12px">Tout ce que les scouts ont demandé, à acheter à la Coop. Quand tu achètes, écris combien et appuie sur <b>Acheté</b>.</div>';
  if(ORD.all===null||!COOP)return h+'<p class="meta">'+esc(ORD.tmsg||'Chargement…')+'</p>';
  var A=tordAgg(),tot=0,lines=0;
  h+=COOP.cats.map(function(c){var L=[];c.items.forEach(function(i){Object.keys(A).forEach(function(k){if(k.split('|')[0]===i.id&&A[k].tot-A[k].done>0)L.push(A[k])})});if(!L.length)return '';
@@ -707,6 +707,7 @@ function ordClick(b){
  if(d.ocat!=null){ORD.open[d.ocat]=!ORD.open[d.ocat];render();return true}
  if(d.oq){var k=d.oq,v=Math.max(0,(ORD.my[k]||0)+(+d.d));if(v)ORD.my[k]=v;else delete ORD.my[k];ORD.dirty=true;ORD.msg='';render();return true}
  if(d.act==='osave'){ordSave();return true}
+ if(d.act==='treload'){ORD.all=null;tordLoad();render();return true}
  if(d.texp){ORD.exp[d.texp]=!ORD.exp[d.texp];render();return true}
  if(d.tbuy){tordBuy(d.tbuy);return true}
  return false;
@@ -1626,7 +1627,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="b89a2ff7e112">
-<script>(function(){var B="b89a2ff7e112";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="9a46adc9afbe">
+<script>(function(){var B="9a46adc9afbe";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

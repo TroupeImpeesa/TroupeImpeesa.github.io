@@ -484,6 +484,7 @@ body.kahoot .hamb{background:rgba(255,255,255,.14)}body.kahoot .hamb span{backgr
 .ieddist{width:64px;padding:4px 6px;font-size:14px;border-radius:6px;border:1px solid #ccc}.iedfrom{width:auto;padding:4px;font-size:14px;border-radius:6px}
 .iedbtns button.d{background:#fde7e9;color:#c62828}
 .iedbar{display:grid;grid-template-columns:repeat(4,1fr) 48px;gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));background:#fff}
+.visrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #eee}.visdot{width:9px;height:9px;border-radius:50%;background:#bbb;flex:none}.visdot.on{background:#2fb365}.visn{flex:1;min-width:0;display:grid}.visn b{font-size:14px}.visn span{font-size:12px;color:#777}.vist{font-size:12px;color:#777;white-space:nowrap}
 .iedbar button{border:none;border-radius:10px;background:#f0f0f3;font:800 13px var(--body);padding:12px 4px;cursor:pointer;color:#111}.iedbar button.on{background:#1e4636;color:#fff}
 .iedmat{position:absolute;right:12px;top:calc(70px + env(safe-area-inset-top,0px));z-index:3;border:none;border-radius:999px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.15);font:700 13px var(--body);padding:9px 14px;cursor:pointer;color:#111}
 .iedsheet{position:absolute;left:10px;right:10px;top:calc(110px + env(safe-area-inset-top,0px));z-index:4;background:#fff;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.2);padding:14px;display:grid;gap:6px;max-height:55%;overflow:auto;color:#111}
@@ -1284,7 +1285,7 @@ function acnCreate(){
 
 function adminPage(){
  var h='<h2>Espace admin</h2><div class="meta" style="margin:-4px 0 12px">Compte de gestion du site.</div>';
- h+='<div class="kadmwrap">'+(QZ.ready&&QZ.user?acnBox()+qAdmin():'<p class="meta">Chargement…</p>')+'</div>';
+ h+='<div class="kadmwrap">'+(QZ.ready&&QZ.user?visBox()+acnBox()+qAdmin():'<p class="meta">Chargement…</p>')+'</div>';
  h+='<div class="cplist" style="margin-top:12px">'+'<button class="btn ghost" data-act="acclogout" style="margin-top:6px">Se déconnecter</button></div>';
  return h}
 function mePage(){
@@ -1634,12 +1635,26 @@ function qClick(b){
 }
 
 /* ===== Visiteurs en ligne (Firebase) ===== */
-var ONLINE=null;
+var ONLINE=null,VREF=null,VSENT='',VIS={on:false,list:null,err:''};
+function visDev(){var u=navigator.userAgent||'',d=/iPad/.test(u)?'iPad':/iPhone/.test(u)?'iPhone':/Android/.test(u)?(/Mobile/.test(u)?'Android':'Tablette Android'):/Macintosh/.test(u)?((navigator.maxTouchPoints||0)>1?'iPad':'Mac'):/Windows/.test(u)?'PC Windows':/Linux/.test(u)?'Linux':'Appareil',b=/Instagram/.test(u)?'Instagram':/FBAN|FBAV/.test(u)?'Facebook':/WhatsApp/.test(u)?'WhatsApp':/Edg\//.test(u)?'Edge':/CriOS|Chrome\//.test(u)?'Chrome':/FxiOS|Firefox\//.test(u)?'Firefox':/Safari\//.test(u)?'Safari':'';return d+(b?' · '+b:'')}
+function visTick(){if(!VREF)return;var n=ACC?ACC.name:'',k=n+'|'+tab;if(k===VSENT)return;var first=!VSENT;VSENT=k;var o={n:n,t:tab,d:visDev()};if(first)o.at=firebase.database.ServerValue.TIMESTAMP;VREF.update(o).catch(function(){})}
+var VTAB={home:'Accueil',progress:'Troupe',events:'Calendrier',history:'Histoire',quiz:'Quiz Prêt',login:'Connexion',me:'Profil',order:'Commande',orders:'Commande troupe',inst:'Installations'};
+function visBox(){
+ if(!VIS.on){VIS.on=true;fbAuth().then(function(){firebase.database().ref('visitors').on('value',function(s){VIS.list=s.val()||{};VIS.err='';if(tab==='me')render()},function(){VIS.err='Ajoute la règle « visitors » dans Firebase pour voir les visiteurs.';if(tab==='me')render()})}).catch(function(){})}
+ var h='<div class="kcard kadm"><b>👀 En ligne maintenant</b>';
+ if(VIS.err)return h+'<span class="kwarn">'+esc(VIS.err)+'</span></div>';
+ if(!VIS.list)return h+'<span class="kwarn">Chargement…</span></div>';
+ var L=Object.keys(VIS.list).map(function(k){return VIS.list[k]||{}}).filter(function(v){return v.d}).sort(function(a,b){return (a.at||0)-(b.at||0)}),now=Date.now();
+ var na=L.filter(function(v){return !v.n}).length;
+ h+='<span class="kwarn">'+L.length+' personne'+(L.length>1?'s':'')+' sur le site · '+(L.length-na)+' connectée'+(L.length-na>1?'s':'')+', '+na+' visiteur'+(na>1?'s':'')+' sans compte</span>';
+ h+=L.map(function(v){var m=v.at?Math.max(0,Math.round((now-v.at)/60000)):0;return '<div class="visrow"><span class="visdot'+(v.n?' on':'')+'"></span><span class="visn"><b>'+esc(v.n||'Visiteur')+'</b><span>'+esc(v.d||'')+' · '+esc(VTAB[v.t]||v.t||'')+'</span></span><span class="vist">'+(m<1?'à l’instant':m<60?m+' min':Math.floor(m/60)+' h '+(m%60))+'</span></div>'}).join('');
+ return h+'</div>'}
 function presence(){
  if(!CP_ON||!/github\.io$/.test(location.hostname))return;
  fbLoad().then(function(app){
   var db=firebase.database(app),me=db.ref('online/'+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
-  db.ref('.info/connected').on('value',function(s){if(s.val()===true){me.onDisconnect().remove();me.set(true)}});
+  VREF=db.ref('visitors/'+me.key);VSENT='';
+  db.ref('.info/connected').on('value',function(s){if(s.val()===true){me.onDisconnect().remove();me.set(true);VREF.onDisconnect().remove();VSENT='';visTick()}});
   db.ref('online').on('value',function(s){ONLINE=Math.max(1,s.numChildren());var n=document.getElementById('online-n');if(n)n.textContent=ONLINE});
  }).catch(function(){var o=document.getElementById('online');if(o)o.style.display='none'});
 }
@@ -1801,7 +1816,7 @@ function settings(){return editing?'<div class="editbox" style="margin-top:28px"
 
 function render(){
  var app=document.getElementById('app');
- var keep=editing;
+ var keep=editing;try{visTick()}catch(e){}
  try{document.body.classList.toggle('kahoot',tab==='quiz');document.body.classList.toggle('lgpage',tab==='login'&&!ACC)}catch(e){}
  var body=header()+(tab==='home'||(tab==='progress'&&(openGroup||openPts))?'':backHome())+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():tab==='quiz'?quiz():tab==='login'?loginPage():tab==='me'?mePage():tab==='inst'?instPage():tab==='order'?orderPage():tab==='orders'?troupeOrderPage():events())+(full?settings():'');
  editing=keep;
@@ -1927,7 +1942,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="76f40b221de7">
-<script>(function(){var B="76f40b221de7";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="e4694c297b54">
+<script>(function(){var B="e4694c297b54";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

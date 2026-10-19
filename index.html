@@ -862,7 +862,6 @@ function mePage(){
  var p=pat(ACC.patrol),staff=ACC.sid.indexOf('staff:')===0||ACC.role==='Maîtrise',st=staff?(S.staff||[]).filter(function(m){return m.name===ACC.name})[0]:null;
  return '<div class="phero" style="--pc:'+(p?col(p):'var(--navy)')+';margin-top:14px"><span class="pav">'+(st&&st.photo?'<img src="'+st.photo+'" alt="">':esc(accIni(ACC.name)))+'</span><div class="pid"><div class="ptag">'+(staff?'Maîtrise'+(st?' · '+esc(st.role):''):esc(p?p.name:''))+'</div><h2 class="pname2">'+esc(ACC.name)+'</h2></div></div>'+
   '<div class="cplist" style="margin-top:12px">'+
-  (ACCK?'<button class="cpbtn" data-nav="progress"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Espace CP/SP</b><span>'+(ACCK.scope==='chef'?'Toutes les patrouilles':'Patrouille '+esc((pat(ACCK.scope)||{}).name||''))+'</span></span><span class="evgo" aria-hidden="true">›</span></button>':'')+
   '<button class="tile wide qtile" data-nav="quiz" style="margin-top:4px"><span class="qbig">Quiz <span>Prêt!</span></span></button>'+
   '<button class="btn ghost" data-act="acclogout" style="margin-top:6px">Se déconnecter</button></div>';
 }
@@ -1305,7 +1304,7 @@ function profile(){
  var pres=M.filter(function(m){return m.present.indexOf(s.id)>=0}).length;
  var roleTxt=s.role==='CP'?'Chef de patrouille':s.role==='SP'?'Second de patrouille':'Scout';
  var h='<div class="profile" role="dialog" aria-modal="true" aria-label="Fiche de '+esc(s.name)+'"><div class="pwrap">'+
-  '<div class="prow">'+'<button class="back" data-act="closeprofile"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+(CP_ON?'<button class="pdfbtn" data-pdf="'+s.id+'">'+DLICON+'<span>Exporter en PDF</span></button>':'')+'</div>'+(ACC&&ACC.sid===s.id?'<div class="mine"><span>C’est ton profil 👋</span>'+(ACCK?'<button class="pdfbtn" data-nav="progress/cp-'+s.patrol+'">Espace CP/SP</button>':'')+'<button class="pdfbtn" data-act="acclogout">Se déconnecter</button></div>':'')+
+  '<div class="prow">'+'<button class="back" data-act="closeprofile"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+(CP_ON?'<button class="pdfbtn" data-pdf="'+s.id+'">'+DLICON+'<span>Exporter en PDF</span></button>':'')+'</div>'+(ACC&&ACC.sid===s.id?'<div class="mine"><span>C’est ton profil 👋</span>'+'<button class="pdfbtn" data-act="acclogout">Se déconnecter</button></div>':'')+
   '<div class="phero" style="--pc:'+col(p)+'">'+avatar(s,'pav')+'<div class="pid"><div class="ptag">'+esc(p?p.name:'')+' · '+roleTxt+'</div><h2 class="pname2">'+esc(s.name)+'</h2></div></div>'+
   '<div class="stats"><div class="stat"><b>'+esc(S.stages[s.stage]||'')+'</b><span>Étape</span></div><div class="stat"><b class="big">'+(s.badges||0)+'</b><span>Badges</span></div><div class="stat"><b class="big">'+(M.length?Math.round(pres/M.length*100)+'%':'–')+'</b><span>Présence'+(M.length?' ('+pres+'/'+M.length+')':'')+'</span></div></div>'+
   (M.length?(function(){var k=streakOf(s);return k?'<div class="streak"><span class="sn">🔥 '+k+'</span><span class="st">Série de présence<small>'+k+' réunion'+(k>1?'s':'')+' d’affilée</small></span></div>':'<div class="streak off"><span class="sn">0</span><span class="st">Série de présence<small>Viens à la prochaine réunion pour la lancer</small></span></div>'})():'')+
@@ -1485,7 +1484,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="9ff2c4b863e1">
-<script>(function(){var B="9ff2c4b863e1";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="5f255dbb54a4">
+<script>(function(){var B="5f255dbb54a4";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

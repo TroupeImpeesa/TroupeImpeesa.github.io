@@ -429,6 +429,7 @@ body.kahoot .back{color:#fff}body.kahoot .bico{background:rgba(255,255,255,.15);
 .knm{font-weight:800;min-width:0;overflow-wrap:anywhere}.knm small{display:block;font-weight:600;color:#888;font-size:11px}
 .kpt{font:900 20px var(--display);color:#46178f}
 .kme{outline:3px solid #ffd23f}
+.kb5{font:800 11px var(--body);font-style:normal;background:#26890c;color:#fff;border-radius:999px;padding:2px 7px;margin-right:8px;vertical-align:3px}
 .kload{display:flex;justify-content:center;gap:8px;padding:40px}.kload i{width:16px;height:16px;border-radius:4px;animation:kb .9s infinite alternate}
 .kload i:nth-child(1){background:#e21b3c}.kload i:nth-child(2){background:#1368ce;animation-delay:.15s}.kload i:nth-child(3){background:#d89e00;animation-delay:.3s}.kload i:nth-child(4){background:#26890c;animation-delay:.45s}
 @keyframes kb{to{transform:translateY(-12px)}}
@@ -901,8 +902,9 @@ function qBoardRows(){
  var L=Object.keys(src).map(function(k){var u=QZ.users[k]||{};return {k:k,s:src[k],n:u.name||'?',p:u.patrol||''}}).sort(function(a,b){return b.s-a.s});
  if(!L.length)return '<div class="kcard kc"><b>Personne n’a encore joué cette semaine.</b><span>Sois le premier !</span></div>';
  var rk=0,prev=null;
- return '<div class="klb">'+L.slice(0,50).map(function(r,i){if(r.s!==prev){rk=i+1;prev=r.s}var p=pat(r.p);var me=QZ.user&&r.k===QZ.user.uid;
-  return '<div class="krow'+(rk<=3?' k'+rk:'')+(me?' kme':'')+'"><span class="krk">'+rk+'</span><span class="knm">'+esc(r.n)+(p?'<small>'+esc(p.name)+'</small>':'')+'</span><span class="kpt">'+r.s+'</span></div>'}).join('')+'</div>';
+ var top=0;
+ return '<div class="klb">'+L.map(function(r,i){if(r.s!==prev){rk=i+1;prev=r.s}var p=pat(r.p);var me=QZ.user&&r.k===QZ.user.uid;var bonus=p&&top<10;if(bonus)top++;
+  return '<div class="krow'+(rk<=3?' k'+rk:'')+(me?' kme':'')+'"><span class="krk">'+rk+'</span><span class="knm">'+esc(r.n)+(p?'<small>'+esc(p.name)+'</small>':'<small>Maîtrise</small>')+'</span><span class="kpt">'+(bonus?'<i class="kb5">+5</i>':'')+r.s+'</span></div>'}).join('')+'</div>';
 }
 function quiz(){
  qInit();
@@ -929,7 +931,7 @@ function quiz(){
   else if(QZ.started)h+='<div class="kcard kc"><b>Tu as déjà commencé le quiz de cette semaine.</b><span>Un seul essai par semaine. Prochain quiz lundi !</span></div>';
   else h+='<div class="kcard kc"><span class="kwk">Semaine du '+esc(longDate(qWeek()))+'</span><b class="kth">'+esc(set.title)+'</b><div class="kinfo"><span><b>'+set.qs.length+'</b>questions</span><span><b>'+QZ_T+' s</b>par question</span><span><b>⚡</b>vite = + de points</span></div><span class="kwarn">Une fois commencé, tu ne peux pas recommencer. Ne quitte pas la page !</span><button class="kbtn kgo" data-act="qstart"'+(QZ.busy?' disabled':'')+'>Jouer</button>'+(QZ.msg?'<p class="kerr">'+esc(QZ.msg)+'</p>':'')+'</div>';
  }
- h+='<div class="ktitle">Classement de la semaine</div>'+qBoardRows()+'<div class="ksub" style="text-align:center;margin-top:10px">Les 10 premiers dimanche soir : +5 pour leur patrouille</div>';
+ h+='<div class="ktitle">Classement de la semaine</div>'+qBoardRows()+'<div class="ksub" style="text-align:center;margin-top:10px"><i class="kb5">+5</i> = dans le top 10, rapporte 5 points à sa patrouille dimanche soir</div>';
  return h;
 }
 var KSH=['<svg viewBox="0 0 32 32"><path d="M16 4 30 28H2z" fill="#fff"/></svg>','<svg viewBox="0 0 32 32"><path d="M16 2 30 16 16 30 2 16z" fill="#fff"/></svg>','<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="#fff"/></svg>','<svg viewBox="0 0 32 32"><rect x="4" y="4" width="24" height="24" rx="2" fill="#fff"/></svg>'];
@@ -1259,7 +1261,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="a1b9d7148def">
-<script>(function(){var B="a1b9d7148def";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="349175dee2d5">
+<script>(function(){var B="349175dee2d5";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

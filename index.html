@@ -602,7 +602,7 @@ var tab='home',openGroup=null,openPts=null;
 function route(h){h=(h==null?(location.hash||'#home').slice(1):h).split('/');var t=h[0]==='points'?'progress':h[0];if(TABS.indexOf(t)<0)t='home';tab=t;openGroup=null;openPts=null;openScout=null;openEvent=null;openCP=null;var x=h[1]||'';
  if(t==='progress'){if(x.indexOf('g-')===0)openGroup=x.slice(2);else if(x.indexOf('cp-')===0&&pat(x.slice(3))){openCP=x.slice(3);openGroup=openCP}else if(x.indexOf('pts-')===0)openPts=x.slice(4);else if(x.indexOf('s-')===0){var sc=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc){openScout=sc.id;openGroup=sc.patrol}}}
  if(x.indexOf('e-')===0&&S.events.some(function(e){return e.id===x.slice(2)}))openEvent=x.slice(2);
- if(!openCP)cpLock();if(!openPts)ptsLock();if(t==='orders'&&!ORD.tbusy)ORD.all=null;if(t==='order'&&!ORD.dirty)ORD.my=null}
+ if(!openCP)cpLock();if(!openPts)ptsLock();if(typeof ORD!=='undefined'&&ORD){if(t==='orders'&&!ORD.tbusy)ORD.all=null;if(t==='order'&&!ORD.dirty)ORD.my=null}}
 function go(h){try{history.pushState({ia:1},'','#'+h)}catch(e){}route(h);render()}
 function closeView(){if(history.state&&history.state.ia){history.back();return}var h=tab;if((openScout||openCP)&&openGroup)h='progress/g-'+openGroup;try{history.replaceState(null,'','#'+h)}catch(e){}route(h);render()}
 route();
@@ -675,6 +675,7 @@ function ordInit(){
  .catch(function(){ORD.busy=false;ORD.my={};ORD.msg='Impossible de charger. Vérifie ta connexion.';render()});
 }
 function orderPage(){
+ if(typeof ORD==='undefined'||!ORD){setTimeout(render,0);return '<p class="meta">Chargement…</p>'}
  if(!ACC){var hv='<h2>Commande Coop</h2><div class="cpcard" style="margin-bottom:12px"><p class="cplead">Regarde ce qu’il y a à la Coop. Pour commander, connecte-toi avec ton compte.</p><button class="btn" data-nav="login">Se connecter</button></div>';
   if(!COOP){coopLoad().then(function(){if(tab==='order')render()}).catch(function(){});return hv+'<p class="meta">Chargement…</p>'}
   return hv+COOP.cats.map(function(c,ci){var op=!!ORD.open[ci];return '<div class="ocat"><button class="ocath" data-ocat="'+ci+'"><b>'+esc(c.name)+'</b><span class="meta">'+c.items.length+'</span><span class="ochev'+(op?' on':'')+'">›</span></button>'+(op?'<div class="olist">'+c.items.map(function(i){return '<div class="oitem"><div class="oin"><b>'+esc(i.name)+'</b><span>'+pmoney(i)+(i.sizes?' · tailles : '+esc(i.sizes.join(', ')):'')+'</span></div></div>'}).join('')+'</div>':'')+'</div>'}).join('')}
@@ -710,6 +711,7 @@ function tordAgg(){
  return A;
 }
 function troupeOrderPage(){
+ if(typeof ORD==='undefined'||!ORD){setTimeout(render,0);return '<p class="meta">Chargement…</p>'}
  if(!isChef())return '<h2>Commande de la troupe</h2><div class="cpcard"><p class="cplead">Réservé à la maîtrise.</p></div>';
  if(ORD.all===null&&!ORD.tbusy)setTimeout(tordLoad,0);
  var h='<div class="prow"><h2>Commande de la troupe</h2><button class="pdfbtn" data-act="treload">Actualiser</button></div><div class="meta" style="margin:-4px 0 12px">Tout ce que les scouts ont demandé à la Coop. Touche un article pour voir qui l’a demandé, puis coche <b>Acheté</b> et <b>Reçu</b>.</div>';
@@ -776,6 +778,7 @@ function instLoad(){
 }
 function fmtM(v){return (Math.round(v*100)/100).toFixed(2).replace(/0$/,'').replace(/\.0?$/,'').replace('.',',')+' m'}
 function instPage(){
+ if(typeof INST==='undefined'||!INST){setTimeout(render,0);return '<p class="meta">Chargement…</p>'}
  if(!INST.loaded)instLoad();
  var h='<h2>Installations</h2><div class="meta" style="margin:-4px 0 12px">Les installations de camp de chaque patrouille, en 3D : rondins, brelages et mesures.</div>';
  if(!INST.loaded)return h+'<p class="meta">Chargement…</p>';
@@ -1967,7 +1970,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="96dfb8f90490">
-<script>(function(){var B="96dfb8f90490";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="c7651954d937">
+<script>(function(){var B="c7651954d937";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

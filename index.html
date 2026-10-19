@@ -429,6 +429,10 @@ body.kahoot .back{color:#fff}body.kahoot .bico{background:rgba(255,255,255,.15);
 .knm{font-weight:800;min-width:0;overflow-wrap:anywhere}.kpat{display:inline-block;font:800 11px var(--body);font-style:normal;color:#fff;border-radius:999px;padding:2px 8px;margin-left:8px;vertical-align:2px;white-space:nowrap}
 .kpt{font:900 20px var(--display);color:#46178f}
 .kme{outline:3px solid #ffd23f}
+.kadm{margin-bottom:14px;gap:8px}.kadm>b{font-size:16px}
+.kadr{display:flex;align-items:center;gap:6px;background:#f6f2fb;border-radius:8px;padding:8px 10px}.kadr .knm{flex:1}
+.kab{border:none;border-radius:6px;font:800 13px var(--body);padding:8px 10px;color:#fff;cursor:pointer}.kab.ok{background:#26890c}.kab.no{background:#e21b3c}.kab:disabled{opacity:.5}
+.klink2{border:none;background:none;color:#46178f;font:700 13px var(--body);text-decoration:underline;cursor:pointer;padding:4px;justify-self:start}
 .kb5{font:800 11px var(--body);font-style:normal;background:#26890c;color:#fff;border-radius:999px;padding:2px 7px;margin-right:8px;vertical-align:3px}
 .kload{display:flex;justify-content:center;gap:8px;padding:40px}.kload i{width:16px;height:16px;border-radius:4px;animation:kb .9s infinite alternate}
 .kload i:nth-child(1){background:#e21b3c}.kload i:nth-child(2){background:#1368ce;animation-delay:.15s}.kload i:nth-child(3){background:#d89e00;animation-delay:.3s}.kload i:nth-child(4){background:#26890c;animation-delay:.45s}
@@ -868,7 +872,8 @@ function fbAuth(){
  FBAUTH.catch(function(){FBAUTH=null});
  return FBAUTH;
 }
-var QZ={ready:false,err:'',user:null,name:'',patrol:'',data:null,mode:'login',busy:false,msg:'',lb:'week',week:null,all:null,users:{},started:false,play:null,done:null,mine:null};
+var QZ_ADMIN='impeesa.admin';
+var QZ={ok:null,admin:false,ready:false,err:'',user:null,name:'',patrol:'',data:null,mode:'login',busy:false,msg:'',lb:'week',week:null,all:null,users:{},started:false,play:null,done:null,mine:null};
 var QZ_T=20,QZ_DOM='@quiz.troupeimpeesa.github.io';
 function bDate(d){try{return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Beirut',year:'numeric',month:'2-digit',day:'2-digit'}).format(d||new Date())}catch(e){return today()}}
 function qWeek(){var t=bDate(),d=new Date(t+'T12:00:00Z'),wd=(d.getUTCDay()+6)%7;d.setUTCDate(d.getUTCDate()-wd);return d.toISOString().slice(0,10)}
@@ -880,12 +885,12 @@ function qInit(){
  QZ.busy=true;
  fetch('data/quiz.json',{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){QZ.data=j}).catch(function(){QZ.data={weeks:{}}})
  .then(fbAuth).then(function(){
-  firebase.auth().onAuthStateChanged(function(u){QZ.user=u;QZ.ready=true;QZ.busy=false;QZ.mine=null;QZ.started=false;if(u)qMe();qBoards();if(tab==='quiz')render()});
+  firebase.auth().onAuthStateChanged(function(u){QZ.user=u;QZ.ok=null;QZ.admin=false;QZ.msg='';QZ.ready=true;QZ.busy=false;QZ.mine=null;QZ.started=false;if(u)qMe();qBoards();if(tab==='quiz')render()});
  }).catch(function(){QZ.busy=false;QZ.err='net';if(tab==='quiz')render()});
 }
 function qMe(){
  var db=firebase.database(),u=QZ.user,w=qWeek();
- db.ref('quiz/users/'+u.uid).once('value').then(function(s){var v=s.val()||{};QZ.name=v.name||u.email.split('@')[0];QZ.patrol=v.patrol||'';if(tab==='quiz')render()});
+ db.ref('quiz/users/'+u.uid).once('value').then(function(s){var v=s.val()||{};QZ.name=v.name||u.email.split('@')[0];QZ.patrol=v.patrol||'';QZ.ok=v.ok===true;QZ.admin=u.email===QZ_ADMIN+QZ_DOM;if(tab==='quiz')render()});
  db.ref('quiz/starts/'+w+'/'+u.uid).once('value').then(function(s){QZ.started=s.exists();if(tab==='quiz')render()});
 }
 function qBoards(){
@@ -925,7 +930,10 @@ function quiz(){
    (su?'<span class="meta">Retiens bien ton mot de passe : tu en auras besoin chaque fois que tu te connectes sur un nouveau téléphone.</span>':'')+'</div>';
  }else{
   h+='<div class="khello"><span>Salut <b>'+esc(QZ.name)+'</b> 👋</span><button class="klink" data-act="qlogout">Se déconnecter</button></div>';
-  if(!set)h+='<div class="kcard kc"><b>Pas de quiz cette semaine.</b><span>Reviens lundi pour le prochain !</span></div>';
+  if(QZ.admin)h+=qAdmin();
+  if(QZ.ok===null)h+='<div class="kload"><i></i><i></i><i></i><i></i></div>';
+  else if(!QZ.ok&&!QZ.admin)h+='<div class="kcard kc"><b>⏳ Compte en attente d’approbation</b><span>La maîtrise doit approuver ton compte avant que tu puisses jouer. Reviens un peu plus tard !</span><button class="kbtn" data-act="qcheck">Vérifier</button></div>';
+  else if(!set)h+='<div class="kcard kc"><b>Pas de quiz cette semaine.</b><span>Reviens lundi pour le prochain !</span></div>';
   else if(QZ.done)h+='<div class="kcard kc kres"><span>Ton score cette semaine</span><b>'+QZ.done.s+'</b><span>'+QZ.done.n+' bonnes réponses sur '+set.qs.length+' 🎉</span></div>';
   else if(QZ.mine)h+='<div class="kcard kc kres"><span>Déjà joué cette semaine</span><b>'+QZ.mine.s+'</b><span>'+QZ.mine.n+' bonnes réponses sur '+set.qs.length+' · prochain quiz lundi !</span></div>';
   else if(QZ.started)h+='<div class="kcard kc"><b>Tu as déjà commencé le quiz de cette semaine.</b><span>Un seul essai par semaine. Prochain quiz lundi !</span></div>';
@@ -955,6 +963,13 @@ function qFinish(){
  function send(k){firebase.database().ref('quiz/scores/'+qWeek()+'/'+QZ.user.uid).set(res).then(qBoards).catch(function(){if(k<3)setTimeout(function(){send(k+1)},4000)})}
  var wait=Math.max(0,31000-(Date.now()-P.start));setTimeout(function(){send(0)},wait);
 }
+function alertQ(t){QZ.msg=t;render()}
+function qAdmin(){
+ var U=QZ.users||{},P=Object.keys(U).filter(function(k){return U[k].ok!==true}),A=Object.keys(U).filter(function(k){return U[k].ok===true});
+ function row(k,pend){var u=U[k],p=pat(u.patrol);return '<div class="kadr"><span class="knm">'+esc(u.name||'?')+'<i class="kpat" style="background:'+(p?pdfCol(p):'#46178f')+'">'+(p?esc(p.name):'Maîtrise')+'</i></span>'+(pend?'<button class="kab ok" data-act="qok" data-u="'+k+'">Approuver</button>':'')+'<button class="kab no" data-act="qno" data-u="'+k+'">'+(pend?'Refuser':'Retirer')+'</button></div>'}
+ return '<div class="kcard kadm"><b>👑 Admin · comptes en attente ('+P.length+')</b>'+(P.length?P.map(function(k){return row(k,true)}).join(''):'<span class="kwarn">Aucun compte en attente.</span>')+
+  '<button class="klink2" data-act="qadm">'+(QZ.admOpen?'Cacher':'Voir')+' les comptes approuvés ('+A.length+')</button>'+(QZ.admOpen?A.map(function(k){return row(k,false)}).join(''):'')+(QZ.msg?'<p class="kerr">'+esc(QZ.msg)+'</p>':'')+'</div>';
+}
 function qClick(b){
  var a=b.dataset.act;if(!a||a.charAt(0)!=='q'||a==='qq')return false;
  if(a==='qretry'){QZ.err='';QZ.ready=false;render();return true}
@@ -968,7 +983,7 @@ function qClick(b){
   if(a==='qsignup'&&!pt){QZ.msg='Choisis ta patrouille.';render();return true}
   QZ.busy=true;QZ.msg='';render();
   var A=firebase.auth(),em=u+QZ_DOM;
-  (a==='qsignup'?A.createUserWithEmailAndPassword(em,pw).then(function(c){return firebase.database().ref('quiz/users/'+c.user.uid).set({name:raw.trim().slice(0,20),patrol:pt==='x'?'':pt}).then(function(){QZ.name=raw.trim().slice(0,20);QZ.patrol=pt})}):A.signInWithEmailAndPassword(em,pw))
+  (a==='qsignup'?A.createUserWithEmailAndPassword(em,pw).then(function(c){return firebase.database().ref('quiz/users/'+c.user.uid).set({name:raw.trim().slice(0,20),patrol:pt==='x'?'':pt,ok:false}).then(function(){QZ.name=raw.trim().slice(0,20);QZ.patrol=pt;QZ.ok=false})}):A.signInWithEmailAndPassword(em,pw))
   .then(function(){QZ.busy=false;QZ.msg='';qBoards();render()})
   .catch(function(e){QZ.busy=false;var c=(e&&e.code)||'';QZ.msg=c.indexOf('email-already-in-use')>=0?'Ce nom d’utilisateur est déjà pris.':/wrong-password|user-not-found|invalid-credential|invalid-login/.test(c)?'Nom d’utilisateur ou mot de passe incorrect.':c.indexOf('operation-not-allowed')>=0?'Le quiz n’est pas encore activé.':c.indexOf('too-many')>=0?'Trop d’essais. Réessaie dans quelques minutes.':'Erreur. Vérifie ta connexion et réessaie.';render()});
   return true}
@@ -979,6 +994,10 @@ function qClick(b){
   }).catch(function(){QZ.busy=false;QZ.started=true;QZ.msg='';qMe();render()});
   return true}
  if(a==='qpick'){qAnswer(+b.dataset.i);return true}
+ if(a==='qcheck'){QZ.ok=null;render();qMe();return true}
+ if(a==='qok'||a==='qno'){var id=b.dataset.u,r=firebase.database().ref('quiz/users/'+id+(a==='qok'?'/ok':''));b.disabled=true;
+  (a==='qok'?r.set(true):r.remove()).then(function(){if(a==='qok'&&QZ.users[id])QZ.users[id].ok=true;else delete QZ.users[id];if(id===QZ.user.uid)QZ.ok=a==='qok';render()}).catch(function(){b.disabled=false;alertQ('Échec. As-tu bien mis à jour les règles Firebase ?')});return true}
+ if(a==='qadm'){QZ.admOpen=!QZ.admOpen;render();return true}
  return false;
 }
 
@@ -1261,7 +1280,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="e3675c5c5b10">
-<script>(function(){var B="e3675c5c5b10";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="e54e026daa2d">
+<script>(function(){var B="e54e026daa2d";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

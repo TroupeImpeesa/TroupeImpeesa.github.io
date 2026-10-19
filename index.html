@@ -431,9 +431,26 @@ body.kahoot .back{color:#fff}body.kahoot .bico{background:rgba(255,255,255,.15);
 .kme{outline:3px solid #ffd23f}
 .acbar{display:flex;justify-content:flex-end;align-items:center;padding-top:12px}
 .acbar+header.top{margin-top:8px}
-.acct{border:none;border-radius:999px;background:var(--fg);color:var(--bg);font:700 14px var(--body);padding:9px 16px;cursor:pointer}
-.acct.me{width:40px;height:40px;padding:0;border-radius:50%;background:var(--accent);color:#fff;font:800 15px var(--body)}
-body.kahoot .acct{background:#fff;color:#46178f}
+.acbar{padding-top:12px}
+.acct{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:none;border-radius:14px;background:var(--fg);color:var(--bg);font:700 15px var(--body);padding:12px 16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.acct:active{transform:scale(.99)}
+.acct.me{justify-content:flex-start;background:var(--surface);color:var(--fg);padding:8px 14px 8px 8px;width:100%;height:auto;border-radius:14px}
+.acav{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;font:800 14px var(--body);display:flex;align-items:center;justify-content:center;flex:none}
+.acnm{font-weight:700;flex:1;text-align:left}.acgo{font-size:22px;color:var(--muted);line-height:1}
+body.lgpage .acbar,body.lgpage header.top,body.lgpage .back{display:none}
+.lgwrap{min-height:calc(100vh - 40px);display:flex;align-items:center;justify-content:center;padding:24px 0}
+.lgcard{width:100%;max-width:400px;display:grid;gap:14px;text-align:center}
+.lglogo{width:72px;height:72px;border-radius:20px;justify-self:center;box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.lgtroop{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.lgh{margin:0;font-size:30px}.lgsub{margin:-6px 0 6px;color:var(--muted);font-size:14px}
+.lgl{display:grid;gap:6px;text-align:left;font-size:13px;font-weight:700;color:var(--muted)}
+.lgl input{font:500 16px var(--body);padding:14px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg)}
+.lgl input:focus{outline:none;border-color:var(--accent);background:var(--bg)}
+.lgpw{position:relative;display:block}.lgpw input{width:100%;padding-right:86px}
+.lgeye{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:none;color:var(--accent);font:700 13px var(--body);cursor:pointer;padding:6px}
+.lgbtn{border:none;border-radius:12px;background:var(--accent);color:#fff;font:800 16px var(--body);padding:15px;cursor:pointer;margin-top:4px}.lgbtn:disabled{opacity:.6}
+.lgback{border:none;background:none;color:var(--muted);font:600 14px var(--body);cursor:pointer;padding:8px}
+body.kahoot .acct{background:#fff;color:#46178f}body.kahoot .acct.me{background:rgba(255,255,255,.14);color:#fff}body.kahoot .acgo{color:#fff}
 .mine{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px}.mine>span{font-weight:700;margin-right:auto}.mine .pdfbtn{margin-top:0}
 .kadm{margin-bottom:14px;gap:8px}
 .kadmwrap .kcard{box-shadow:0 1px 3px rgba(0,0,0,.12)}.kadm>b{font-size:16px}
@@ -729,8 +746,8 @@ function accApply(){if(typeof cp==='undefined'||!cp||!ACCK)return;cp.token=ACCK.
 function accIni(n){return String(n||'?').split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w.charAt(0)}).join('').toUpperCase()}
 function acctBtn(){
  if(!CP_ON)return '';
- if(ACC)return '<button class="acct me" data-act="acct" aria-label="Mon profil">'+esc(accIni(ACC.name))+'</button>';
- return '<button class="acct" data-act="acct">Se connecter</button>';
+ if(ACC)return '<button class="acct me" data-act="acct" aria-label="Mon profil"><span class="acav">'+esc(accIni(ACC.name))+'</span><span class="acnm">'+esc(ACC.name)+'</span><span class="acgo" aria-hidden="true">›</span></button>';
+ return '<button class="acct" data-act="acct"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Se connecter</span></button>';
 }
 function accFromProfile(u,v){
  ACC={uid:u.uid,u:u.email.split('@')[0],name:v.name||u.email.split('@')[0],sid:v.sid||'',patrol:v.patrol||'',role:v.role||''};accSave();
@@ -744,6 +761,12 @@ function accDecrypt(uname,pw){
    .then(function(b){return JSON.parse(new TextDecoder().decode(b))}).catch(function(){return null})}).catch(function(){return null});
 }
 function loginPage(){
+ if(!ACC)return '<div class="lgwrap"><div class="lgcard"><img class="lglogo" src="icon.png" alt=""><div class="lgtroop">'+esc(S.troop)+'</div><h2 class="lgh">Connexion</h2><p class="lgsub">Utilise le nom d’utilisateur et le mot de passe que la maîtrise t’a donnés.</p>'+
+  '<label class="lgl">Nom d’utilisateur<input id="acc-u" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="ex. joegeagea"></label>'+
+  '<label class="lgl">Mot de passe<span class="lgpw"><input id="acc-p" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="••••••"><button type="button" class="lgeye" data-act="accshow" aria-label="Afficher le mot de passe">Afficher</button></span></label>'+
+  (ACCF.msg?'<p class="cperr">'+esc(ACCF.msg)+'</p>':'')+
+  '<button class="lgbtn" data-act="acclogin"'+(ACCF.busy?' disabled':'')+'>'+(ACCF.busy?'Connexion…':'Se connecter')+'</button>'+
+  '<button class="lgback" data-nav="home">← Retour au site</button></div></div>';
  if(ACC)return '<h2>Mon compte</h2><div class="cpcard"><p class="cplead">Tu es connecté en tant que <b>'+esc(ACC.name)+'</b>.</p><button class="btn ghost" data-act="acclogout">Se déconnecter</button></div>';
  return '<h2>Se connecter</h2><div class="meta" style="margin:-4px 0 10px">Utilise le nom d’utilisateur et le mot de passe que la maîtrise t’a donnés.</div>'+
   '<div class="cpcard"><label class="lbl">Nom d’utilisateur<input id="acc-u" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="ex. joegeagea"></label>'+
@@ -770,6 +793,7 @@ function accClick(b){
  var a=b.dataset.act;
  if(a==='acct'){if(!ACC){go('login');return true}if(ACC.u===QZ_ADMIN){go('me');return true}if(ACC.sid&&S.scouts.some(function(s){return s.id===ACC.sid}))go('progress/s-'+ACC.sid);else go('me');return true}
  if(a==='acclogout'){accLogout();return true}
+ if(a==='accshow'){var i=document.getElementById('acc-p');if(i){i.type=i.type==='password'?'text':'password';b.textContent=i.type==='password'?'Afficher':'Cacher'}return true}
  if(a==='acclogin'){
   var raw=val('acc-u'),u=qUname(raw).replace(/[._-]/g,''),pw=(document.getElementById('acc-p')||{}).value||'';
   if(raw.trim().toLowerCase()===QZ_ADMIN)u=QZ_ADMIN;
@@ -1264,7 +1288,7 @@ function settings(){return editing?'<div class="editbox" style="margin-top:28px"
 function render(){
  var app=document.getElementById('app');
  var keep=editing;
- try{document.body.classList.toggle('kahoot',tab==='quiz')}catch(e){}
+ try{document.body.classList.toggle('kahoot',tab==='quiz');document.body.classList.toggle('lgpage',tab==='login'&&!ACC)}catch(e){}
  var body=header()+(tab==='home'||(tab==='progress'&&(openGroup||openPts))?'':backHome())+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():tab==='quiz'?quiz():tab==='login'?loginPage():tab==='me'?mePage():events())+(full?settings():'');
  editing=keep;
  if(openScout) body+=profile();
@@ -1326,7 +1350,7 @@ document.addEventListener('click',function(ev){
  if(a==='hpdel'){var yr2=(S.maitrises||[]).filter(function(y){return y.year===b.dataset.year})[0];if(yr2&&yr2.hp){yr2.hp.photo='';touch()}return}
  if(a==='publish'){publish()}
 });
-document.addEventListener('keydown',function(ev){var t=ev.target;if(ev.key==='Enter'&&t.id==='pts-pw'){var pb=document.querySelector('[data-act="ptsunlock"]');if(pb)pb.click();return}if(ev.key==='Enter'&&t.id==='cp-pw'){var ub=document.querySelector('[data-act="cpunlock"]');if(ub)ub.click();return}if((ev.key==='Enter'||ev.key===' ')&&t.dataset&&t.dataset.event&&!t.closest('button')){ev.preventDefault();openEvent=t.dataset.event;render()}if(ev.key==='Escape'&&(openEvent||openScout||openGroup||openPts)){closeView()}});
+document.addEventListener('keydown',function(ev){var t=ev.target;if(ev.key==='Enter'&&(t.id==='acc-p'||t.id==='acc-u')){var lb=document.querySelector('[data-act="acclogin"]');if(lb)lb.click();return}if(ev.key==='Enter'&&t.id==='pts-pw'){var pb=document.querySelector('[data-act="ptsunlock"]');if(pb)pb.click();return}if(ev.key==='Enter'&&t.id==='cp-pw'){var ub=document.querySelector('[data-act="cpunlock"]');if(ub)ub.click();return}if((ev.key==='Enter'||ev.key===' ')&&t.dataset&&t.dataset.event&&!t.closest('button')){ev.preventDefault();openEvent=t.dataset.event;render()}if(ev.key==='Escape'&&(openEvent||openScout||openGroup||openPts)){closeView()}});
 window.addEventListener('popstate',function(){route();render()});
 document.addEventListener('change',function(ev){
  var t=ev.target;
@@ -1380,7 +1404,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="1641f876ac52">
-<script>(function(){var B="1641f876ac52";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="311269d045d2">
+<script>(function(){var B="311269d045d2";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

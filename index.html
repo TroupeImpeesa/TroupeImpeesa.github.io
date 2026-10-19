@@ -728,6 +728,8 @@ function troupeOrderPage(){
  if(M.length){h+='<h2>Par membre</h2><div class="ocat"><div class="olist" style="padding-top:10px">'+M.map(function(m){var p=pat(m.patrol),op=!!(ORD.mexp||{})[m.uid],sub=0,subl=0;m.L.forEach(function(x){sub+=x.q*kprice(x.k);subl+=x.q*klbp(x.k)});
    return '<div class="titem"><button class="tname" data-mexp="'+m.uid+'"><span class="tq'+(m.rem?'':' ok')+'">'+(m.rem||'✓')+'</span><span><b>'+esc(m.name)+(p?' <i class="kpat" style="background:'+pdfCol(p)+'">'+esc(p.name)+'</i>':'')+'</b><span class="meta">'+m.L.length+' article'+(m.L.length>1?'s':'')+' · '+tmoney(sub,subl)+(m.L.every(function(x){return x.r>=x.q})?' · tout reçu':m.rem?'':' · tout acheté')+'</span></span><span class="ochev'+(op?' on':'')+'">›</span></button>'+
     (op?'<div class="mlist">'+m.L.map(function(x){var K=esc(x.k),U=esc(m.uid);return '<div class="tper"><span class="tpn"><b>'+x.q+' × '+esc(klabel(x.k))+'</b><span class="meta">'+kmoney(x.k,x.q)+'</span></span><button class="tchk'+(x.d>=x.q?' on':'')+'" data-tb="'+K+'" data-u="'+U+'"'+(ORD.tbusy?' disabled':'')+'><i></i>Acheté</button><button class="tchk'+(x.r>=x.q?' on':'')+'" data-tr="'+K+'" data-u="'+U+'"'+(ORD.tbusy?' disabled':'')+'><i></i>Reçu</button></div>'}).join('')+'</div>':'')+'</div>'}).join('')+'</div></div>'}
+ var GOT=[];Object.keys(A).forEach(function(k){A[k].who.forEach(function(w){if(w.r>0)GOT.push({k:k,w:w})})});
+ if(GOT.length){var go=!!ORD.gopen;h+='<div class="ocat" style="margin-top:14px"><button class="ocath" data-act="gopen"><b>Déjà remis ('+GOT.length+')</b><span class="ochev'+(go?' on':'')+'">›</span></button>'+(go?'<div class="olist"><span class="meta" style="padding:0 6px">Si tu as coché Reçu par erreur, enlève la coche ici.</span>'+GOT.sort(function(x,y){return x.w.name.localeCompare(y.w.name)}).map(function(g){return '<div class="titem"><div class="tper"><span class="tpn"><b>'+esc(g.w.name)+'</b><span class="meta">'+g.w.q+' × '+esc(klabel(g.k))+'</span></span><button class="tchk on" data-tr="'+esc(g.k)+'" data-u="'+esc(g.w.uid)+'"'+(ORD.tbusy?' disabled':'')+'><i></i>Reçu</button></div></div>'}).join('')+'</div>':'')+'</div>'}
  if(ORD.tmsg)h+='<p class="cperr">'+esc(ORD.tmsg)+'</p>';
  return h;
 }
@@ -754,6 +756,7 @@ function ordClick(b){
  if(d.ocat!=null){ORD.open[d.ocat]=!ORD.open[d.ocat];render();return true}
  if(d.oq){var k=d.oq,v=Math.max(0,(ORD.my[k]||0)+(+d.d));if(v)ORD.my[k]=v;else delete ORD.my[k];ORD.dirty=true;ORD.msg='';render();return true}
  if(d.act==='osave'){ordSave();return true}
+ if(d.act==='gopen'){ORD.gopen=!ORD.gopen;render();return true}
  if(d.act==='treload'){ORD.all=null;tordLoad();render();return true}
  if(d.mexp){ORD.mexp=ORD.mexp||{};ORD.mexp[d.mexp]=!ORD.mexp[d.mexp];render();return true}
  if(d.texp){ORD.exp[d.texp]=!ORD.exp[d.texp];render();return true}
@@ -1964,7 +1967,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="f3a552c87c9e">
-<script>(function(){var B="f3a552c87c9e";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="96dfb8f90490">
+<script>(function(){var B="96dfb8f90490";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

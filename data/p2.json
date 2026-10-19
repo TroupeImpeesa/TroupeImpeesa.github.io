@@ -21,7 +21,14 @@
    "name": "Matheo Ayoub",
    "role": "SP",
    "stage": 2,
-   "badges": []
+   "badges": [
+    "Ami de Dieu Jaune",
+    "Meneur de jeu",
+    "Sport de balles",
+    "Gérant De Matériel",
+    "Intendant",
+    "Mains Habiles"
+   ]
   },
   {
    "id": "p2-3",
@@ -135,5 +142,5 @@
    ]
   }
  ],
- "updated": "2026-10-17T14:50:32.734Z"
+ "updated": "2026-10-19T13:24:38.410Z"
 }

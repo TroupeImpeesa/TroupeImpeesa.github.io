@@ -484,6 +484,7 @@ body.kahoot .acct{background:#fff;color:#46178f}body.kahoot .acct.me{background:
 .cpic{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;flex:none}
 .cptx b{display:block;font-size:16px}.cptx span{font-size:13px;opacity:.75}
 .cpbtn .evgo{margin-left:auto;color:inherit;opacity:.7}
+.cpbtn.cpon{background:#26890c;color:#fff}.cpbtn.cpoff{background:var(--pending);color:var(--muted)}.cpbtn.cpoff .cpic{background:rgba(0,0,0,.06)}
 .cphead{display:flex;align-items:center;gap:12px;margin:8px 0 12px}
 .cphead .tcirc{width:48px;height:48px;border-radius:14px;background:var(--gc);color:#fff;font:800 20px var(--display);display:flex;align-items:center;justify-content:center;flex:none}
 .cpcard{background:var(--surface);border-radius:18px;padding:14px 16px;margin-top:10px;display:grid;gap:10px}
@@ -974,7 +975,7 @@ function lastPres(gp){var t=today(),ids={};S.scouts.forEach(function(x){if(x.pat
  if(!M)return '<div class="lpres"><div class="lpt"><b>Dernière réunion</b><span class="meta">Pas encore de présences</span></div></div>';
  var k=M.present.filter(function(i){return ids[i]}).length,pc=n?Math.round(k/n*100):0;
  return '<div class="lpres" style="--gc:'+col(gp)+'"><div class="lpt"><b>Dernière réunion</b><span class="meta">'+esc(longDate(M.date))+'</span></div><div class="lpn"><b>'+k+'</b><span>/ '+n+' présents</span></div><div class="lpbar"><i style="width:'+pc+'%"></i></div></div>'}
-function cpBtn(gp){return CP_ON&&cpAllowed(gp.id)?'<button class="cpbtn" data-act="cpopen"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Espace CP/SP</b><span>Présences et progression</span></span><span class="evgo" aria-hidden="true">›</span></button>':''}
+function cpBtn(gp){var ok=cpAllowed(gp.id);return CP_ON?'<button class="cpbtn '+(ok?'cpon':'cpoff')+'" data-act="cpopen"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Espace CP/SP</b><span>'+(ok?'Tu as accès':'Réservé au CP, au SP et à la maîtrise')+'</span></span><span class="evgo" aria-hidden="true">›</span></button>':''}
 function cpPage(){
  var p=pat(openCP),h='<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>'+esc(p.name)+'</span></button>';
  h+='<div class="cphead" style="--gc:'+col(p)+'"><span class="tcirc">'+animalOf(p.name)+'</span><div><div class="gname">Espace CP/SP</div><div class="meta">'+esc(p.name)+'</div></div></div>';
@@ -1467,7 +1468,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="925c2c0ba23e">
-<script>(function(){var B="925c2c0ba23e";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="931af3b1495f">
+<script>(function(){var B="931af3b1495f";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

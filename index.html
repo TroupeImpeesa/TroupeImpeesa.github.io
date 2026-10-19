@@ -430,6 +430,25 @@ body.kahoot .back{color:#fff}body.kahoot .bico{background:rgba(255,255,255,.15);
 .kpt{font:900 20px var(--display);color:#46178f}
 .kme{outline:3px solid #ffd23f}
 .acbar{display:flex;justify-content:flex-end;align-items:center;padding-top:12px}
+.acbar{display:flex;align-items:center;gap:10px}
+.acbar .acct{flex:1;width:auto}
+.hamb{width:46px;height:46px;flex:none;border:none;border-radius:14px;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.hamb span{display:block;width:20px;height:2.2px;border-radius:2px;background:var(--fg)}
+body.kahoot .hamb{background:rgba(255,255,255,.14)}body.kahoot .hamb span{background:#fff}
+.drw-bg{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.45);animation:fdin .2s ease}
+.drw{position:fixed;top:0;left:0;bottom:0;z-index:41;width:min(300px,80vw);background:var(--bg);box-shadow:4px 0 30px rgba(0,0,0,.25);padding:calc(16px + env(safe-area-inset-top,0px)) 12px 20px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;animation:drin .25s cubic-bezier(.3,.7,.2,1)}
+@keyframes drin{from{transform:translateX(-100%)}to{transform:none}}@keyframes fdin{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.drw,.drw-bg{animation:none}}
+.drwh{display:flex;align-items:center;gap:10px;padding:4px 6px 16px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.drwh img{width:42px;height:42px;border-radius:12px}.drwh div{flex:1;min-width:0;display:grid}.drwh b{font-size:15px;letter-spacing:-.01em}.drwh span{font-size:12px;color:var(--muted)}
+.drwx{border:none;background:var(--surface);color:var(--fg);width:34px;height:34px;border-radius:50%;font-size:22px;line-height:1;cursor:pointer}
+.drwl{display:flex;align-items:center;gap:12px;width:100%;border:none;background:none;color:var(--fg);font:600 16px var(--body);padding:12px 10px;border-radius:12px;cursor:pointer;text-align:left}
+.drwl.on{background:var(--surface);font-weight:800}.drwl:active{background:var(--surface)}
+.drwi{width:36px;height:36px;border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:center;flex:none}
+.drwl.on .drwi{background:var(--accent);color:#fff}
+.drwi.acav{background:var(--accent);color:#fff;font:800 13px var(--body)}
+.drwsep{height:1px;background:var(--line);margin:10px 4px}
+
 .acbar+header.top{margin-top:8px}
 .acbar{padding-top:12px}
 .acct{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:none;border-radius:14px;background:var(--fg);color:var(--bg);font:700 15px var(--body);padding:12px 16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -590,7 +609,15 @@ function heroTop(){
  LOADED[slide]=true;
  return '<header class="top hero" id="show">'+P.map(function(ph,i){return '<img '+(LOADED[i]?'src':'data-src')+'="'+ph.src+'" alt="'+esc(ph.caption||'Photo de la troupe')+'" class="'+(i===slide?'on':'')+'"'+(i===slide?' fetchpriority="high"':' decoding="async"')+'>'}).join('')+'<div class="shade"></div>'+txt+
   '</header>'}
-function header(){return (CP_ON?'<div class="acbar">'+acctBtn()+'</div>':'')+heroTop()+
+
+var MENU=false,NAVL=[['home','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>','Accueil']].concat([['progress','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/></svg>','Troupe','Patrouilles, membres et points','var(--navy)'],['events','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>','Calendrier','Toutes les activités','var(--p3)'],['history','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg>','Histoire','L’histoire de la troupe','var(--p4)']].map(function(x){return [x[0],x[1],x[2]]}),[['quiz','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 .9c0 1.7-2.5 2.2-2.5 3.8"/><path d="M12 17.2v.1"/></svg>','Quiz Prêt']]);
+function menuBtn(){return '<button class="hamb" data-act="menu" aria-label="Menu" aria-expanded="'+MENU+'"><span></span><span></span><span></span></button>'}
+function drawer(){if(!MENU)return '';
+ return '<div class="drw-bg" data-act="menuclose"></div><nav class="drw" aria-label="Menu"><div class="drwh"><img src="icon.png" alt=""><div><b>'+esc(S.troop)+'</b><span>'+esc(S.season)+'</span></div><button class="drwx" data-act="menuclose" aria-label="Fermer">×</button></div>'+
+  NAVL.map(function(x){return '<button class="drwl'+(tab===x[0]?' on':'')+'" data-menunav="'+x[0]+'"><span class="drwi">'+x[1]+'</span>'+esc(x[2])+'</button>'}).join('')+
+  '<div class="drwsep"></div>'+(ACC?'<button class="drwl" data-act="acct"><span class="drwi acav">'+esc(accIni(ACC.name))+'</span>'+esc(ACC.name)+'</button>':'<button class="drwl" data-menunav="login"><span class="drwi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>Se connecter</button>')+
+  '</nav>'}
+function header(){return '<div class="acbar">'+menuBtn()+(CP_ON?acctBtn():'<span style="flex:1"></span>')+'</div>'+drawer()+heroTop()+
  '<div class="tabbar"></div>'+
  (canEdit&&draftAvail?'<div class="note draftbar"><span>Tu as des modifications non publiées.</span><span><button class="btn" data-act="restore">Récupérer</button> <button class="btn ghost" data-act="nodraft">Ignorer</button></span></div>':'')+
  (S.example?'<div class="note">Les points affichés sont des exemples. '+(canEdit?'Appuie sur <b>Modifier</b> pour les remplacer par les vrais.':'Les chefs ajouteront bientôt les vrais.')+'</div>':'')}
@@ -655,8 +682,7 @@ function home(){
  h+=N.length?'<ul class="news">'+N.map(function(n){return '<li><span class="ndate">'+fmtDate(n.date)+'</span><span class="ntext">'+(n.auto?'<span class="ntag">Progression</span> ':'')+linkify(n.text)+'</span>'+(editing?'<button class="x" data-delnews="'+n.id+'" aria-label="Supprimer l’annonce">×</button>':'')+'</li>'}).join('')+'</ul>':'<p class="empty">Aucune annonce pour l’instant.</p>';
  var t=today(),nx=S.events.filter(function(e){return !evOver(e)}).sort(function(a,b){return a.date<b.date?-1:1})[0];
  if(nx){h+='<h2>Prochaine activité</h2>'+evCard(nx,false,false,true);}
- h+='<div class="navgrid">'+[['progress','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/></svg>','Troupe','Patrouilles, membres et points','var(--navy)'],['events','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>','Calendrier','Toutes les activités','var(--p3)'],['history','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg>','Histoire','L’histoire de la troupe','var(--p4)']].map(function(x){return '<button class="tile" data-nav="'+x[0]+'" style="--gc:'+x[4]+'"><span class="tcirc">'+x[1]+'</span><span class="tname">'+x[2]+'</span></button>'}).join('')+
-  '<button class="tile wide qtile" data-nav="quiz"><span class="qbig">Quiz <span>Prêt!</span></span></button></div>';
+ h+='<div class="navgrid"><button class="tile wide qtile" data-nav="quiz"><span class="qbig">Quiz <span>Prêt!</span></span></button></div>';
  return h}
 
 var ANIMALS=[['poney','🐎'],['requin','🦈'],['castor','🦫'],['boa','🐍']];
@@ -1384,6 +1410,11 @@ document.addEventListener('click',function(ev){
  var b=ev.target.closest('button');
  if(b&&cpClick(b))return;
  if(b&&ptsClick(b))return;
+ if(b&&b.dataset.act==='menu'){MENU=true;render();return}
+ if(b&&b.dataset.act==='menuclose'){MENU=false;render();return}
+ if(b&&b.dataset.menunav){MENU=false;go(b.dataset.menunav);window.scrollTo(0,0);return}
+ if(!b&&ev.target.closest('.drw-bg')){MENU=false;render();return}
+ if(b&&b.dataset.act==='acct')MENU=false;
  if(b&&accClick(b))return;
  if(b&&qClick(b))return;
  if(!b){var pt=ev.target.closest('[data-ptab]');if(pt&&!ev.target.closest('input,select,textarea')){go('progress/pts-'+pt.dataset.ptab);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return}
@@ -1484,7 +1515,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="5f255dbb54a4">
-<script>(function(){var B="5f255dbb54a4";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="5fc2b446052d">
+<script>(function(){var B="5fc2b446052d";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

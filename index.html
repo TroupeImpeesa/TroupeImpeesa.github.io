@@ -854,8 +854,7 @@ function acnCreate(){
 function adminPage(){
  var h='<h2>Espace admin</h2><div class="meta" style="margin:-4px 0 12px">Compte de gestion du site.</div>';
  h+='<div class="kadmwrap">'+(QZ.ready&&QZ.user?acnBox()+qAdmin():'<p class="meta">Chargement…</p>')+'</div>';
- h+='<div class="cplist" style="margin-top:12px">'+(ACCK?'<button class="cpbtn" data-nav="progress"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Espace CP/SP et points</b><span>Toutes les patrouilles</span></span><span class="evgo" aria-hidden="true">›</span></button>':'<div class="cpcard"><p class="cplead">Pour gérer l’Espace CP/SP et les points, déconnecte-toi puis reconnecte-toi avec le mot de passe de la maîtrise.</p></div>')+
-  '<button class="btn ghost" data-act="acclogout" style="margin-top:6px">Se déconnecter</button></div>';
+ h+='<div class="cplist" style="margin-top:12px">'+'<button class="btn ghost" data-act="acclogout" style="margin-top:6px">Se déconnecter</button></div>';
  return h}
 function mePage(){
  if(!ACC)return loginPage();
@@ -1486,7 +1485,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="deb2783e3414">
-<script>(function(){var B="deb2783e3414";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="9ff2c4b863e1">
+<script>(function(){var B="9ff2c4b863e1";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

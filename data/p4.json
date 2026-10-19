@@ -37,7 +37,14 @@
    "name": "Peter Karam",
    "role": "",
    "stage": 1,
-   "badges": []
+   "badges": [
+    "Ami de Dieu Jaune",
+    "Sport de balles",
+    "Intendant",
+    "Animateur",
+    "Animaux domestiques",
+    "Sciences Animales"
+   ]
   },
   {
    "id": "p4-4",
@@ -147,5 +154,5 @@
    ]
   }
  ],
- "updated": "2026-10-17T19:08:28.849Z"
+ "updated": "2026-10-19T13:46:05.974Z"
 }

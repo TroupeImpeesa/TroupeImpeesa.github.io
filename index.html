@@ -723,6 +723,7 @@ function troupeOrderPage(){
  var h='<div class="prow"><h2>Commande de la troupe</h2><button class="pdfbtn" data-act="treload">Actualiser</button></div><div class="meta" style="margin:-4px 0 12px">Tout ce que les scouts ont demandé à la Coop. Touche un article pour voir qui l’a demandé, puis coche <b>Acheté</b> et <b>Reçu</b>.</div>';
  if(ORD.all===null||!COOP)return h+'<p class="meta">'+esc(ORD.tmsg||'Chargement…')+'</p>';
  var A=tordAgg(),tot=0,totl=0,lines=0;
+ h+=ordOpen()?'<p class="meta" style="margin:-4px 0 12px">📄 Le PDF de la commande sera disponible quand les commandes ferment (mardi 22h).</p>':'<button class="btn" data-act="tpdf" style="width:100%;margin:0 0 12px"'+(ORD.pdfbusy?' disabled':'')+'>'+(ORD.pdfbusy?'Préparation du PDF…':'📄 Télécharger la commande (PDF)')+'</button>';
  h+=COOP.cats.map(function(c){var L=[];c.items.forEach(function(i){Object.keys(A).forEach(function(k){if(k.split('|')[0]===i.id&&A[k].got<A[k].tot)L.push(A[k])})});if(!L.length)return '';
   return '<div class="ocat"><div class="ocath static"><b>'+esc(c.name)+'</b></div><div class="olist">'+L.map(function(a){var rem=a.tot-a.done,give=a.tot-a.got;tot+=rem*kprice(a.k);totl+=rem*klbp(a.k);lines++;var ex=!!ORD.exp[a.k],np=a.who.filter(function(w){return w.r<w.q}).length,K=esc(a.k);
    var h2='<div class="titem"><button class="tname" data-texp="'+K+'"><span class="tq'+(rem?'':' ok')+'">'+(rem||'✓')+'</span><span><b>'+esc(klabel(a.k))+'</b><span class="meta">'+(rem?'à acheter · '+kmoney(a.k,rem):'tout acheté · '+give+' à remettre')+' · '+np+' personne'+(np>1?'s':'')+'</span></span><span class="ochev'+(ex?' on':'')+'">›</span></button>';
@@ -740,6 +741,34 @@ function troupeOrderPage(){
  if(GOT.length){var go=!!ORD.gopen;h+='<div class="ocat" style="margin-top:14px"><button class="ocath" data-act="gopen"><b>Déjà remis ('+GOT.length+')</b><span class="ochev'+(go?' on':'')+'">›</span></button>'+(go?'<div class="olist"><span class="meta" style="padding:0 6px">Si tu as coché Reçu par erreur, enlève la coche ici.</span>'+GOT.sort(function(x,y){return x.w.name.localeCompare(y.w.name)}).map(function(g){return '<div class="titem"><div class="tper"><span class="tpn"><b>'+esc(g.w.name)+'</b><span class="meta">'+g.w.q+' × '+esc(klabel(g.k))+'</span></span><button class="tchk on" data-tr="'+esc(g.k)+'" data-u="'+esc(g.w.uid)+'"'+(ORD.tbusy?' disabled':'')+'><i></i>Reçu</button></div></div>'}).join('')+'</div>':'')+'</div>'}
  if(ORD.tmsg)h+='<p class="cperr">'+esc(ORD.tmsg)+'</p>';
  return h;
+}
+function tordPdf(){
+ if(ORD.pdfbusy)return;ORD.pdfbusy=true;render();
+ jspdfLoad().then(function(){
+  var T=function(x){return String(x==null?'':x).replace(/[’‘]/g,"'").replace(/[“”«»]/g,'"').replace(/[–—]/g,'-').replace(/…/g,'...').replace(/[^\x00-\xFF]/g,'')};
+  var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'}),W=210,M=14,y=18,A=tordAgg();
+  function np(need){if(y+need>282){doc.addPage();y=18}}
+  var d=new Date(),ds=d.toLocaleDateString('fr-FR',{timeZone:'Asia/Beirut',day:'numeric',month:'long',year:'numeric'});
+  doc.setFont('helvetica','bold');doc.setFontSize(18);doc.text(T('Commande Coop'),M,y);y+=7;
+  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(110);doc.text(T(S.troop+' - '+ds),M,y);doc.setTextColor(0);y+=10;
+  doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text(T('À acheter'),M,y);y+=6;
+  var tot=0,totl=0,any=false;
+  COOP.cats.forEach(function(c){var L=[];c.items.forEach(function(i){Object.keys(A).forEach(function(k){if(k.split('|')[0]===i.id&&A[k].tot-A[k].done>0)L.push(A[k])})});if(!L.length)return;any=true;
+   np(16);doc.setFillColor(238,240,243);doc.rect(M,y-4,W-2*M,6.5,'F');doc.setFont('helvetica','bold');doc.setFontSize(10);doc.text(T(c.name),M+2,y);y+=7;
+   doc.setFont('helvetica','normal');
+   L.forEach(function(a){var rem=a.tot-a.done,u=rem*kprice(a.k),l=rem*klbp(a.k);tot+=u;totl+=l;np(7);
+    doc.setFont('helvetica','bold');doc.text(String(rem),M+4,y,{align:'right'});doc.setFont('helvetica','normal');
+    doc.text(T(klabel(a.k)),M+9,y);doc.text(T(tmoney(u,l)),W-M,y,{align:'right'});y+=6});y+=2});
+  if(!any){doc.setFont('helvetica','normal');doc.setFontSize(10);doc.text(T('Rien à acheter.'),M,y);y+=8}
+  else{np(10);doc.setDrawColor(0);doc.setLineWidth(.4);doc.line(M,y-3,W-M,y-3);doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text(T('Total'),M,y+2);doc.text(T(tmoney(tot,totl)),W-M,y+2,{align:'right'});y+=12}
+  var Mm=Object.keys(ORD.all||{}).map(function(uid){var o=ORD.all[uid]||{},it=o.items||{},dn=(ORD.alldone||{})[uid]||{};return {name:o.name||'?',patrol:o.patrol||'',L:Object.keys(it).map(function(k){var q=+it[k]||0;return {k:k,n:q-Math.min(q,+dn[k]||0)}}).filter(function(x){return x.n>0})}}).filter(function(m){return m.L.length}).sort(function(a,b){return (a.patrol||'z').localeCompare(b.patrol||'z')||a.name.localeCompare(b.name)});
+  if(Mm.length){np(16);doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text(T('Par membre'),M,y);y+=7;
+   Mm.forEach(function(m){var p=pat(m.patrol);np(8+m.L.length*5);doc.setFont('helvetica','bold');doc.setFontSize(10.5);doc.text(T(m.name+(p?'  ('+p.name+')':'')),M,y);y+=5;doc.setFont('helvetica','normal');doc.setFontSize(9.5);
+    m.L.forEach(function(x){doc.text(T(x.n+' x '+klabel(x.k)),M+5,y);doc.text(T(kmoney(x.k,x.n)),W-M,y,{align:'right'});y+=5});y+=3})}
+  var n=doc.getNumberOfPages();for(var i=1;i<=n;i++){doc.setPage(i);doc.setFontSize(8);doc.setTextColor(140);doc.text(T('Troupe Impeesa VPJ - page '+i+'/'+n),W/2,292,{align:'center'});doc.setTextColor(0)}
+  var f=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Beirut'}).format(d);
+  doc.save('Commande-Coop-'+f+'.pdf');ORD.pdfbusy=false;render()
+ }).catch(function(){ORD.pdfbusy=false;ORD.tmsg='Impossible de créer le PDF. Vérifie ta connexion.';render()});
 }
 function tordSet(list){
  var upd={};list.forEach(function(x){var w=x.w,k=x.k;
@@ -765,6 +794,7 @@ function ordClick(b){
  if(d.oq&&!ordOpen()){render();return true}
  if(d.oq){var k=d.oq,v=Math.max(0,(ORD.my[k]||0)+(+d.d));if(v)ORD.my[k]=v;else delete ORD.my[k];ORD.dirty=true;ORD.msg='';render();return true}
  if(d.act==='osave'){ordSave();return true}
+ if(d.act==='tpdf'){tordPdf();return true}
  if(d.act==='gopen'){ORD.gopen=!ORD.gopen;render();return true}
  if(d.act==='treload'){ORD.all=null;tordLoad();render();return true}
  if(d.mexp){ORD.mexp=ORD.mexp||{};ORD.mexp[d.mexp]=!ORD.mexp[d.mexp];render();return true}
@@ -1977,7 +2007,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="6b032c8ea621">
-<script>(function(){var B="6b032c8ea621";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="81a86b420ef4">
+<script>(function(){var B="81a86b420ef4";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

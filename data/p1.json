@@ -107,13 +107,6 @@
    "role": "",
    "stage": 0,
    "badges": []
-  },
-  {
-   "id": "p1-nmvm6z34g",
-   "name": "Anthony Khattar",
-   "role": "",
-   "stage": 0,
-   "badges": []
   }
  ],
  "meetings": [
@@ -162,10 +155,9 @@
     "p1-10",
     "p1-11",
     "p1-12",
-    "p1-nmvm6ubwg",
-    "p1-nmvm6z34g"
+    "p1-nmvm6ubwg"
    ]
   }
  ],
- "updated": "2026-10-24T09:26:00.146Z"
+ "updated": "2026-10-24T10:40:49.513Z"
 }

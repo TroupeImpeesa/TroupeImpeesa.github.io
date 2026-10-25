@@ -625,16 +625,19 @@ function autoLog(){var out=[],t=today();S.meetings.forEach(function(m){if(m.date
 var QLOG=[],QB_FROM='2026-10-26';
 function allLog(){return S.log.concat(autoLog(),QLOG)}
 function qBonus(){
- if(!CP_ON||!/github\.io$|localhost/.test(location.hostname))return;
- fbLoad().then(function(){var db=firebase.database();return Promise.all([db.ref('quiz/users').once('value'),db.ref('quiz/scores').once('value')])}).then(function(r){
-  var U=r[0].val()||{},A=r[1].val()||{},cur=qWeek(),out=[];
-  Object.keys(A).sort().forEach(function(w){if(w>=cur||w<QB_FROM)return;var W=A[w]||{};
+ if(!CP_ON||!/github\.io$|localhost/.test(location.hostname)||qBonus.on)return;qBonus.on=true;
+ fbLoad().then(function(){var db=firebase.database(),U=null,A=null,last='';
+  function go(){if(!U||!A)return;var cur=qWeek(),out=[];
+  Object.keys(A).sort().forEach(function(w){if(w>cur||w<QB_FROM)return;var W=A[w]||{},live=w===cur;
    var L=Object.keys(W).filter(function(k){return U[k]&&U[k].ok===true}).map(function(k){return {p:(U[k]||{}).patrol||'',s:W[k].s||0,at:W[k].at||0}}).filter(function(x){return pat(x.p)}).sort(function(a,b){return b.s-a.s||a.at-b.at}).slice(0,10);
    var c={};L.forEach(function(x){c[x.p]=(c[x.p]||0)+1});
-   var d=new Date(w+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+6);var end=d.toISOString().slice(0,10);
-   Object.keys(c).forEach(function(pid){out.push({id:'quiz-'+pid+'-'+w,patrol:pid,cat:'jeux',pts:5*c[pid],reason:'Quiz Prêt : '+c[pid]+' scout'+(c[pid]>1?'s':'')+' dans le top 10 (semaine du '+longDate(w)+')',date:end,auto:true})})});
-  QLOG=out;if(out.length)render();
- }).catch(function(){});
+   var d=new Date(w+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+6);var end=live?bDate():d.toISOString().slice(0,10);
+   Object.keys(c).forEach(function(pid){out.push({id:'quiz-'+pid+'-'+w,patrol:pid,cat:'jeux',pts:5*c[pid],reason:'Quiz Prêt : '+c[pid]+' scout'+(c[pid]>1?'s':'')+' dans le top 10 (semaine du '+longDate(w)+(live?', en cours':'')+')',date:end,auto:true})})});
+  var k=JSON.stringify(out);if(k===last)return;last=k;QLOG=out;if(!(tab==='quiz'&&QZ.play))render()}
+  db.ref('quiz/users').on('value',function(s){U=s.val()||{};go()});
+  db.ref('quiz/scores').on('value',function(s){A=s.val()||{};go()});
+  setInterval(go,60000);
+ }).catch(function(){qBonus.on=false});
 }
 function totals(){var t={};S.patrols.forEach(function(p){t[p.id]=0});allLog().forEach(function(l){if(l.patrol in t)t[l.patrol]+=Number(l.pts)||0});return t}
 var DKEYS=['troop','season','patrols','log','events','photos','news','cover','faces','staff'],draftAvail=false;

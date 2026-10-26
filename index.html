@@ -1187,13 +1187,14 @@ function avatar(s,cls){var f=S.faces[s.id];return '<span class="'+cls+'"'+(f?'':
 var CATS=[['jeux','Jeux'],['esprit','Esprit'],['animation','Animation'],['presence','Présence']];
 function catName(c){var r='';CATS.forEach(function(x){if(x[0]===c)r=x[1]});return r}
 function ptsPage(){
- var p=pat(openPts),L=allLog().filter(function(l){return l.patrol===p.id});
+ var p=pat(openPts),LA=allLog().filter(function(l){return l.patrol===p.id}),isQ=function(l){return /^quiz-/.test(String(l.id||''))},L=LA.filter(function(l){return !isQ(l)}),QL=LA.filter(isQ);
  var other=L.some(function(l){return !catName(l.cat)});
  var cols=CATS.slice();if(other)cols.push(['autre','Autre']);
  var days={};L.forEach(function(l){var k=catName(l.cat)?l.cat:'autre';days[l.date]=days[l.date]||{};days[l.date][k]=(days[l.date][k]||0)+(Number(l.pts)||0)});
  var dates=Object.keys(days).sort().reverse(),tot={},grand=0;
  cols.forEach(function(c){tot[c[0]]=0});
  dates.forEach(function(d){cols.forEach(function(c){tot[c[0]]+=days[d][c[0]]||0})});
+ QL.forEach(function(l){var k=catName(l.cat)?l.cat:'autre';if(tot[k]==null)k=cols[0][0];tot[k]+=Number(l.pts)||0});
  cols.forEach(function(c){grand+=tot[c[0]]});
  var h='<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+
   '<section class="gview" style="--gc:'+col(p)+'"><header class="ghero"><span class="tcirc">'+animalOf(p.name)+'</span><span class="gname">'+esc(p.name)+'</span><span class="gcount">'+grand+' points au total</span></header></section>'+ptsTop();
@@ -2058,7 +2059,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="9090c654873e">
-<script>(function(){var B="9090c654873e";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="0a40ea9dc475">
+<script>(function(){var B="0a40ea9dc475";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

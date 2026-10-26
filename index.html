@@ -1438,7 +1438,7 @@ function loadPublicData(){
  if(!CP_ON)return;
  fetch('data/badges.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():[]}).then(function(b){if(Array.isArray(b))BADGES=b}).catch(function(){});
  Promise.all(S.patrols.map(function(p){return fetch('data/'+p.id+'.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).catch(function(){return null})}))
-  .then(function(list){fetch('data/points.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(d){if(d&&Array.isArray(d.log)&&!pts.dirty){S.log=d.log;render()}}).catch(function(){});var any=false;list.forEach(function(d){if(d&&!(cp.data&&cp.dirty&&d.patrol===cp.patrol)){applyPatrol(d);any=true}});if(any)render()});
+  .then(function(list){fetch('data/events.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(d){if(d&&Array.isArray(d.events)&&!EVW.busy){S.events=d.events;render()}}).catch(function(){});fetch('data/points.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(d){if(d&&Array.isArray(d.log)&&!pts.dirty){S.log=d.log;render()}}).catch(function(){});var any=false;list.forEach(function(d){if(d&&!(cp.data&&cp.dirty&&d.patrol===cp.patrol)){applyPatrol(d);any=true}});if(any)render()});
 }
 function unlock(pw,pid){
  return fetch('data/keys.json?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 'nokeys';return r.json()}).then(function(K){
@@ -1848,6 +1848,7 @@ function eventPage(){
   '<div class="evinfo">'+(hours(e)?'<div><span>Horaire</span><b>'+esc(hours(e))+'</b></div>':'')+(e.place?'<div><span>Lieu</span><b>'+linkify(e.place)+'</b></div>':'')+(e.note?'<div><span>Info</span><b>'+linkify(e.note)+'</b></div>':'')+'</div>'+
   (bring.length?'<h3 class="psec">À apporter</h3><ul class="evlist">'+bring.map(function(x){return '<li>'+linkify(x)+'</li>'}).join('')+'</ul>':'')+
   (rem.length?'<h3 class="psec">Remarques</h3><ul class="evlist">'+rem.map(function(x){return '<li>'+linkify(x)+'</li>'}).join('')+'</ul>':'');
+ if(canEv()&&!editing){h+=EVW.edit===e.id?evForm(e,'ewe'):'<div class="fields" style="margin-top:16px"><button class="btn ghost" data-evedit="'+esc(e.id)+'">Modifier</button><button class="btn danger" data-evdel="'+esc(e.id)+'"'+(EVW.busy?' disabled':'')+'>'+(EVW.del===e.id?'Confirmer la suppression':'Supprimer')+'</button></div>'+(EVW.err&&EVW.edit!==e.id?'<p class="cperr">'+esc(EVW.err)+'</p>':'')}
  if(editing) h+='<div class="editbox"><h4>Modifier l’activité</h4>'+
   '<label class="lbl">Titre<input id="ev-title" value="'+esc(e.title)+'"></label>'+
   '<div class="fields"><label class="lbl">Date<input id="ev-date" type="date" value="'+esc(e.date)+'"></label><label class="lbl">Fin (si plusieurs jours)<input id="ev-enddate" type="date" value="'+esc(e.endDate||'')+'"></label></div>'+
@@ -1857,10 +1858,50 @@ function eventPage(){
   '<label class="lbl">Remarques (une par ligne)<textarea id="ev-rem" rows="3">'+esc(e.remarks||'')+'</textarea></label>'+
   '<div class="fields"><button class="btn" data-act="saveevent">Enregistrer</button><button class="btn danger" data-delevent="'+e.id+'">Supprimer l’activité</button></div></div>';
  return h+'</div></div>'}
+
+/* ===== Calendrier : la maîtrise ajoute / modifie sur le site ===== */
+var EVW={add:false,edit:null,del:null,busy:false,err:'',msg:''};
+function canEv(){return CP_ON&&!!ACCK&&ACCK.scope==='chef'&&!!ACCK.token}
+function evGh(path,opt){opt=opt||{};opt.headers={'Accept':'application/vnd.github+json','Authorization':'Bearer '+ACCK.token};if(opt.body)opt.headers['Content-Type']='application/json';opt.cache='no-store';return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path,opt)}
+function evForm(e,pre){e=e||{};return '<div class="editbox"><h4>'+(e.id?'Modifier l’événement':'Nouvel événement')+'</h4>'+
+ '<label class="lbl">Titre<input id="'+pre+'-title" value="'+esc(e.title||'')+'" placeholder="Ex. Camp d’hiver"></label>'+
+ '<div class="fields"><label class="lbl">Date<input id="'+pre+'-date" type="date" value="'+esc(e.date||'')+'"></label><label class="lbl">Jusqu’au (si plusieurs jours)<input id="'+pre+'-enddate" type="date" value="'+esc(e.endDate||'')+'"></label></div>'+
+ '<div class="fields"><label class="lbl">Début<input id="'+pre+'-time" type="time" value="'+esc(e.time||'')+'"></label><label class="lbl">Fin<input id="'+pre+'-end" type="time" value="'+esc(e.end||'')+'"></label></div>'+
+ '<div class="fields"><label class="lbl">Lieu<input id="'+pre+'-place" value="'+esc(e.place||'')+'"></label><label class="lbl">Info courte<input id="'+pre+'-note" value="'+esc(e.note||'')+'"></label></div>'+
+ '<label class="lbl">À apporter (une chose par ligne)<textarea id="'+pre+'-bring" rows="3">'+esc(e.bring||'')+'</textarea></label>'+
+ '<label class="lbl">Remarques (une par ligne)<textarea id="'+pre+'-rem" rows="3">'+esc(e.remarks||'')+'</textarea></label>'+
+ '<div class="fields"><button class="btn" data-evsave="'+esc(e.id||'')+'"'+(EVW.busy?' disabled':'')+'>'+(EVW.busy?'Enregistrement…':'Enregistrer')+'</button><button class="btn ghost" data-act="evcancel">Annuler</button></div>'+
+ (EVW.err?'<p class="cperr">'+esc(EVW.err)+'</p>':'')+'</div>'}
+function evRead(pre,id){function v(x){var el=document.getElementById(pre+'-'+x);return el?el.value.trim():''}
+ var e={id:id||('w'+Date.now().toString(36)),title:v('title'),date:v('date'),endDate:v('enddate'),time:v('time'),end:v('end'),place:v('place'),note:v('note'),bring:v('bring'),remarks:v('rem')};
+ if(e.endDate&&e.endDate<=e.date)e.endDate='';return e}
+function evSave(op,retry){
+ EVW.busy=true;EVW.err='';render();
+ var sha=null;
+ evGh('data/events.json?ref=main').then(function(r){if(r.status===404)return null;if(!r.ok)throw r.status;return r.json()}).then(function(j){
+  var list=S.events.slice();if(j){sha=j.sha;try{var d=JSON.parse(b64d(j.content));if(Array.isArray(d.events))list=d.events}catch(x){}}
+  if(op.del)list=list.filter(function(x){return x.id!==op.del});
+  else{var i=-1;list.forEach(function(x,k){if(x.id===op.ev.id)i=k});if(i>=0)list[i]=Object.assign({},list[i],op.ev);else list.push(op.ev)}
+  list.sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:0});
+  var body={message:'Calendrier : '+(op.del?'événement supprimé':(op.ev.title||'événement'))+' ('+today()+')',content:b64e(JSON.stringify({events:list},null,1)),branch:'main'};if(sha)body.sha=sha;
+  return evGh('data/events.json',{method:'PUT',body:JSON.stringify(body)}).then(function(r){
+   if((r.status===409||r.status===422)&&!retry)return evSave(op,true);
+   if(!r.ok)throw r.status;S.events=list;EVW.busy=false;EVW.add=false;EVW.edit=null;EVW.del=null;EVW.msg='Enregistré ✓ Visible par tous dans 1 à 2 minutes.';if(op.del&&openEvent===op.del)openEvent=null;render()})
+ }).catch(function(e){EVW.busy=false;EVW.err=e===401||e===403?'Accès refusé. Déconnecte-toi puis reconnecte-toi.':'Échec de l’enregistrement. Vérifie ta connexion et réessaie.';render()});
+}
+function evClick(b){var d=b.dataset;
+ if(d.act==='evadd'){EVW.add=true;EVW.err='';EVW.msg='';render();return true}
+ if(d.act==='evcancel'){EVW.add=false;EVW.edit=null;EVW.del=null;EVW.err='';render();return true}
+ if(d.evedit){EVW.edit=d.evedit;EVW.del=null;EVW.err='';render();return true}
+ if(d.evdel){if(EVW.del===d.evdel)evSave({del:d.evdel});else{EVW.del=d.evdel;render()}return true}
+ if(d.evsave!=null){var pre=d.evsave?'ewe':'ewn',e=evRead(pre,d.evsave);if(!e.title||!e.date){EVW.err='Mets au moins un titre et une date.';render();return true}evSave({ev:e});return true}
+ return false}
 function events(){
  var t=today(),up=S.events.filter(function(e){return !evOver(e)}).sort(function(a,b){return a.date<b.date?-1:1}),past=S.events.filter(function(e){return evOver(e)}).sort(function(a,b){return a.date<b.date?1:-1});
  function card(e,isPast,first){return evCard(e,isPast,first)}
- var h='<h2>À venir</h2>'+(up.length?up.map(function(e,i){return card(e,false,i===0)}).join(''):'<p class="empty">Rien de prévu pour l’instant.</p>');
+ var h='';
+ if(canEv()&&!editing){h+=EVW.add?evForm(null,'ewn'):'<button class="btn" data-act="evadd" style="width:100%;margin-top:14px">+ Ajouter un événement</button>';if(EVW.msg&&!EVW.add)h+='<p class="meta" style="margin:8px 0 0">'+esc(EVW.msg)+'</p>'}
+ h+='<h2>À venir</h2>'+(up.length?up.map(function(e,i){return card(e,false,i===0)}).join(''):'<p class="empty">Rien de prévu pour l’instant.</p>');
  if(editing) h+='<div class="editbox"><h4>Ajouter une activité</h4><label class="lbl">Titre<input id="ne-title" placeholder="Ex. Camp d’hiver"></label><div class="fields"><label class="lbl">Date<input id="ne-date" type="date"></label><label class="lbl">Fin (si plusieurs jours)<input id="ne-enddate" type="date"></label></div><div class="fields"><label class="lbl">Début<input id="ne-time" type="time"></label><label class="lbl">Fin<input id="ne-end" type="time"></label></div><label class="lbl">Lieu<input id="ne-place"></label><div class="fields"><button class="btn" data-act="addevent">Ajouter</button></div><span class="meta">Ensuite tu pourras ajouter « À apporter » et les remarques.</span></div>';
  if(past.length) h+='<h2>Passées</h2>'+past.map(function(e){return card(e,true)}).join('');
  return h}
@@ -1910,6 +1951,7 @@ document.addEventListener('click',function(ev){
  if(b&&b.dataset.menunav){MENU=false;go(b.dataset.menunav);window.scrollTo(0,0);return}
  if(!b&&ev.target.closest('.drw-bg')){MENU=false;render();return}
  if(b&&b.dataset.act==='acct')MENU=false;
+ if(b&&evClick(b))return;
  if(b&&instClick(b))return;
  if(b&&ordClick(b))return;
  if(b&&accClick(b))return;
@@ -2014,7 +2056,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="08a8f0f832d6">
-<script>(function(){var B="08a8f0f832d6";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="111389a5267f">
+<script>(function(){var B="111389a5267f";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

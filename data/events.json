@@ -1,0 +1,65 @@
+{
+ "events": [
+  {
+   "id": "e10",
+   "title": "Réunion Passage",
+   "date": "2026-10-10",
+   "time": "12:00",
+   "place": "",
+   "note": "",
+   "end": "14:00",
+   "bring": "",
+   "remarks": ""
+  },
+  {
+   "id": "e17",
+   "title": "Messe d’ouverture",
+   "date": "2026-10-17",
+   "time": "09:00",
+   "place": "",
+   "note": "",
+   "end": "14:00",
+   "remarks": "Tenue complète",
+   "bring": "",
+   "endDate": ""
+  },
+  {
+   "id": "e24a",
+   "title": "Réunion Troupe",
+   "date": "2026-10-24",
+   "time": "12:00",
+   "place": "",
+   "note": "",
+   "endDate": "",
+   "end": "14:00",
+   "bring": "",
+   "remarks": ""
+  },
+  {
+   "id": "e24b",
+   "title": "Camp HP Formation",
+   "date": "2026-10-24",
+   "time": "",
+   "place": "",
+   "note": "",
+   "endDate": "2026-10-25"
+  },
+  {
+   "id": "e1107",
+   "title": "Camp par patrouille",
+   "date": "2026-11-07",
+   "time": "",
+   "place": "",
+   "note": "",
+   "endDate": "2026-11-08"
+  },
+  {
+   "id": "e0605",
+   "title": "SDL en Concert",
+   "date": "2027-06-05",
+   "time": "",
+   "place": "",
+   "note": ""
+  }
+ ]
+}

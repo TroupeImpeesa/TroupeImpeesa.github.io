@@ -87,6 +87,30 @@
    "pts": 15,
    "reason": "",
    "date": "2026-10-24"
+  },
+  {
+   "id": "lmvorbw2bnx8",
+   "patrol": "p1",
+   "cat": "jeux",
+   "pts": 40,
+   "reason": "",
+   "date": "2026-10-24"
+  },
+  {
+   "id": "lmvorbw2b9kv",
+   "patrol": "p1",
+   "cat": "esprit",
+   "pts": 5,
+   "reason": "",
+   "date": "2026-10-24"
+  },
+  {
+   "id": "lmvorbw2bevo",
+   "patrol": "p1",
+   "cat": "animation",
+   "pts": 10,
+   "reason": "",
+   "date": "2026-10-24"
   }
  ]
 }

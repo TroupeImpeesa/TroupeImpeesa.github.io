@@ -23,6 +23,22 @@
    "pts": 10,
    "reason": "Défi JOTA-JOTI : 3e",
    "date": "2026-10-17"
+  },
+  {
+   "id": "lmvor9ij3aiq",
+   "patrol": "p4",
+   "cat": "jeux",
+   "pts": 30,
+   "reason": "",
+   "date": "2026-10-24"
+  },
+  {
+   "id": "lmvor9ij4izu",
+   "patrol": "p4",
+   "cat": "esprit",
+   "pts": 10,
+   "reason": "",
+   "date": "2026-10-24"
   }
  ]
 }

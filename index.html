@@ -422,6 +422,7 @@ body.kahoot .back{color:#fff}body.kahoot .bico{background:rgba(255,255,255,.15);
 .kres b{font:900 56px/1 var(--display);color:#46178f;letter-spacing:-.04em}
 .krules{display:grid;gap:6px;background:rgba(255,255,255,.12);color:#fff;border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:14px;line-height:1.35}.krules>b{font:900 16px var(--display);color:#ffd23f}
 .ktitle{color:#fff;font:900 20px var(--display);margin:26px 2px 10px;letter-spacing:-.02em}
+.kpg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:10px}.kpq{aspect-ratio:1;background:var(--pc);color:#fff;border-radius:10px;box-shadow:0 4px 0 rgba(0,0,0,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4px;min-width:0}.kpq b{font:800 12px var(--body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.kpn{font:900 24px/1.05 var(--display);letter-spacing:-.03em}.kpn small{font-size:14px;opacity:.85}.kps{font-size:10.5px;opacity:.9}
 .klb{display:grid;gap:6px}
 .krow{display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:10px;background:#fff;border-radius:8px;padding:10px 14px;box-shadow:0 4px 0 rgba(0,0,0,.2);color:#1b1b1b}
 .krk{width:30px;height:30px;border-radius:50%;background:#efe8f8;color:#46178f;font:900 15px var(--body);display:flex;align-items:center;justify-content:center}
@@ -1607,6 +1608,8 @@ function qBoards(){
   if(tab==='quiz')render();
  }).catch(function(){});
 }
+function qPatGrid(){var pl={};Object.keys(QZ.week||{}).forEach(function(k){var u=(QZ.users||{})[k];if(!u||u.ok!==true||u.role==='Maîtrise'||!pat(u.patrol))return;pl[u.patrol]=(pl[u.patrol]||0)+1});
+ return '<div class="kpg">'+S.patrols.map(function(p){var n=S.scouts.filter(function(x){return x.patrol===p.id}).length,k=Math.min(pl[p.id]||0,n||99);return '<div class="kpq" style="--pc:'+pdfCol(p)+'"><b>'+esc(p.name)+'</b><span class="kpn">'+k+'<small>/'+n+'</small></span><span class="kps">ont joué</span></div>'}).join('')+'</div>'}
 function qBoardRows(){
  var src={};
  Object.keys(QZ.week||{}).forEach(function(k){var u=QZ.users[k];if(!u||u.ok!==true||u.name==='impeesa.admin'||u.role==='Maîtrise'||!pat(u.patrol))return;src[k]=QZ.week[k].s||0});
@@ -1638,7 +1641,7 @@ function quiz(){
   else if(QZ.started)h+='<div class="kcard kc"><b>Tu as déjà commencé le quiz de cette semaine.</b><span>Un seul essai par semaine. Prochain quiz lundi à 14h !</span></div>';
   else h+='<div class="kcard kc"><span class="kwk">Semaine du '+esc(longDate(qWeek()))+'</span><b class="kth">'+esc(set.title)+'</b><div class="kinfo"><span><b>'+set.qs.length+'</b>questions</span><span><b>'+QZ_T+' s</b>par question</span><span><b>⚡</b>vite = + de points</span></div><span class="kwarn">Une fois commencé, tu ne peux pas recommencer. Ne quitte pas la page !</span><button class="kbtn kgo" data-act="qstart"'+(QZ.busy?' disabled':'')+'>Jouer</button>'+(QZ.msg?'<p class="kerr">'+esc(QZ.msg)+'</p>':'')+'</div>';
  }
- h+='<div class="ktitle">Classement de la semaine</div>'+qBoardRows()+(qWeek()<QB_FROM?'<div class="ksub" style="text-align:center;margin-top:10px">🧪 Semaine d’essai : pas de points pour les patrouilles cette semaine. Les +5 commencent lundi 26 octobre à 14h !</div>':'<div class="ksub" style="text-align:center;margin-top:10px"><i class="kb5">+5</i> = dans le top 10, rapporte 5 points à sa patrouille dimanche soir</div>');
+ h+='<div class="ktitle">Classement de la semaine</div>'+qPatGrid()+qBoardRows()+(qWeek()<QB_FROM?'<div class="ksub" style="text-align:center;margin-top:10px">🧪 Semaine d’essai : pas de points pour les patrouilles cette semaine. Les +5 commencent lundi 26 octobre à 14h !</div>':'<div class="ksub" style="text-align:center;margin-top:10px"><i class="kb5">+5</i> = dans le top 10, rapporte 5 points à sa patrouille dimanche soir</div>');
  return h;
 }
 var KSH=['<svg viewBox="0 0 32 32"><path d="M16 4 30 28H2z" fill="#fff"/></svg>','<svg viewBox="0 0 32 32"><path d="M16 2 30 16 16 30 2 16z" fill="#fff"/></svg>','<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="#fff"/></svg>','<svg viewBox="0 0 32 32"><rect x="4" y="4" width="24" height="24" rx="2" fill="#fff"/></svg>'];
@@ -2059,7 +2062,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="e622802d682a">
-<script>(function(){var B="e622802d682a";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="bfbe402a37dc">
+<script>(function(){var B="bfbe402a37dc";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

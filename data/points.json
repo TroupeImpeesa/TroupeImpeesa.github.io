@@ -63,6 +63,30 @@
    "pts": 10,
    "reason": "",
    "date": "2026-10-24"
+  },
+  {
+   "id": "lmvoramzk7xn",
+   "patrol": "p3",
+   "cat": "jeux",
+   "pts": 20,
+   "reason": "",
+   "date": "2026-10-24"
+  },
+  {
+   "id": "lmvoramzkb90",
+   "patrol": "p3",
+   "cat": "esprit",
+   "pts": 5,
+   "reason": "",
+   "date": "2026-10-24"
+  },
+  {
+   "id": "lmvoramzkua6",
+   "patrol": "p3",
+   "cat": "animation",
+   "pts": 15,
+   "reason": "",
+   "date": "2026-10-24"
   }
  ]
 }

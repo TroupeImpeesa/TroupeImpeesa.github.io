@@ -596,7 +596,7 @@ body.kahoot .acct{background:#fff;color:#46178f}body.kahoot .acct.me{background:
 .pfg{background:var(--surface);border-radius:18px;overflow:hidden;margin-top:10px}
 .pfr{display:flex;align-items:center;gap:12px;padding:13px 16px}.pfr+.pfr{border-top:1px solid var(--line)}
 .pfl{flex:1;min-width:0;display:grid;gap:1px}.pfl b{font-size:15px;font-weight:600}.pfl b.mu{color:var(--muted);font-weight:500}.pfl span{font-size:12.5px;color:var(--muted)}
-.pfk{font:800 26px var(--display);color:var(--accent);letter-spacing:-.03em}.pfk.off{color:var(--muted)}
+.pfk{font:800 26px var(--display);color:var(--accent);letter-spacing:-.03em;display:inline-flex;align-items:center;gap:6px}.pfk.off{color:var(--muted)}.pff{color:#f2711c}.pfk.off .pff{color:var(--line)}.pfk.off .pff path+path{fill:var(--line)}
 .pfc{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);box-sizing:border-box;flex:none;position:relative}.pfc.on{background:var(--accent);border-color:var(--accent)}.pfc.on::after{content:"";position:absolute;left:6px;top:2.5px;width:5px;height:10px;border-right:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(45deg)}
 .pft{font-size:12px;color:var(--muted);white-space:nowrap}.pft.now{color:#fff;background:var(--accent);border-radius:999px;padding:3px 9px;font-weight:700}
 .pfst{font-size:13px;font-weight:700;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}.pfst::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}.pfst.y{color:var(--ok,#2e8b57)}.pfst.n{color:var(--danger)}
@@ -1853,7 +1853,7 @@ function profile(){
   (function(){var cur=s.stage,k=M.length?streakOf(s):0,pct=M.length?Math.round(pres/M.length*100):null;
    var x='<section class="pfh" style="--pc:'+col(p)+'">'+avatar(s,'pfav')+'<h2 class="pfn">'+esc(s.name)+'</h2><div class="pfm">'+(p?'<span class="pfp"><i></i>'+esc(p.name)+'</span>':'')+'<span>'+roleTxt+'</span></div></section>';
    x+='<div class="pfs"><div><b>'+esc(S.stages[cur]||'–')+'</b><span>Étape</span></div><div><b>'+(s.badges||0)+'</b><span>Badges</span></div><div><b>'+(pct==null?'–':pct+'%')+'</b><span>Présence'+(M.length?' · '+pres+'/'+M.length:'')+'</span></div></div>';
-   if(M.length)x+='<div class="pfg"><div class="pfr"><span class="pfl"><b>Série de présence</b><span>'+(k?k+' réunion'+(k>1?'s':'')+' d’affilée':'Pas de série en cours')+'</span></span><span class="pfk'+(k?'':' off')+'">'+k+'</span></div></div>';
+   if(M.length)x+='<div class="pfg"><div class="pfr"><span class="pfl"><b>Série de présence</b><span>'+(k?k+' réunion'+(k>1?'s':'')+' d’affilée':'Pas de série en cours')+'</span></span><span class="pfk'+(k?'':' off')+'"><svg class="pff" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 2c.6 3.2 2.6 5 4.3 6.9C18 10.7 19 12.6 19 15a7 7 0 0 1-14 0c0-2.2.9-3.9 2.3-5.4.2 1.6.9 2.8 2.1 3.5C9 9.3 10.2 5.4 12 2z" fill="currentColor"/><path d="M12 13c.9 1.3 2.5 2.3 2.5 4a2.5 2.5 0 0 1-5 0c0-1.3.9-2.4 2.5-4z" fill="#ffd23f"/></svg>'+k+'</span></div></div>';
    x+='<h3 class="psec">Progression</h3><div class="pfg">'+S.stages.slice(1).map(function(n,i){var st=i+1,done=cur>=st,now=cur===st;return '<div class="pfr"><span class="pfc'+(done?' on':'')+'" aria-hidden="true"></span><span class="pfl"><b'+(done?'':' class="mu"')+'>'+esc(n)+'</b></span><span class="pft'+(now?' now':'')+'">'+(now?'Actuelle':done?'Obtenue':'À venir')+'</span></div>'}).join('')+'</div>';
    if(s.badgeList&&s.badgeList.length)x+='<h3 class="psec">Badges <span class="pfcount">'+s.badgeList.length+'</span></h3><div class="bchips">'+s.badgeList.map(function(b){return '<span class="bchip">'+esc(b)+'</span>'}).join('')+'</div>';
    x+='<h3 class="psec">Présences</h3>'+(M.length?'<div class="pfg">'+M.slice().reverse().map(function(m){var y=m.present.indexOf(s.id)>=0;return '<div class="pfr"><span class="pfl"><b>Réunion du '+fmtDate(m.date)+'</b></span><span class="pfst '+(y?'y':'n')+'">'+(y?'Présent':'Absent')+'</span></div>'}).join('')+'</div>':'<p class="empty">Pas encore de présences enregistrées.</p>');
@@ -2085,7 +2085,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="a05f08d8ebc0">
-<script>(function(){var B="a05f08d8ebc0";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="06ce4cb066ba">
+<script>(function(){var B="06ce4cb066ba";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

@@ -110,14 +110,16 @@ def send(title, body, uid=None):
     key = os.environ.get('ONESIGNAL_API_KEY')
     if not key:
         print('ONESIGNAL_API_KEY manquante, rien envoyé')
-        return
+        return 'nokey'
     req = urllib.request.Request('https://api.onesignal.com/notifications?c=push', data=json.dumps(msg).encode(),
                                  headers={'Content-Type': 'application/json', 'Authorization': 'Key ' + key})
     try:
         with urllib.request.urlopen(req, timeout=30) as r:
             print(' ->', r.status, r.read().decode()[:200])
+            return r.status
     except urllib.error.HTTPError as e:
         print(' -> ERREUR', e.code, e.read().decode()[:300])
+        return e.code
 
 
 def ordinal(n):
@@ -130,8 +132,8 @@ def fmt(x):
 
 def main():
     if os.environ.get('VERIFY') == '1':  # teste la clé sans rien envoyer à personne
-        send('test', 'test', uid='__verify__')
-        return
+        r = send('test', 'test', uid='__verify__')
+        sys.exit(0 if r in (200, 400) else 1)
     n = now()
     today, cur = n.date().isoformat(), quiz_week(n)
     try:

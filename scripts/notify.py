@@ -166,7 +166,7 @@ def main():
             verb = "t'ont dépassé" if len(passers) > 1 else "t'a dépassé"
             send('⚡ Tu as été dépassé !',
                  f"{who} {verb} au Quiz Prêt. {first['name']} est {ordinal(new[first['k']])}, "
-                 f"tu es maintenant {ordinal(r_new)}. Rejoue pour reprendre ta place !", uid=k)
+                 f"tu es maintenant {ordinal(r_new)}.", uid=k)
     st['rank'] = new
 
     # 1. Classement quotidien à 20h

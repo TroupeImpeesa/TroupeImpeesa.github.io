@@ -109,16 +109,16 @@ def send(title, body, uid=None):
         return
     key = os.environ.get('ONESIGNAL_API_KEY')
     if not key:
-        print('ONESIGNAL_API_KEY manquante, rien envoyé')
+        print('::warning::ONESIGNAL_API_KEY manquante, rien envoyé')
         return 'nokey'
     req = urllib.request.Request('https://api.onesignal.com/notifications?c=push', data=json.dumps(msg).encode(),
                                  headers={'Content-Type': 'application/json', 'Authorization': 'Key ' + key})
     try:
         with urllib.request.urlopen(req, timeout=30) as r:
-            print(' ->', r.status, r.read().decode()[:200])
+            print('::notice::OneSignal', r.status, r.read().decode()[:200])
             return r.status
     except urllib.error.HTTPError as e:
-        print(' -> ERREUR', e.code, e.read().decode()[:300])
+        print('::warning::OneSignal ERREUR', e.code, e.read().decode()[:300].replace('\n', ' '))
         return e.code
 
 

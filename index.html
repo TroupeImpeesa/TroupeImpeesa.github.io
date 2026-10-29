@@ -399,7 +399,31 @@ input,select,textarea{border-radius:10px;font-family:var(--body)}
 .hpl{width:24px;height:24px;border-radius:7px;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;flex:none}
 .hpr{display:grid;grid-template-columns:24px 1fr;align-items:baseline;font-size:13px;line-height:1.35;overflow-wrap:anywhere}.hpr span{font-size:11px;font-weight:700;color:var(--muted)}
 .qtile{grid-column:1/-1;flex-direction:row;align-items:center;gap:14px;padding:14px 16px;background:#46178f!important;color:#fff!important}
-.qtile{justify-content:center!important;padding:22px 16px!important}.qbig{font:900 30px/1 var(--display);letter-spacing:-.03em;text-shadow:0 3px 0 rgba(0,0,0,.25)}.qbig span{color:#ffd23f}
+.qtile{justify-content:center!important;padding:22px 16px!important}.utile{grid-column:1/-1;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:6px;padding:20px 16px!important;background:#0f2342!important;color:#fff!important}
+.ubig{font:900 26px/1 var(--display);letter-spacing:-.03em}.ubig span{color:#f5c542}.usub{font-size:13px;opacity:.8;font-weight:600}
+.uhero{background:#0f2342;color:#fff;border-radius:20px;padding:18px;margin:4px 0 14px}.uhero small{display:block;letter-spacing:.12em;font-size:11px;opacity:.7;font-weight:700}.uhero b{display:block;font:900 24px/1.15 var(--display);letter-spacing:-.02em;margin:6px 0 4px}.uhero span{font-size:13px;opacity:.85}
+.ugrp{background:var(--soft);border-radius:16px;padding:12px;margin:10px 0}.ugrp .ut{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:4px}
+.uopt{display:flex;align-items:center;gap:10px;width:100%;background:#fff;border:2px solid var(--line);border-radius:12px;padding:11px 12px;margin-top:7px;font:inherit;color:var(--fg);cursor:pointer;text-align:left}
+.uopt b{font-size:16px;min-width:70px}.uopt .ud{flex:1;font-size:12.5px;color:var(--muted)}.uopt.on{border-color:#0f2342;box-shadow:0 0 0 3px rgba(15,35,66,.1)}.uopt.full{opacity:.45;cursor:not-allowed}
+.urad{width:18px;height:18px;border-radius:50%;border:2px solid #bbb;flex:none}.uopt.on .urad{border:5px solid #0f2342}
+.useat{font-style:normal;font-size:12px;font-weight:700;padding:3px 8px;border-radius:99px;background:#e8f5ec;color:#16743a;white-space:nowrap}.useat.f{background:#fde8e8;color:#b42318}
+.ubtn{width:100%;margin-top:12px;background:#0f2342!important;color:#fff!important;border-color:#0f2342}.ubtn:disabled{opacity:.5}.ubtn2{width:100%;margin-top:8px}
+.uh3{font-size:16px;margin:16px 2px 8px}.uerr{color:var(--danger);font-weight:600;font-size:13px}
+.usch{border:1px solid var(--line);border-radius:16px;overflow:hidden}.usch>div{display:flex;align-items:center;gap:10px;padding:11px 12px;border-top:1px solid var(--line)}.usch>div:first-child{border-top:0}
+.usch .uh{font-size:12px;color:var(--muted);min-width:96px;font-variant-numeric:tabular-nums}.usch .ur{margin-left:auto;font-size:12px;color:var(--muted)}.usch .ur2{font-size:11px;color:var(--muted);margin-right:6px}.uplan b{font-size:13.5px}
+.ugpa{display:flex;gap:8px;margin-top:6px}.ugpa>div{flex:1;background:var(--soft);border-radius:14px;padding:12px 6px;text-align:center}.ugpa b{display:block;font-size:22px;letter-spacing:-.02em}.ugpa span{font-size:11.5px;color:var(--muted)}
+.ugpa.up>div{box-shadow:inset 0 3px 0 var(--gc)}
+.ugl{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.ugl span{background:var(--soft);border-radius:10px;padding:8px;display:flex;justify-content:space-between;font-size:13px}.ugl i{font-style:normal;color:var(--muted)}
+.utabs{display:flex;gap:6px;margin:4px 0 12px;flex-wrap:wrap}.utabs button{border:none;font:700 13px var(--body);padding:8px 12px;border-radius:99px;background:var(--soft);color:var(--fg);cursor:pointer}.utabs button.on{background:#0f2342;color:#fff}.utabs.sm button{font-size:12px;padding:6px 10px}
+.ucls{background:var(--soft);border-radius:14px;margin-top:8px}.ucls summary{display:flex;align-items:center;gap:10px;padding:12px;cursor:pointer;list-style:none}.ucls summary::-webkit-details-marker{display:none}.ucls summary span{flex:1;font-size:12px;color:var(--muted)}
+.ucls>div{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 12px}.ucls>div span{background:#fff;border-radius:99px;padding:5px 10px;font-size:12.5px}.ucls em{color:var(--muted);font-size:11px}
+.udot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.upub{display:flex;align-items:center;gap:10px;background:var(--soft);border-radius:14px;padding:10px 12px;margin:10px 0;font-size:12.5px}.upub span{flex:1}
+.utw{overflow-x:auto;margin:0 -4px}.ugt{border-collapse:collapse;width:100%;min-width:330px;font-size:12px;table-layout:fixed}.ugt col.n{width:27%}.ugt col.g{width:12%}
+.ugt th{font-size:10.5px;color:var(--muted);text-transform:uppercase;padding:6px 2px;border-bottom:2px solid var(--line)}.ugt th:first-child,.ugt td:first-child{text-align:left}
+.ugt td{padding:6px 2px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ugt input{width:100%;max-width:40px;font-size:13px;border:1.5px solid var(--line);border-radius:7px;padding:5px 0;text-align:center;font:inherit;-moz-appearance:textfield}.ugt input::-webkit-inner-spin-button{-webkit-appearance:none}.ugt input.bad{border-color:var(--danger)}.ug{font-weight:800}
+.qbig{font:900 30px/1 var(--display);letter-spacing:-.03em;text-shadow:0 3px 0 rgba(0,0,0,.25)}.qbig span{color:#ffd23f}
 .navgrid .qtile .tcirc{margin:0;background:#fff!important;color:#46178f!important}
 body.kahoot,body.kahoot #app{background:#46178f}
 body.kahoot header.top{display:none}
@@ -624,7 +648,7 @@ body.kahoot .acct{background:#fff;color:#46178f}body.kahoot .acct.me{background:
 (function(){
 function load(){var x=JSON.parse(document.getElementById('state').textContent);x.meetings=x.meetings||[];x.photos=x.photos||[];x.news=x.news||[];x.faces=x.faces||{};return x}
 var S=load(),curM=null,slide=0,openScout=null,openEvent=null;
-var TABS=['home','progress','events','history','quiz','login','me','order','orders','inst'];
+var TABS=['home','progress','events','history','quiz','login','me','order','orders','inst','uni'];
 var tab='home',openGroup=null,openPts=null;
 function route(h){h=(h==null?(location.hash||'#home').slice(1):h).split('/');var t=h[0]==='points'?'progress':h[0];if(TABS.indexOf(t)<0)t='home';tab=t;openGroup=null;openPts=null;openScout=null;openEvent=null;openCP=null;var x=h[1]||'';
  if(t==='progress'){if(x.indexOf('g-')===0)openGroup=x.slice(2);else if(x.indexOf('cp-')===0&&pat(x.slice(3))){openCP=x.slice(3);openGroup=openCP}else if(x.indexOf('pts-')===0)openPts=x.slice(4);else if(x.indexOf('s-')===0){var sc=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc){openScout=sc.id;openGroup=sc.patrol}}}
@@ -649,7 +673,7 @@ function fmtDate(d){var p=d.split('-');return +p[2]+' '+MONTHS[+p[1]-1]}
 var AUTO_FROM='2026-10-17',AUTO_MIN=10,AUTO_PTS=10;
 function autoLog(){var out=[],t=today();S.meetings.forEach(function(m){if(m.date<AUTO_FROM||m.date>t)return;m.patrols.forEach(function(pid){var ids={};S.scouts.forEach(function(x){if(x.patrol===pid)ids[x.id]=1});var n=Object.keys(ids).length,k=m.present.filter(function(i){return ids[i]}).length,full=n>0&&k===n,pts=full?15:(k>=AUTO_MIN?AUTO_PTS:0);if(pts)out.push({id:'auto-'+pid+'-'+m.date,patrol:pid,cat:'presence',pts:pts,reason:(full?'Présence complète : ':'Présence : ')+k+'/'+n+' présents (automatique)',date:m.date,auto:true})})});return out}
 var QLOG=[],QB_FROM='2026-10-26';
-function allLog(){return S.log.concat(autoLog(),QLOG)}
+function allLog(){return S.log.concat(autoLog(),QLOG,ULOG)}
 var QF1=[25,18,15,12,10,8,6,4,2,1],QFULL=10;
 function qBonus(){
  if(!CP_ON||!/github\.io$|localhost/.test(location.hostname)||qBonus.on)return;qBonus.on=true;
@@ -1108,7 +1132,7 @@ var IINST='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="c
 function menuBtn(){return '<button class="hamb" data-act="menu" aria-label="Menu" aria-expanded="'+MENU+'"><span></span><span></span><span></span></button>'}
 function drawer(){if(!MENU)return visSheet();
  return '<div class="drw-bg" data-act="menuclose"></div><nav class="drw" aria-label="Menu"><div class="drwh">'+(ACC?'<button class="drwme" data-act="acct">'+accAv('drwi')+'<span><b>'+esc(ACC.name)+'</b><span>Voir mon profil</span></span></button>':'<button class="drwme" data-menunav="login"><span class="drwi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span><b>Se connecter</b><span>Avec ton compte</span></span></button>')+'<button class="drwx" data-act="menuclose" aria-label="Fermer">×</button></div>'+
-  NAVL.slice(0,2).concat([['inst',IINST,'Installations']],NAVL.slice(2)).concat(!ACC?[['order',ICART,'Commande Coop']]:ACC.u!==QZ_ADMIN?[['order',ICART,'Ma commande']]:[]).concat(isChef()?[['orders',IBOX,'Commande troupe']]:[]).map(function(x){return '<button class="drwl'+(tab===x[0]?' on':'')+'" data-menunav="'+x[0]+'"><span class="drwi">'+x[1]+'</span>'+esc(x[2])+'</button>'}).join('')+
+  NAVL.slice(0,2).concat([['inst',IINST,'Installations']],NAVL.slice(2)).concat(!ACC?[['order',ICART,'Commande Coop']]:ACC.u!==QZ_ADMIN?[['order',ICART,'Ma commande']]:[]).concat(isChef()?[['orders',IBOX,'Commande troupe']]:[]).concat(today()<=UNI.hideAfter?[['uni','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg>','Université Impeesa']]:[]).map(function(x){return '<button class="drwl'+(tab===x[0]?' on':'')+'" data-menunav="'+x[0]+'"><span class="drwi">'+x[1]+'</span>'+esc(x[2])+'</button>'}).join('')+
   '</nav>'}
 function header(){return '<div class="acbar">'+menuBtn()+(CP_ON?acctBtn():'<span style="flex:1"></span>')+'</div>'+drawer()+heroTop()+
  '<div class="tabbar"></div>'+
@@ -1220,7 +1244,7 @@ function home(){
  h+=N.length?'<ul class="news">'+N.map(function(n){return '<li><span class="ndate">'+fmtDate(n.date)+'</span><span class="ntext">'+(n.auto?'<span class="ntag">Progression</span> ':'')+linkify(n.text)+'</span>'+(editing?'<button class="x" data-delnews="'+n.id+'" aria-label="Supprimer l’annonce">×</button>':'')+'</li>'}).join('')+'</ul>':'<p class="empty">Aucune annonce pour l’instant.</p>';
  var t=today(),nx=S.events.filter(function(e){return !evOver(e)}).sort(function(a,b){return a.date<b.date?-1:1})[0];
  if(nx){h+='<h2>Prochaine activité</h2>'+evCard(nx,false,false,true);}
- h+='<div class="navgrid"><button class="tile wide qtile" data-nav="quiz"><span class="qbig">Quiz <span>Prêt!</span></span></button></div>';
+ h+='<div class="navgrid">'+(today()<=UNI.hideAfter?'<button class="tile wide utile" data-nav="uni"><span class="ubig">🎓 Université <span>Impeesa</span></span><span class="usub">Samedi 31 oct · choisis tes cours</span></button>':'')+'<button class="tile wide qtile" data-nav="quiz"><span class="qbig">Quiz <span>Prêt!</span></span></button></div>';
  return h}
 
 var ANIMALS=[['poney','🐎'],['requin','🦈'],['castor','🦫'],['boa','🐍']];
@@ -1791,6 +1815,113 @@ function qClick(b){
  return false;
 }
 
+/* ===== Université Impeesa (réunion du 31 octobre) ===== */
+var UNI={ev:'2026-10-31',close:Date.UTC(2026,9,31,10,20),hideAfter:'2026-11-08',cap:25,d:null,busy:false,msg:'',pick:null,view:'cl',pf:'all',on:false};
+var UGR=[{k:'a',t:'Bloc A',h:['12h20 – 12h35','12h35 – 12h50'],o:['LIP201','BDG207']},{k:'b',t:'Bloc B',h:['13h05 – 13h20','13h20 – 13h35'],o:['BPR502','VDP301']},{k:'e',t:'Électif',h:['13h35 – 13h50'],o:['E1','E2']}];
+var UROOM={LIP201:'Salle 1',BDG207:'Salle 2',BPR502:'Salle 1',VDP301:'Salle 2',E1:'Salle 1',E2:'Salle 2',LBP224:'Toute la troupe'};
+var UCOLS=['LIP201','BDG207','LBP224','BPR502','VDP301','EL'],UPTS=[100,80,60,40],ULOG=[];
+function uOpen(){return Date.now()<UNI.close}
+function uScouts(){return S.scouts.filter(function(x){return pat(x.patrol)})}
+function uName(sid){var x=S.scouts.filter(function(q){return q.id===sid})[0];return x?x.name:sid}
+function uAssign(){
+ var R=(UNI.d&&UNI.d.reg)||{},out={},sc=uScouts();sc.forEach(function(x){out[x.id]={}});
+ UGR.forEach(function(g){
+  var X=g.o[0],Y=g.o[1],n={},bySide={};n[X]=0;n[Y]=0;bySide[X]=[];bySide[Y]=[];
+  var reg=sc.filter(function(x){var r=R[x.id];return r&&(r[g.k]===X||r[g.k]===Y)}).map(function(x){return {id:x.id,c:R[x.id][g.k],at:R[x.id].at||0}});
+  reg.sort(function(p,q){return p.at-q.at||(p.id<q.id?-1:1)});
+  var over=[];reg.forEach(function(r){if(n[r.c]<UNI.cap){n[r.c]++;out[r.id][g.k]=r.c}else over.push(r)});
+  over.forEach(function(r){var o=r.c===X?Y:X;var c=n[o]<UNI.cap?o:r.c;n[c]++;out[r.id][g.k]=c;if(c!==r.c)out[r.id]['x'+g.k]=1});
+  sc.forEach(function(x){if(!out[x.id][g.k]){var c=n[X]<=n[Y]?X:Y;n[c]++;out[x.id][g.k]=c;out[x.id].auto=1}});
+ });
+ return out;
+}
+function uSeats(g,c){var R=(UNI.d&&UNI.d.reg)||{},n=0;uScouts().forEach(function(x){var r=R[x.id];if(r&&r[g.k]===c)n++});return n}
+function uGPA(sid){var G=((UNI.d&&UNI.d.grades)||{})[sid]||{},t=0,n=0;UCOLS.forEach(function(k){var v=G[k];if(typeof v==='number'){t+=v;n++}});return n?{g:t/n,n:n}:null}
+function uPatGPA(){var r={};S.patrols.forEach(function(p){var t=0,n=0;S.scouts.forEach(function(x){if(x.patrol!==p.id)return;var g=uGPA(x.id);if(g){t+=g.g;n++}});r[p.id]=n?t/n:null});return r}
+function uCompute(){
+ var out=[];if(UNI.d&&UNI.d.pub){var P=uPatGPA(),L=S.patrols.filter(function(p){return P[p.id]!=null}).sort(function(a,b){return P[b.id]-P[a.id]});
+  L.forEach(function(p,i){var rk=i;while(rk>0&&Math.abs(P[L[rk-1].id]-P[p.id])<1e-9)rk--;out.push({id:'uni-'+p.id+'-'+UNI.ev,patrol:p.id,cat:'jeux',pts:UPTS[rk]||0,reason:'Université Impeesa : '+(rk+1)+(rk?'e':'re')+' place, GPA '+P[p.id].toFixed(2)+' / 4',date:UNI.ev,auto:true})})}
+ var k=JSON.stringify(out),chg=k!==JSON.stringify(ULOG);ULOG=out;return chg;
+}
+function uListen(){
+ if(!CP_ON||!/github\.io$|localhost/.test(location.hostname)||UNI.on)return;UNI.on=true;
+ fbLoad().then(function(){firebase.database().ref('uni/'+UNI.ev).on('value',function(s){UNI.d=s.val()||{};var chg=uCompute();
+  var f=document.activeElement;if(f&&f.dataset&&f.dataset.ug){[].forEach.call(document.querySelectorAll('[data-gpa]'),function(td){var q=uGPA(td.dataset.gpa);td.textContent=q?q.g.toFixed(2):'–'});return}
+  if(tab==='uni'||(chg&&!(tab==='quiz'&&QZ.play)))render()},function(){UNI.on=false;UNI.err=1;if(tab==='uni')render()})}).catch(function(){UNI.on=false});
+}
+function uMine(){return ACC&&ACC.sid&&pat(ACC.patrol)&&S.scouts.some(function(x){return x.id===ACC.sid})?ACC.sid:null}
+function uSched(a){if(!a)return '';var rows=[[UGR[0].h[0],a.a],[UGR[0].h[1],a.a===UGR[0].o[0]?UGR[0].o[1]:UGR[0].o[0]],['12h50 – 13h05','LBP224'],[UGR[1].h[0],a.b],[UGR[1].h[1],a.b===UGR[1].o[0]?UGR[1].o[1]:UGR[1].o[0]],[UGR[2].h[0],a.e]];
+ return '<div class="usch">'+rows.map(function(r){return '<div><span class="uh">'+r[0]+'</span><b>'+r[1]+'</b><span class="ur">'+UROOM[r[1]]+'</span></div>'}).join('')+'</div>'}
+function uPlan(){return '<div class="usch uplan">'+[['12h20 – 12h35','LIP201','BDG207'],['12h35 – 12h50','BDG207','LIP201'],['12h50 – 13h05','LBP224',''],['13h05 – 13h20','BPR502','VDP301'],['13h20 – 13h35','VDP301','BPR502'],['13h35 – 13h50','E1','E2']].map(function(r){return '<div><span class="uh">'+r[0]+'</span>'+(r[2]?'<b>'+r[1]+'</b><span class="ur2">Salle 1</span><b>'+r[2]+'</b><span class="ur2">Salle 2</span>':'<b>'+r[1]+'</b><span class="ur">Toute la troupe</span>')+'</div>'}).join('')+'</div>'}
+function uGradeCard(sid){var G=((UNI.d&&UNI.d.grades)||{})[sid]||{},g=uGPA(sid);if(!g)return '';var A=uAssign()[sid]||{};
+ var rk='';if(UNI.d.pub){var all=uScouts().map(function(x){var q=uGPA(x.id);return q?q.g:null}).filter(function(v){return v!=null}).sort(function(a,b){return b-a});rk=all.indexOf(g.g)+1}
+ return '<h3 class="uh3">Mon relevé de notes</h3><div class="ugpa"><div><b>'+g.g.toFixed(2)+'</b><span>GPA / 4</span></div><div><b>'+g.n+'/6</b><span>cours notés</span></div>'+(rk?'<div><b>'+(rk===1?'🥇 ':rk===2?'🥈 ':rk===3?'🥉 ':'')+rk+(rk===1?'er':'e')+'</b><span>de la troupe</span></div>':'')+'</div>'+
+ '<div class="ugl">'+UCOLS.map(function(k){var v=G[k];return '<span><i>'+(k==='EL'?(A.e||'Électif'):k)+'</i><b>'+(typeof v==='number'?v.toFixed(1):'–')+'</b></span>'}).join('')+'</div>'}
+function uniPage(){
+ uListen();
+ var h='<div class="uhero"><small>SAMEDI 31 OCTOBRE · RÉUNION</small><b>🎓 Université Impeesa</b><span>12h20 – 13h50 · 5 cours + 1 électif · 25 places par classe</span></div>';
+ if(!CP_ON)return h+uPlan();
+ if(UNI.d===null)return h+'<p class="meta">'+(UNI.err?'Impossible de charger. Vérifie ta connexion.':'Chargement…')+'</p>';
+ if(isChef())return h+uAdmin();
+ var me=uMine(),R=(UNI.d.reg||{}),mine=me?R[me]:null,A=me?uAssign()[me]:null;
+ if(!ACC)return h+'<div class="cpcard"><p class="cplead"><b>Connecte-toi pour choisir tes cours.</b> Premier arrivé, premier servi !</p><button class="btn" data-nav="login">Se connecter</button></div><h3 class="uh3">Le programme</h3>'+uPlan();
+ if(!me)return h+'<div class="cpcard"><p class="cplead">Ton compte n’est relié à aucun scout d’une patrouille.</p></div>'+uPlan();
+ if(uOpen()&&(!mine||UNI.edit)){
+  var P=UNI.pick||{a:mine&&mine.a,b:mine&&mine.b,e:mine&&mine.e};UNI.pick=P;
+  h+='<p class="meta">Dans chaque bloc, choisis le cours que tu veux <b>en premier</b> (tu feras l’autre juste après). Pour l’électif, choisis-en <b>un seul</b>. Si une classe est complète, tu vas dans l’autre.</p>';
+  UGR.forEach(function(g){h+='<div class="ugrp"><div class="ut">'+(g.k==='e'?'ÉLECTIF · '+g.h[0]+' · un seul au choix':g.t.toUpperCase()+' · '+g.h[0].split(' – ')[0]+' → '+g.h[1].split(' – ')[1]+' · puis on échange')+'</div>'+
+   g.o.map(function(c){var n=uSeats(g,c)-(mine&&mine[g.k]===c?1:0),full=n>=UNI.cap,on=P[g.k]===c;
+    return '<button class="uopt'+(on?' on':'')+(full&&!on?' full':'')+'" data-act="unipick" data-g="'+g.k+'" data-c="'+c+'"'+(full&&!on?' disabled':'')+'><span class="urad"></span><b>'+c+'</b><span class="ud">'+(g.k==='e'?'':'en premier')+'</span><span class="useat'+(full?' f':'')+'">'+(full?'COMPLET':Math.min(n+(on?1:0),UNI.cap)+'/'+UNI.cap)+'</span></button>'}).join('')+'</div>'});
+  var ok=P.a&&P.b&&P.e;
+  h+='<button class="btn ubtn" data-act="unisave"'+(ok&&!UNI.busy?'':' disabled')+'>'+(UNI.busy?'Enregistrement…':mine?'Enregistrer mes changements':'Valider mon inscription')+'</button>'+(mine?'<button class="btn ghost ubtn2" data-act="unicancel">Annuler</button>':'')+(UNI.msg?'<p class="uerr">'+esc(UNI.msg)+'</p>':'')+'<p class="meta" style="text-align:center">Inscriptions ouvertes jusqu’à samedi 12h20 · si tu changes d’avis, tu perds ta place</p>';
+  return h;
+ }
+ h+='<div class="prow"><h3 class="uh3">Mon emploi du temps</h3>'+(uOpen()?'<button class="pdfbtn" data-act="uniedit">Modifier</button>':'')+'</div>';
+ if(!mine)h+='<p class="meta">Tu ne t’es pas inscrit : la maîtrise t’a placé dans les classes où il restait de la place.</p>';
+ else if(A&&(A.xa||A.xb||A.xe))h+='<p class="meta">⚠️ Une classe que tu as choisie était complète : tu as été placé dans l’autre.</p>';
+ h+=uSched(A)+uGradeCard(me);
+ return h;
+}
+function uAdmin(){
+ var A=uAssign(),R=UNI.d.reg||{},G=UNI.d.grades||{},sc=uScouts(),nreg=sc.filter(function(x){return R[x.id]}).length;
+ var h='<div class="utabs"><button class="'+(UNI.view==='cl'?'on':'')+'" data-act="univ" data-v="cl">Classes</button><button class="'+(UNI.view==='gr'?'on':'')+'" data-act="univ" data-v="gr">Notes & GPA</button><button class="'+(UNI.view==='pl'?'on':'')+'" data-act="univ" data-v="pl">Programme</button></div>';
+ if(UNI.view==='pl')return h+uPlan();
+ if(UNI.view==='cl'){
+  h+='<p class="meta">'+nreg+' / '+sc.length+' scouts inscrits'+(uOpen()?' · inscriptions ouvertes jusqu’à samedi 12h20':' · inscriptions fermées')+'. Ceux qui ne se sont pas inscrits sont placés automatiquement là où il reste de la place.</p>';
+  UGR.forEach(function(g){g.o.forEach(function(c){var L=sc.filter(function(x){return A[x.id][g.k]===c});
+   h+='<details class="ucls"><summary><b>'+c+'</b><span>'+(g.k==='e'?'Électif':g.t+' · en premier')+' · '+UROOM[c]+'</span><i class="useat'+(L.length>UNI.cap?' f':'')+'">'+L.length+'/'+UNI.cap+'</i></summary><div>'+
+    L.map(function(x){var p=pat(x.patrol);return '<span><i class="udot" style="background:'+col(p)+'"></i>'+esc(x.name)+(R[x.id]?'':' <em>auto</em>')+'</span>'}).join('')+'</div></details>'})});
+  return h;
+ }
+ var P=uPatGPA(),ord=S.patrols.filter(function(p){return P[p.id]!=null}).sort(function(a,b){return P[b.id]-P[a.id]});
+ h+='<div class="ugpa up">'+S.patrols.map(function(p){var r=ord.indexOf(p);return '<div style="--gc:'+col(p)+'"><b>'+(P[p.id]==null?'–':P[p.id].toFixed(2))+'</b><span>'+esc(p.name)+(r>=0?' · '+(UPTS[r]||0)+' pts':'')+'</span></div>'}).join('')+'</div>';
+ h+='<div class="upub"><span>'+(UNI.d.pub?'✅ Résultats publiés : les points comptent pour les patrouilles (1er 100, 2e 80, 3e 60, 4e 40).':'Les points des patrouilles (100 / 80 / 60 / 40) comptent quand tu publies les résultats.')+'</span><button class="pdfbtn" data-act="unipub">'+(UNI.d.pub?'Retirer':'Publier les résultats')+'</button></div>';
+ h+='<div class="utabs sm">'+[['all','Troupe']].concat(S.patrols.map(function(p){return [p.id,p.name]})).map(function(t){return '<button class="'+(UNI.pf===t[0]?'on':'')+'" data-act="unipf" data-v="'+t[0]+'">'+esc(t[1])+'</button>'}).join('')+'</div>';
+ h+='<p class="meta">Note chaque cours sur 4 (ex. 3.5). Le GPA est la moyenne des cours notés.</p><div class="utw"><table class="ugt"><colgroup><col class="n"><col><col><col><col><col><col><col class="g"></colgroup><tr><th>Scout</th>'+UCOLS.map(function(k){return '<th>'+(k==='EL'?'Él.':k.slice(0,3))+'</th>'}).join('')+'<th>GPA</th></tr>';
+ sc.filter(function(x){return UNI.pf==='all'||x.patrol===UNI.pf}).forEach(function(x){var g=G[x.id]||{},q=uGPA(x.id),p=pat(x.patrol);
+  h+='<tr><td><i class="udot" style="background:'+col(p)+'"></i>'+esc(x.name)+'</td>'+UCOLS.map(function(k){var v=g[k];return '<td><input data-ug="'+x.id+'|'+k+'" type="number" inputmode="decimal" min="0" max="4" step="0.1" value="'+(typeof v==='number'?v:'')+'"'+(k==='EL'?' title="'+(A[x.id].e||'')+'"':'')+'></td>'}).join('')+'<td class="ug" data-gpa="'+x.id+'">'+(q?q.g.toFixed(2):'–')+'</td></tr>'});
+ h+='</table></div>'+(UNI.msg?'<p class="uerr">'+esc(UNI.msg)+'</p>':'');
+ return h;
+}
+function uClick(b){
+ var a=b.dataset.act;if(!a||a.indexOf('uni')!==0)return false;
+ var db=firebase.database(),base='uni/'+UNI.ev;
+ if(a==='unipick'){UNI.pick=UNI.pick||{};UNI.pick[b.dataset.g]=b.dataset.c;UNI.msg='';render();return true}
+ if(a==='uniedit'){UNI.edit=true;UNI.pick=null;render();return true}
+ if(a==='unicancel'){UNI.edit=false;UNI.pick=null;UNI.msg='';render();return true}
+ if(a==='unisave'){var me=uMine(),P=UNI.pick;if(!me||!P||!uOpen())return true;var old=(UNI.d.reg||{})[me];
+  if(old&&old.a===P.a&&old.b===P.b&&old.e===P.e){UNI.edit=false;render();return true}
+  UNI.busy=true;UNI.msg='';render();
+  fbUserReady().then(function(){return db.ref(base+'/reg/'+me).set({a:P.a,b:P.b,e:P.e,at:firebase.database.ServerValue.TIMESTAMP})}).then(function(){UNI.busy=false;UNI.edit=false;UNI.pick=null;render()}).catch(function(){UNI.busy=false;UNI.msg='Échec de l’enregistrement. Vérifie ta connexion et réessaie.';render()});return true}
+ if(a==='univ'){UNI.view=b.dataset.v;UNI.msg='';render();return true}
+ if(a==='unipf'){UNI.pf=b.dataset.v;render();return true}
+ if(a==='unipub'){b.disabled=true;db.ref(base+'/pub').set(UNI.d.pub?null:true).catch(function(){UNI.msg='Échec. As-tu ajouté la règle « uni » dans Firebase ?';render()});return true}
+ return false;
+}
+document.addEventListener('change',function(e){var t=e.target;if(!t||!t.dataset||!t.dataset.ug||!isChef())return;var p=t.dataset.ug.split('|'),v=t.value.trim().replace(',','.');var n=v===''?null:Math.round(parseFloat(v)*100)/100;
+ if(n!=null&&(isNaN(n)||n<0||n>4)){t.classList.add('bad');UNI.msg='Une note doit être entre 0 et 4.';return}t.classList.remove('bad');UNI.msg='';
+ firebase.database().ref('uni/'+UNI.ev+'/grades/'+p[0]+'/'+p[1]).set(n).catch(function(){t.classList.add('bad');UNI.msg='Échec de l’enregistrement. As-tu ajouté la règle « uni » dans Firebase ?';render()})});
+
 /* ===== Visiteurs en ligne (Firebase) ===== */
 var ONLINE=null,VREF=null,VSENT='',VIS={on:false,list:null,err:'',open:false};
 function visDev(){var u=navigator.userAgent||'',d=/iPad/.test(u)?'iPad':/iPhone/.test(u)?'iPhone':/Android/.test(u)?(/Mobile/.test(u)?'Android':'Tablette Android'):/Macintosh/.test(u)?((navigator.maxTouchPoints||0)>1?'iPad':'Mac'):/Windows/.test(u)?'PC Windows':/Linux/.test(u)?'Linux':'Appareil',b=/Instagram/.test(u)?'Instagram':/FBAN|FBAV/.test(u)?'Facebook':/WhatsApp/.test(u)?'WhatsApp':/Edg\//.test(u)?'Edge':/CriOS|Chrome\//.test(u)?'Chrome':/FxiOS|Firefox\//.test(u)?'Firefox':/Safari\//.test(u)?'Safari':'';return d+(b?' · '+b:'')}
@@ -2023,7 +2154,7 @@ function render(){
  var app=document.getElementById('app');
  var keep=editing;try{visTick();if(visCan()&&CP_ON)visListen()}catch(e){}
  try{document.body.classList.toggle('kahoot',tab==='quiz');document.body.classList.toggle('lgpage',tab==='login'&&!ACC)}catch(e){}
- var body=header()+(tab==='home'||(tab==='progress'&&(openGroup||openPts))?'':backHome())+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():tab==='quiz'?quiz():tab==='login'?loginPage():tab==='me'?mePage():tab==='inst'?instPage():tab==='order'?orderPage():tab==='orders'?troupeOrderPage():events())+(full?settings():'');
+ var body=header()+(tab==='home'||(tab==='progress'&&(openGroup||openPts))?'':backHome())+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():tab==='quiz'?quiz():tab==='login'?loginPage():tab==='me'?mePage():tab==='inst'?instPage():tab==='order'?orderPage():tab==='orders'?troupeOrderPage():tab==='uni'?uniPage():events())+(full?settings():'');
  editing=keep;
  if(openScout) body+=profile();
  if(openEvent) body+=eventPage();
@@ -2052,6 +2183,7 @@ document.addEventListener('click',function(ev){
  if(b&&instClick(b))return;
  if(b&&ordClick(b))return;
  if(b&&accClick(b))return;
+ if(b&&uClick(b))return;
  if(b&&qClick(b))return;
  if(!b){var pt=ev.target.closest('[data-ptab]');if(pt&&!ev.target.closest('input,select,textarea')){go('progress/pts-'+pt.dataset.ptab);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return}
   var evl=ev.target.closest('[data-event]');if(evl){go(tab+'/e-'+evl.dataset.event);var pr=document.querySelector('.profile');if(pr)pr.scrollTop=0}return}
@@ -2138,6 +2270,7 @@ loadPublicData();
 presence();
 notifInit();
 qBonus();
+uListen();
 if(CP_ON&&/github\.io$|localhost/.test(location.hostname))qInit();
 if(tab==='progress')setTimeout(leaderRun,400);
 if(window.claude&&window.claude.use){
@@ -2153,7 +2286,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="24c619d4b231">
-<script>(function(){var B="24c619d4b231";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="8139eb0f0a07">
+<script>(function(){var B="8139eb0f0a07";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

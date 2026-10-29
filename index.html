@@ -1171,7 +1171,7 @@ function notifInit(){
   try{OS.User.PushSubscription.addEventListener('change',function(){notifSync();if(tab==='home'||tab==='notif')render()})}catch(e){}if(tab==='home'||tab==='notif')render()})});
 }
 function notifOn(){try{return !!(NOTIF.os&&NOTIF.os.User.PushSubscription.optedIn)}catch(e){return false}}
-function notifSync(){var OS=NOTIF.os;if(!OS)return;try{if(ACC){OS.login(ACC.u);var p=pat(ACC.patrol);OS.User.addTags({patrol:p?p.name:'',role:ACC.role||'Scout'})}}catch(e){}}
+function notifSync(){var OS=NOTIF.os;if(!OS)return;try{if(ACC){OS.login(ACC.u);var p=pat(ACC.patrol);OS.User.addTags({patrol:p?p.name:'',role:ACC.role||'Scout',uid:ACC.uid||''})}}catch(e){}}
 function notifInApp(){return /Instagram|FBAN|FBAV|WhatsApp|Snapchat|TikTok|Line\//.test(navigator.userAgent)}
 function notifPage(){
  var h='<h2>Notifications</h2><div class="meta" style="margin:-4px 0 12px">Reçois sur ton téléphone les annonces de la troupe : nouveau quiz, activités, commandes…</div>';

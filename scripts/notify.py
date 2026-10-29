@@ -161,7 +161,7 @@ def main():
         by = {x['k']: x for x in E}
         for k, r_old in prev.items():
             r_new = new.get(k)
-            if not r_new or r_new <= r_old:
+            if not r_new or r_new <= r_old or r_old > 10:  # seul le top 10 est public
                 continue
             passers = [x for x in E[:r_new - 1] if x['k'] not in prev or prev[x['k']] > r_old]
             if not passers:
@@ -169,9 +169,12 @@ def main():
             first = passers[-1]  # celui juste devant lui maintenant
             who = first['name'] + (f' et {len(passers) - 1} autre' + ('s' if len(passers) > 2 else '') if len(passers) > 1 else '')
             verb = "t'ont dépassé" if len(passers) > 1 else "t'a dépassé"
-            send('⚡ Tu as été dépassé !',
-                 f"{who} {verb} au Quiz Prêt. {first['name']} est {ordinal(new[first['k']])}, "
-                 f"tu es maintenant {ordinal(r_new)}.", uid=k)
+            if r_new <= 10:
+                body = (f"{who} {verb} au Quiz Prêt. {first['name']} est {ordinal(new[first['k']])}, "
+                        f"tu es maintenant {ordinal(r_new)}.")
+            else:
+                body = f"{who} {verb} au Quiz Prêt : tu sors du top 10."
+            send('⚡ Tu as été dépassé !', body, uid=k)
     st['rank'] = new
 
     # 1. Classement quotidien à 20h

@@ -2,6 +2,10 @@ name: Notifications
 on:
   schedule:
     - cron: '*/5 * * * *'
+    # 20h Beyrouth (hiver UTC+2 / été UTC+3), en plus du passage toutes les 5 min que GitHub espace souvent
+    - cron: '7 17 * * *'
+    - cron: '7 18 * * *'
+    - cron: '21 18 * * *'
   workflow_dispatch:
     inputs:
       verify:

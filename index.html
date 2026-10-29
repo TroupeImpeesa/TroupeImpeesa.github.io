@@ -1729,7 +1729,10 @@ function qBoardRows(){
  var rk=0,prev=null;
  var top=0;
  return '<div class="klb">'+L.map(function(r,i){if(r.s!==prev){rk=i+1;prev=r.s}var p=pat(r.p);var me=QZ.user&&r.k===QZ.user.uid;var bonus=p&&top<10&&qWeek()>=QB_FROM?QF1[top]:0;if(bonus)top++;
-  return '<div class="krow'+(rk<=3?' k'+rk:'')+(me?' kme':'')+'"><span class="krk">'+rk+'</span><span class="knm">'+esc(r.n)+'<i class="kpat" style="background:'+(p?pdfCol(p):'#46178f')+'">'+(p?esc(p.name):'Maîtrise')+'</i></span><span class="kpt">'+(bonus?'<i class="kb5">+'+bonus+'</i>':'')+r.s+'</span></div>'}).join('')+'</div>';
+  if(i>=10)return '';
+  return '<div class="krow'+(rk<=3?' k'+rk:'')+(me?' kme':'')+'"><span class="krk">'+rk+'</span><span class="knm">'+esc(r.n)+'<i class="kpat" style="background:'+(p?pdfCol(p):'#46178f')+'">'+(p?esc(p.name):'Maîtrise')+'</i></span><span class="kpt">'+(bonus?'<i class="kb5">+'+bonus+'</i>':'')+r.s+'</span></div>'}).join('')+'</div>'+
+  (function(){var mi=-1;L.forEach(function(r,i){if(QZ.user&&r.k===QZ.user.uid)mi=i});if(mi<10)return '';var r=L[mi],p=pat(r.p);
+   return '<div class="ksub" style="text-align:center;margin:12px 0 6px">Seul le top 10 est affiché.</div><div class="klb"><div class="krow kme"><span class="krk">–</span><span class="knm">Ton score<i class="kpat" style="background:'+(p?pdfCol(p):'#46178f')+'">'+(p?esc(p.name):'')+'</i></span><span class="kpt">'+r.s+'</span></div></div>'})();
 }
 function quiz(){
  qInit();
@@ -2306,7 +2309,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="216473213847">
-<script>(function(){var B="216473213847";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="3d21521a8d7b">
+<script>(function(){var B="3d21521a8d7b";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

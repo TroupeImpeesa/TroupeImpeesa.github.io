@@ -118,7 +118,7 @@ def send(title, body, uid=None):
             print('::notice::OneSignal', r.status, r.read().decode()[:200])
             return r.status
     except urllib.error.HTTPError as e:
-        print('::warning::OneSignal ERREUR', e.code, 'cle', key[:7] + '…', len(key), e.read().decode()[:300].replace('\n', ' '))
+        print('::warning::OneSignal ERREUR', e.code, 'longueur cle', len(key), e.read().decode()[:300].replace('\n', ' '))
         return e.code
 
 

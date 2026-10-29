@@ -400,6 +400,9 @@ input,select,textarea{border-radius:10px;font-family:var(--body)}
 .hpr{display:grid;grid-template-columns:24px 1fr;align-items:baseline;font-size:13px;line-height:1.35;overflow-wrap:anywhere}.hpr span{font-size:11px;font-weight:700;color:var(--muted)}
 .qtile{grid-column:1/-1;flex-direction:row;align-items:center;gap:14px;padding:14px 16px;background:#46178f!important;color:#fff!important}
 .qtile{justify-content:center!important;padding:22px 16px!important}.ucls,.uopt,.ugrp{--uni:#0f2342}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ucls,:root:not([data-theme="light"]) .uopt{--uni:#7aa2e8}}:root[data-theme="dark"] .uopt{--uni:#7aa2e8}
+.usc td{font-size:11.5px}.ucode{display:inline-block;padding:3px 0;width:100%;max-width:56px;border-radius:7px;font-weight:700;font-size:10.5px;background:var(--soft)}
+.uLIP201{background:#dbe8ff;color:#1a3f8f}.uBDG207{background:#ffe3d6;color:#8f3a12}.uBPR502{background:#dff5e4;color:#16602e}.uVDP301{background:#f1e2ff;color:#5b2a8f}.uE1{background:#fff3c4;color:#7a5a00}.uE2{background:#d8f4f4;color:#0f5f5f}
+.unm{border:none;background:none;padding:0;font:inherit;color:var(--fg);cursor:pointer;text-align:left;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.usx td{padding:6px 0 12px;white-space:normal}.usx .usch{font-size:12.5px}
 .utile{grid-column:1/-1;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:6px;padding:20px 16px!important;background:#0f2342!important;color:#fff!important}
 .ubig{font:900 26px/1 var(--display);letter-spacing:-.03em}.ubig span{color:#f5c542}.usub{font-size:13px;opacity:.8;font-weight:600}
 .uhero{background:#0f2342;color:#fff;border-radius:20px;padding:18px;margin:4px 0 14px}.uhero small{display:block;letter-spacing:.12em;font-size:11px;opacity:.7;font-weight:700}.uhero b{display:block;font:900 24px/1.15 var(--display);letter-spacing:-.02em;margin:6px 0 4px}.uhero span{font-size:13px;opacity:.85}
@@ -1885,8 +1888,18 @@ function uniPage(){
 }
 function uAdmin(){
  var A=uAssign(),R=UNI.d.reg||{},G=UNI.d.grades||{},sc=uScouts(),nreg=sc.filter(function(x){return R[x.id]}).length;
- var h='<div class="utabs"><button class="'+(UNI.view==='cl'?'on':'')+'" data-act="univ" data-v="cl">Classes</button><button class="'+(UNI.view==='gr'?'on':'')+'" data-act="univ" data-v="gr">Notes & GPA</button><button class="'+(UNI.view==='pl'?'on':'')+'" data-act="univ" data-v="pl">Programme</button></div>';
+ var h='<div class="utabs"><button class="'+(UNI.view==='cl'?'on':'')+'" data-act="univ" data-v="cl">Classes</button><button class="'+(UNI.view==='sc'?'on':'')+'" data-act="univ" data-v="sc">Par scout</button><button class="'+(UNI.view==='gr'?'on':'')+'" data-act="univ" data-v="gr">Notes & GPA</button><button class="'+(UNI.view==='pl'?'on':'')+'" data-act="univ" data-v="pl">Programme</button></div>';
  if(UNI.view==='pl')return h+uPlan();
+ if(UNI.view==='sc'){
+  var other=function(g,c){return c===g.o[0]?g.o[1]:g.o[0]};
+  h+='<div class="utabs sm">'+[['all','Troupe']].concat(S.patrols.map(function(p){return [p.id,p.name]})).map(function(t){return '<button class="'+(UNI.pf===t[0]?'on':'')+'" data-act="unipf" data-v="'+t[0]+'">'+esc(t[1])+'</button>'}).join('')+'</div>';
+  h+='<p class="meta">Le programme de chaque scout. LBP224 (12h50 – 13h05) est pour toute la troupe. Touche un nom pour voir les salles.</p>';
+  h+='<div class="utw"><table class="ugt usc"><colgroup><col class="n"><col><col><col><col><col></colgroup><tr><th>Scout</th><th>12h20</th><th>12h35</th><th>13h05</th><th>13h20</th><th>13h35</th></tr>';
+  sc.filter(function(x){return UNI.pf==='all'||x.patrol===UNI.pf}).forEach(function(x){var a=A[x.id],p=pat(x.patrol),r=[a.a,other(UGR[0],a.a),a.b,other(UGR[1],a.b),a.e];
+   h+='<tr><td><button class="unm" data-act="unisc" data-s="'+x.id+'"><i class="udot" style="background:'+col(p)+'"></i>'+esc(x.name)+'</button></td>'+r.map(function(c){return '<td><span class="ucode u'+c+'">'+c+'</span></td>'}).join('')+'</tr>';
+   if(UNI.scOpen===x.id)h+='<tr class="usx"><td colspan="6">'+uSched(a)+'</td></tr>'});
+  return h+'</table></div>';
+ }
  if(UNI.view==='cl'){
   h+='<p class="meta">'+nreg+' / '+sc.length+' scouts inscrits'+(uOpen()?' · inscriptions ouvertes jusqu’à samedi 12h20':' · inscriptions fermées')+'. Ceux qui ne se sont pas inscrits sont placés automatiquement là où il reste de la place.</p>';
   UGR.forEach(function(g){g.o.forEach(function(c){var L=sc.filter(function(x){return A[x.id][g.k]===c});
@@ -1914,6 +1927,7 @@ function uClick(b){
   if(old&&old.a===P.a&&old.b===P.b&&old.e===P.e){UNI.edit=false;render();return true}
   UNI.busy=true;UNI.msg='';render();
   fbUserReady().then(function(){return db.ref(base+'/reg/'+me).set({a:P.a,b:P.b,e:P.e,at:firebase.database.ServerValue.TIMESTAMP})}).then(function(){UNI.busy=false;UNI.edit=false;UNI.pick=null;render()}).catch(function(){UNI.busy=false;UNI.msg='Échec de l’enregistrement. Vérifie ta connexion et réessaie.';render()});return true}
+ if(a==='unisc'){UNI.scOpen=UNI.scOpen===b.dataset.s?null:b.dataset.s;render();return true}
  if(a==='univ'){UNI.view=b.dataset.v;UNI.msg='';render();return true}
  if(a==='unipf'){UNI.pf=b.dataset.v;render();return true}
  if(a==='unipub'){b.disabled=true;db.ref(base+'/pub').set(UNI.d.pub?null:true).catch(function(){UNI.msg='Échec. As-tu ajouté la règle « uni » dans Firebase ?';render()});return true}
@@ -2287,7 +2301,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="1ec203d85397">
-<script>(function(){var B="1ec203d85397";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="0df6764d4edb">
+<script>(function(){var B="0df6764d4edb";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

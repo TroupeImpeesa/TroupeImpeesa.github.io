@@ -61,6 +61,7 @@ out = (
     '<meta name="description" content="Troupe Impeesa VPJ : annonces, points des patrouilles, progression et activités.">\n'
     + '<meta name="theme-color" content="#1e4636">\n'
     '<link rel="icon" type="image/png" href="icon.png">\n<link rel="apple-touch-icon" href="icon.png">\n'
+    '<link rel="manifest" href="manifest.json">\n<meta name="apple-mobile-web-app-capable" content="yes">\n<meta name="mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-title" content="Impeesa">\n<meta name="apple-mobile-web-app-status-bar-style" content="default">\n'
     '<meta property="og:type" content="website">\n<meta property="og:url" content="https://troupeimpeesa.github.io/">\n'
     '<meta property="og:title" content="Troupe Impeesa VPJ">\n'
     '<meta property="og:description" content="Annonces, calendrier, patrouilles et points de la troupe.">\n'

@@ -1884,7 +1884,7 @@ function uniPage(){
   h+='<button class="btn ubtn" data-act="unisave"'+(ok&&!UNI.busy?'':' disabled')+'>'+(UNI.busy?'Enregistrement…':mine?'Enregistrer mes changements':'Valider mon inscription')+'</button>'+(mine?'<button class="btn ghost ubtn2" data-act="unicancel">Annuler</button>':'')+(UNI.msg?'<p class="uerr">'+esc(UNI.msg)+'</p>':'')+'<p class="meta" style="text-align:center">Inscriptions ouvertes jusqu’à samedi 12h20 · si tu changes d’avis, tu perds ta place</p>';
   return h;
  }
- h+='<div class="prow"><h3 class="uh3">Mon emploi du temps</h3>'+(uOpen()?'<button class="pdfbtn" data-act="uniedit">Modifier</button>':'')+'</div>';
+ h+='<div class="prow"><h3 class="uh3">Mon emploi du temps</h3><span>'+(uOpen()?'<button class="pdfbtn" data-act="uniedit">Modifier</button> ':'')+'<button class="pdfbtn" data-act="unipdf" data-s="'+me+'">'+(UNI.pdfbusy?'…':'📄 PDF')+'</button></span></div>';
  if(!mine)h+='<p class="meta">Tu ne t’es pas inscrit : la maîtrise t’a placé dans les classes où il restait de la place.</p>';
  else if(A&&(A.xa||A.xb||A.xe))h+='<p class="meta">⚠️ Une classe que tu as choisie était complète : tu as été placé dans l’autre.</p>';
  h+=uSched(A)+uGradeCard(me);
@@ -1898,11 +1898,11 @@ function uAdmin(){
  if(UNI.view==='sc'){
   var other=function(g,c){return c===g.o[0]?g.o[1]:g.o[0]};
   h+='<div class="utabs sm">'+[['all','Troupe']].concat(S.patrols.map(function(p){return [p.id,p.name]})).map(function(t){return '<button class="'+(UNI.pf===t[0]?'on':'')+'" data-act="unipf" data-v="'+t[0]+'">'+esc(t[1])+'</button>'}).join('')+'</div>';
-  h+='<p class="meta">Le programme de chaque scout. LBP224 (12h50 – 13h05) est pour toute la troupe. Touche un nom pour voir les salles.</p>';
+  h+='<div class="prow"><p class="meta" style="margin:0">Le programme de chaque scout. LBP224 (12h50 – 13h05) est pour toute la troupe. Touche un nom pour voir les salles.</p><button class="pdfbtn" data-act="unipdf">'+(UNI.pdfbusy?'Création…':'📄 PDF '+(UNI.pf==='all'?'de tous':'de la patrouille'))+'</button></div>'+(UNI.msg?'<p class="uerr">'+esc(UNI.msg)+'</p>':'');
   h+='<div class="utw"><table class="ugt usc"><colgroup><col class="n"><col><col><col><col><col></colgroup><tr><th>Scout</th><th>12h20</th><th>12h35</th><th>13h05</th><th>13h20</th><th>13h35</th></tr>';
   sc.filter(function(x){return UNI.pf==='all'||x.patrol===UNI.pf}).forEach(function(x){var a=A[x.id],p=pat(x.patrol),r=[a.a,other(UGR[0],a.a),a.b,other(UGR[1],a.b),a.e];
    h+='<tr><td><button class="unm" data-act="unisc" data-s="'+x.id+'"><i class="udot" style="background:'+col(p)+'"></i>'+esc(x.name)+'</button></td>'+r.map(function(c){return '<td><span class="ucode u'+c+'">'+c+'</span></td>'}).join('')+'</tr>';
-   if(UNI.scOpen===x.id)h+='<tr class="usx"><td colspan="6">'+uSched(a)+'</td></tr>'});
+   if(UNI.scOpen===x.id)h+='<tr class="usx"><td colspan="6">'+uSched(a)+'<button class="pdfbtn" style="margin-top:8px" data-act="unipdf" data-s="'+x.id+'">📄 PDF de '+esc(x.name.split(' ')[0])+'</button></td></tr>'});
   return h+'</table></div>';
  }
  if(UNI.view==='cl'){
@@ -1925,6 +1925,43 @@ function uGrades(ed){var A=uAssign(),sc=uScouts(),G=UNI.d.grades||{},h='';
  sc.filter(function(x){return UNI.pf==='all'||x.patrol===UNI.pf}).forEach(function(x){var g=G[x.id]||{},q=uGPA(x.id),p=pat(x.patrol);
   h+='<tr'+(x.id===uMine()?' class="ume"':'')+'><td><i class="udot" style="background:'+col(p)+'"></i>'+esc(x.name)+'</td>'+UCOLS.map(function(k){var v=g[k];return (ed?'<td><input data-ug="'+x.id+'|'+k+'" type="number" inputmode="decimal" min="0" max="4" step="0.1" value="'+(typeof v==='number'?v:'')+'"'+(k==='EL'?' title="'+(A[x.id].e||'')+'"':'')+'></td>':'<td class="ugv">'+(typeof v==='number'?v.toFixed(1):'–')+'</td>')}).join('')+'<td class="ug" data-gpa="'+x.id+'">'+(q?q.g.toFixed(2):'–')+'</td></tr>'});
  h+='</table></div>';return h}
+function uPdf(sids,all){
+ if(UNI.pdfbusy)return;UNI.pdfbusy=true;render();
+ jspdfLoad().then(function(){
+  var T=function(x){return pdfTxt(String(x).replace(/[–—]/g,'-'))},doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'}),W=210,M=14,AS=uAssign(),G=(UNI.d&&UNI.d.grades)||{};
+  var PC=['#111111','#c62828','#2c5d8a','#8a6a12','#7a3f78','#3d7d7a'];function pc(p){return PC[((p&&p.c)||1)-1]||'#111111'}
+  function oth(g,c){return c===g.o[0]?g.o[1]:g.o[0]}
+  function rows(a){return [[UGR[0].h[0],a.a],[UGR[0].h[1],oth(UGR[0],a.a)],['12h50 – 13h05','LBP224'],[UGR[1].h[0],a.b],[UGR[1].h[1],oth(UGR[1],a.b)],[UGR[2].h[0],a.e]]}
+  function sc(id){return S.scouts.filter(function(x){return x.id===id})[0]}
+  function card(id,y){var x=sc(id),p=pat(x.patrol),a=AS[id]||{},g=G[id]||{},q=uGPA(id);
+   doc.setFillColor('#0f2342');doc.roundedRect(M,y,W-2*M,16,3,3,'F');doc.setTextColor(255);doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text(T('Université Impeesa'),M+5,y+7);
+   doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text(T('Samedi 31 octobre 2026 - 12h20 à 13h50'),M+5,y+12.5);doc.text(T(S.troop||''),W-M-5,y+12.5,{align:'right'});doc.setTextColor(0);
+   y+=25;doc.setFont('helvetica','bold');doc.setFontSize(17);doc.text(T(x.name),M,y);
+   doc.setFillColor(pc(p));var nw=doc.getTextWidth(T(x.name));doc.setFontSize(9);var pw=doc.getTextWidth(T(p.name))+6;doc.roundedRect(M+nw+4,y-4.6,pw,6,3,3,'F');doc.setTextColor(255);doc.text(T(p.name),M+nw+7,y-0.4);doc.setTextColor(0);
+   if(q){doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text(T('GPA'),W-M-22,y-0.5,{align:'right'});doc.setFont('helvetica','bold');doc.setFontSize(17);doc.text(q.g.toFixed(2),W-M,y,{align:'right'})}
+   y+=6;doc.setFontSize(8.5);doc.setTextColor(110);doc.setFont('helvetica','bold');doc.text(T('HEURE'),M+2,y);doc.text(T('COURS'),M+42,y);doc.text(T('SALLE'),M+92,y);doc.text(T('NOTE /4'),W-M-2,y,{align:'right'});doc.setTextColor(0);y+=2;
+   rows(a).forEach(function(r,i){var k=r[1]==='E1'||r[1]==='E2'?'EL':r[1],v=g[k];if(i%2===0){doc.setFillColor(244,245,248);doc.rect(M,y,W-2*M,9,'F')}
+    doc.setFont('helvetica','normal');doc.setFontSize(10.5);doc.text(T(r[0]),M+2,y+6);doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text(T(r[1]),M+42,y+6.2);
+    doc.setFont('helvetica','normal');doc.setFontSize(10.5);doc.text(T(UROOM[r[1]]),M+92,y+6);doc.setFont('helvetica','bold');doc.text(typeof v==='number'?v.toFixed(1):'',W-M-2,y+6,{align:'right'});y+=9});
+   return y}
+  if(all){
+   doc.setFont('helvetica','bold');doc.setFontSize(18);doc.text(T('Université Impeesa - programme de la troupe'),M,18);doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(110);
+   doc.text(T('Samedi 31 octobre 2026 - 12h20 à 13h50 - LBP224 (12h50 - 13h05) pour toute la troupe'),M,24);doc.setTextColor(0);
+   var cx=[M+2,M+56,M+82,M+102,M+122,M+142,M+162],hd=['Scout','Patrouille','12h20','12h35','13h05','13h20','13h35'],y=34;
+   function head(){doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(110);hd.forEach(function(t,i){doc.text(T(t),cx[i],y)});doc.text('GPA',W-M-2,y,{align:'right'});doc.setTextColor(0);y+=2.5}
+   head();
+   S.patrols.forEach(function(p){var L=sids.filter(function(id){return sc(id).patrol===p.id});if(!L.length)return;
+    L.forEach(function(id,i){if(y>280){doc.addPage();y=18;head()}var x=sc(id),a=AS[id]||{},r=rows(a),q=uGPA(id);if(i%2===0){doc.setFillColor(244,245,248);doc.rect(M,y,W-2*M,7,'F')}
+     doc.setFillColor(pc(p));doc.rect(M,y,1.2,7,'F');doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.text(T(x.name),cx[0]+1,y+4.9);doc.text(T(p.name),cx[1],y+4.9);
+     doc.setFont('helvetica','bold');[0,1,3,4,5].forEach(function(j,n){doc.text(T(r[j][1]),cx[2+n],y+4.9)});doc.text(q?q.g.toFixed(2):'-',W-M-2,y+4.9,{align:'right'});y+=7})});
+   var P=uPatGPA();if(Object.keys(P).some(function(k){return P[k]!=null})){if(y>255){doc.addPage();y=18}y+=8;doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text(T('GPA des patrouilles'),M,y);y+=6;
+    S.patrols.slice().sort(function(a,b){return (P[b.id]||0)-(P[a.id]||0)}).forEach(function(p,i){doc.setFont('helvetica','normal');doc.setFontSize(10.5);doc.setFillColor(pc(p));doc.rect(M,y-3.5,3,4.5,'F');doc.text(T((i+1)+'. '+p.name),M+5,y);doc.setFont('helvetica','bold');doc.text(P[p.id]==null?'-':P[p.id].toFixed(2),M+60,y);y+=6})}
+   doc.addPage();
+  }
+  sids.forEach(function(id,i){if(i>0&&i%2===0)doc.addPage();var y0=i%2===0?14:156;if(i%2===1){doc.setDrawColor(190);doc.setLineDashPattern([2,2],0);doc.line(M,148,W-M,148);doc.setLineDashPattern([],0)}card(id,y0)});
+  var nm=sids.length===1?sc(sids[0]).name:'Troupe';doc.save(T('Universite-Impeesa-'+nm.replace(/\s+/g,'-')+'.pdf'));
+ }).catch(function(){UNI.msg='Impossible de créer le PDF. Vérifie ta connexion.'}).then(function(){UNI.pdfbusy=false;render()});
+}
 function uClick(b){
  var a=b.dataset.act;if(!a||a.indexOf('uni')!==0)return false;
  var db=firebase.database(),base='uni/'+UNI.ev;
@@ -1935,6 +1972,7 @@ function uClick(b){
   if(old&&old.a===P.a&&old.b===P.b&&old.e===P.e){UNI.edit=false;render();return true}
   UNI.busy=true;UNI.msg='';render();
   fbUserReady().then(function(){return db.ref(base+'/reg/'+me).set({a:P.a,b:P.b,e:P.e,at:firebase.database.ServerValue.TIMESTAMP})}).then(function(){UNI.busy=false;UNI.edit=false;UNI.pick=null;render()}).catch(function(){UNI.busy=false;UNI.msg='Échec de l’enregistrement. Vérifie ta connexion et réessaie.';render()});return true}
+ if(a==='unipdf'){var id=b.dataset.s;if(id)uPdf([id],false);else uPdf(uScouts().filter(function(x){return UNI.pf==='all'||x.patrol===UNI.pf}).map(function(x){return x.id}),true);return true}
  if(a==='unisc'){UNI.scOpen=UNI.scOpen===b.dataset.s?null:b.dataset.s;render();return true}
  if(a==='univ'){UNI.view=b.dataset.v;UNI.msg='';render();return true}
  if(a==='unipf'){UNI.pf=b.dataset.v;render();return true}
@@ -2309,7 +2347,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="3d21521a8d7b">
-<script>(function(){var B="3d21521a8d7b";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="112eb54c0e83">
+<script>(function(){var B="112eb54c0e83";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

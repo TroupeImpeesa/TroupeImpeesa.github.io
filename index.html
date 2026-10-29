@@ -402,6 +402,7 @@ input,select,textarea{border-radius:10px;font-family:var(--body)}
 .qtile{justify-content:center!important;padding:22px 16px!important}.ucls,.uopt,.ugrp{--uni:#0f2342}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ucls,:root:not([data-theme="light"]) .uopt{--uni:#7aa2e8}}:root[data-theme="dark"] .uopt{--uni:#7aa2e8}
 .usc td{font-size:11.5px}.ucode{display:inline-block;padding:3px 0;width:100%;max-width:56px;border-radius:7px;font-weight:700;font-size:10.5px;background:var(--soft)}
 .uLIP201{background:#dbe8ff;color:#1a3f8f}.uBDG207{background:#ffe3d6;color:#8f3a12}.uBPR502{background:#dff5e4;color:#16602e}.uVDP301{background:#f1e2ff;color:#5b2a8f}.uE1{background:#fff3c4;color:#7a5a00}.uE2{background:#d8f4f4;color:#0f5f5f}
+.ugv{font-weight:600}.ume td{background:color-mix(in srgb,var(--accent) 12%,transparent)}
 .unm{border:none;background:none;padding:0;font:inherit;color:var(--fg);cursor:pointer;text-align:left;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.usx td{padding:6px 0 12px;white-space:normal}.usx .usch{font-size:12.5px}
 .utile{grid-column:1/-1;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:6px;padding:20px 16px!important;background:#0f2342!important;color:#fff!important}
 .ubig{font:900 26px/1 var(--display);letter-spacing:-.03em}.ubig span{color:#f5c542}.usub{font-size:13px;opacity:.8;font-weight:600}
@@ -1884,6 +1885,7 @@ function uniPage(){
  if(!mine)h+='<p class="meta">Tu ne t’es pas inscrit : la maîtrise t’a placé dans les classes où il restait de la place.</p>';
  else if(A&&(A.xa||A.xb||A.xe))h+='<p class="meta">⚠️ Une classe que tu as choisie était complète : tu as été placé dans l’autre.</p>';
  h+=uSched(A)+uGradeCard(me);
+ if(Object.keys(UNI.d.grades||{}).length)h+='<h3 class="uh3">Notes de la troupe</h3>'+uGrades(false);
  return h;
 }
 function uAdmin(){
@@ -1907,16 +1909,19 @@ function uAdmin(){
     L.map(function(x){var p=pat(x.patrol);return '<span><i class="udot" style="background:'+col(p)+'"></i>'+esc(x.name)+(R[x.id]?'':' <em>auto</em>')+'</span>'}).join('')+'</div></details>'})});
   return h;
  }
- var P=uPatGPA(),ord=S.patrols.filter(function(p){return P[p.id]!=null}).sort(function(a,b){return P[b.id]-P[a.id]});
- h+='<div class="ugpa up">'+S.patrols.map(function(p){var r=ord.indexOf(p);return '<div style="--gc:'+col(p)+'"><b>'+(P[p.id]==null?'–':P[p.id].toFixed(2))+'</b><span>'+esc(p.name)+(r>=0?' · '+(UPTS[r]||0)+' pts':'')+'</span></div>'}).join('')+'</div>';
- h+='<div class="upub"><span>'+(UNI.d.pub?'✅ Résultats publiés : les points comptent pour les patrouilles (1er 100, 2e 80, 3e 60, 4e 40).':'Les points des patrouilles (100 / 80 / 60 / 40) comptent quand tu publies les résultats.')+'</span><button class="pdfbtn" data-act="unipub">'+(UNI.d.pub?'Retirer':'Publier les résultats')+'</button></div>';
- h+='<div class="utabs sm">'+[['all','Troupe']].concat(S.patrols.map(function(p){return [p.id,p.name]})).map(function(t){return '<button class="'+(UNI.pf===t[0]?'on':'')+'" data-act="unipf" data-v="'+t[0]+'">'+esc(t[1])+'</button>'}).join('')+'</div>';
- h+='<p class="meta">Note chaque cours sur 4 (ex. 3.5). Le GPA est la moyenne des cours notés.</p><div class="utw"><table class="ugt"><colgroup><col class="n"><col><col><col><col><col><col><col class="g"></colgroup><tr><th>Scout</th>'+UCOLS.map(function(k){return '<th>'+(k==='EL'?'Él.':k.slice(0,3))+'</th>'}).join('')+'<th>GPA</th></tr>';
- sc.filter(function(x){return UNI.pf==='all'||x.patrol===UNI.pf}).forEach(function(x){var g=G[x.id]||{},q=uGPA(x.id),p=pat(x.patrol);
-  h+='<tr><td><i class="udot" style="background:'+col(p)+'"></i>'+esc(x.name)+'</td>'+UCOLS.map(function(k){var v=g[k];return '<td><input data-ug="'+x.id+'|'+k+'" type="number" inputmode="decimal" min="0" max="4" step="0.1" value="'+(typeof v==='number'?v:'')+'"'+(k==='EL'?' title="'+(A[x.id].e||'')+'"':'')+'></td>'}).join('')+'<td class="ug" data-gpa="'+x.id+'">'+(q?q.g.toFixed(2):'–')+'</td></tr>'});
+ h+=uGrades(true);
  h+='</table></div>'+(UNI.msg?'<p class="uerr">'+esc(UNI.msg)+'</p>':'');
  return h;
 }
+function uGrades(ed){var A=uAssign(),sc=uScouts(),G=UNI.d.grades||{},h='';
+ var P=uPatGPA(),ord=S.patrols.filter(function(p){return P[p.id]!=null}).sort(function(a,b){return P[b.id]-P[a.id]});
+ h+='<div class="ugpa up">'+S.patrols.map(function(p){var r=ord.indexOf(p);return '<div style="--gc:'+col(p)+'"><b>'+(P[p.id]==null?'–':P[p.id].toFixed(2))+'</b><span>'+esc(p.name)+(r>=0&&(ed||UNI.d.pub)?' · '+(UPTS[r]||0)+' pts':'')+'</span></div>'}).join('')+'</div>';
+ if(ed)h+='<div class="upub"><span>'+(UNI.d.pub?'✅ Résultats publiés : les points comptent pour les patrouilles (1er 100, 2e 80, 3e 60, 4e 40).':'Les points des patrouilles (100 / 80 / 60 / 40) comptent quand tu publies les résultats.')+'</span><button class="pdfbtn" data-act="unipub">'+(UNI.d.pub?'Retirer':'Publier les résultats')+'</button></div>';
+ h+='<div class="utabs sm">'+[['all','Troupe']].concat(S.patrols.map(function(p){return [p.id,p.name]})).map(function(t){return '<button class="'+(UNI.pf===t[0]?'on':'')+'" data-act="unipf" data-v="'+t[0]+'">'+esc(t[1])+'</button>'}).join('')+'</div>';
+ h+=''+(ed?'<p class="meta">Note chaque cours sur 4 (ex. 3.5). Le GPA est la moyenne des cours notés.</p>':'<p class="meta">Notes sur 4 · le GPA est la moyenne des cours notés.</p>')+'<div class="utw"><table class="ugt"><colgroup><col class="n"><col><col><col><col><col><col><col class="g"></colgroup><tr><th>Scout</th>'+UCOLS.map(function(k){return '<th>'+(k==='EL'?'Él.':k.slice(0,3))+'</th>'}).join('')+'<th>GPA</th></tr>';
+ sc.filter(function(x){return UNI.pf==='all'||x.patrol===UNI.pf}).forEach(function(x){var g=G[x.id]||{},q=uGPA(x.id),p=pat(x.patrol);
+  h+='<tr'+(x.id===uMine()?' class="ume"':'')+'><td><i class="udot" style="background:'+col(p)+'"></i>'+esc(x.name)+'</td>'+UCOLS.map(function(k){var v=g[k];return (ed?'<td><input data-ug="'+x.id+'|'+k+'" type="number" inputmode="decimal" min="0" max="4" step="0.1" value="'+(typeof v==='number'?v:'')+'"'+(k==='EL'?' title="'+(A[x.id].e||'')+'"':'')+'></td>':'<td class="ugv">'+(typeof v==='number'?v.toFixed(1):'–')+'</td>')}).join('')+'<td class="ug" data-gpa="'+x.id+'">'+(q?q.g.toFixed(2):'–')+'</td></tr>'});
+ h+='</table></div>';return h}
 function uClick(b){
  var a=b.dataset.act;if(!a||a.indexOf('uni')!==0)return false;
  var db=firebase.database(),base='uni/'+UNI.ev;
@@ -2301,7 +2306,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="0df6764d4edb">
-<script>(function(){var B="0df6764d4edb";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="216473213847">
+<script>(function(){var B="216473213847";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

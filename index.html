@@ -7,6 +7,11 @@
 <meta name="theme-color" content="#1e4636">
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Impeesa">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://troupeimpeesa.github.io/">
 <meta property="og:title" content="Troupe Impeesa VPJ">
@@ -584,6 +589,7 @@ body.kahoot .acct{background:#fff;color:#46178f}body.kahoot .acct.me{background:
 .cpsave{position:sticky;bottom:0;z-index:6;margin:16px -16px 0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:rgba(255,255,255,.97);border-top:1px solid var(--line);display:flex;align-items:center;gap:10px}
 .cpsave .msg{flex:1;font-size:13px;color:var(--muted)}
 .btn:disabled{opacity:.4;cursor:default}
+.ncard{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border-radius:18px;padding:14px 16px;margin-top:14px}.nci{width:38px;height:38px;border-radius:12px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:18px;flex:none}.nct{flex:1;min-width:0;display:grid;gap:4px}.nct>b{font-size:15px}.nct>span{font-size:13px;color:var(--muted);line-height:1.4}.ncb{display:flex;align-items:center;gap:10px;margin-top:6px;flex-wrap:wrap}.nclater{border:none;background:none;color:var(--muted);font:600 13px var(--body);cursor:pointer;padding:6px 0;justify-self:start}
 .bchips{display:flex;flex-wrap:wrap;gap:6px}
 .pfh{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;background:var(--surface);border-radius:22px;padding:22px 16px 18px;margin-top:8px}
 .pfav{width:88px;height:88px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;color:#fff;font:800 28px var(--display);letter-spacing:-.02em;box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--pc);margin-bottom:6px;flex:none}.pfav img{width:100%;height:100%;object-fit:cover}
@@ -1152,6 +1158,35 @@ function addPhotos(files){
   msg=ok.length<list.length?'Certaines images n’ont pas pu être lues.':'';touch()});
 }
 
+/* ===== Notifications (OneSignal) ===== */
+var NOTIF={os:null,ready:false,busy:false};
+function notifIOS(){return /iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}
+function notifStandalone(){return (window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true}
+function notifInit(){
+ if(!CP_ON||!/github\.io$/.test(location.hostname))return;
+ window.OneSignalDeferred=window.OneSignalDeferred||[];
+ var t=document.createElement('script');t.src='https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js';t.defer=true;document.head.appendChild(t);
+ OneSignalDeferred.push(function(OS){return OS.init({appId:'3c44d331-0f92-49cd-b15b-00ae9c7e6d94',serviceWorkerPath:'OneSignalSDKWorker.js',serviceWorkerParam:{scope:'/'},notifyButton:{enable:false}}).then(function(){NOTIF.os=OS;NOTIF.ready=true;notifSync();
+  try{OS.User.PushSubscription.addEventListener('change',function(){notifSync();if(tab==='home')render()})}catch(e){}if(tab==='home')render()})});
+}
+function notifOn(){try{return !!(NOTIF.os&&NOTIF.os.User.PushSubscription.optedIn)}catch(e){return false}}
+function notifSync(){var OS=NOTIF.os;if(!OS)return;try{if(ACC){OS.login(ACC.u);var p=pat(ACC.patrol);OS.User.addTags({patrol:p?p.name:'',role:ACC.role||'Scout'})}}catch(e){}}
+function notifCard(){
+ if(!CP_ON||editing)return '';
+ var hid=0;try{hid=+localStorage.getItem('ti-notif-later')||0}catch(e){}
+ if(Date.now()<hid)return '';
+ var ios=notifIOS(),sa=notifStandalone();
+ if(ios&&!sa)return '<div class="ncard"><div class="nci">🔔</div><div class="nct"><b>Reçois les annonces sur ton iPhone</b><span>Touche <b>Partager</b> <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg> puis <b>« Sur l’écran d’accueil »</b>. Ouvre le site depuis l’icône et active les notifications ici.</span><button class="nclater" data-act="notiflater">Plus tard</button></div></div>';
+ if(!('Notification' in window)||!('serviceWorker' in navigator))return '';
+ if(!NOTIF.ready||notifOn())return '';
+ if(Notification.permission==='denied')return '';
+ return '<div class="ncard"><div class="nci">🔔</div><div class="nct"><b>Reçois les annonces sur ton téléphone</b><span>Nouveau quiz, activités, commandes… On te prévient.</span><div class="ncb"><button class="btn" data-act="notifon"'+(NOTIF.busy?' disabled':'')+'>'+(NOTIF.busy?'…':'Activer les notifications')+'</button><button class="nclater" data-act="notiflater">Plus tard</button></div></div></div>';
+}
+function notifClick(b){var a=b.dataset.act;
+ if(a==='notiflater'){try{localStorage.setItem('ti-notif-later',String(Date.now()+7*864e5))}catch(e){}render();return true}
+ if(a==='notifon'){if(!NOTIF.os)return true;NOTIF.busy=true;render();var OS=NOTIF.os;
+  Promise.resolve(OS.Notifications.requestPermission()).then(function(){return OS.User.PushSubscription.optIn()}).catch(function(){}).then(function(){NOTIF.busy=false;notifSync();render()});return true}
+ return false}
 function home(){
  var h='';
  if(editing){
@@ -1162,6 +1197,7 @@ function home(){
  if(editing) h+='<div class="editbox"><h4>Photo de l’en-tête</h4><div class="fields"><input id="cv-file" type="file" accept="image/*" aria-label="Choisir la photo de l’en-tête">'+(S.cover?'<button class="btn ghost" data-act="delcover">Retirer</button>':'')+'</div><span class="meta">Une photo large marche mieux (paysage).</span></div>';
  var N=S.news.slice().reverse().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:0}).slice(0,editing?30:3);
  h+='<div class="igrow"><a class="igcard" href="https://www.instagram.com/troupeimpeesavpj/" aria-label="Instagram @troupeimpeesavpj" target="_blank" rel="noopener"><span class="igic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.8l1.4-2h4.6l1.4 2h1.8A2.5 2.5 0 0 1 20 8.5v9A2.5 2.5 0 0 1 17.5 20h-11A2.5 2.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.6"/></svg></span><b>@troupeimpeesavpj</b></a>'+(CP_ON?(visCan()?'<button class="online" id="online" data-act="vis" title="Voir qui est sur le site">':'<span class="online" id="online" title="Personnes sur le site en ce moment">')+'<i></i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><b id="online-n">'+(visNum()==null?'·':visNum())+'</b>'+(visCan()?'</button>':'</span>'):'')+'</div>';
+ h+=notifCard();
  h+='<h2>Annonces</h2>';
  if(editing) h+='<div class="editbox"><h4>Nouvelle annonce</h4><textarea id="nw-text" rows="3" placeholder="Ex. Réunion samedi à 12h00. Inscription : https://…"></textarea><div class="fields"><input id="nw-date" type="date" value="'+today()+'" style="flex:0 1 170px" aria-label="Date"><button class="btn" data-act="addnews">Ajouter l’annonce</button></div><span class="meta">Les liens (https://…) deviennent cliquables.</span></div>';
  h+=N.length?'<ul class="news">'+N.map(function(n){return '<li><span class="ndate">'+fmtDate(n.date)+'</span><span class="ntext">'+(n.auto?'<span class="ntag">Progression</span> ':'')+linkify(n.text)+'</span>'+(editing?'<button class="x" data-delnews="'+n.id+'" aria-label="Supprimer l’annonce">×</button>':'')+'</li>'}).join('')+'</ul>':'<p class="empty">Aucune annonce pour l’instant.</p>';
@@ -1985,6 +2021,7 @@ document.addEventListener('click',function(ev){
  if(b&&b.dataset.menunav){MENU=false;go(b.dataset.menunav);window.scrollTo(0,0);return}
  if(!b&&ev.target.closest('.drw-bg')){MENU=false;render();return}
  if(b&&b.dataset.act==='acct')MENU=false;
+ if(b&&notifClick(b))return;
  if(b&&evClick(b))return;
  if(b&&instClick(b))return;
  if(b&&ordClick(b))return;
@@ -2073,6 +2110,7 @@ render();
 setInterval(function(){if(!editing&&!openCP&&!openScout&&(tab==='home'||tab==='events')&&!document.hidden&&!(document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)))render()},60000);
 loadPublicData();
 presence();
+notifInit();
 qBonus();
 if(CP_ON&&/github\.io$|localhost/.test(location.hostname))qInit();
 if(tab==='progress')setTimeout(leaderRun,400);
@@ -2090,7 +2128,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="ab99668b9be6">
-<script>(function(){var B="ab99668b9be6";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="25245fd4348a">
+<script>(function(){var B="25245fd4348a";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

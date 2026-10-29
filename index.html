@@ -591,6 +591,7 @@ body.kahoot .acct{background:#fff;color:#46178f}body.kahoot .acct.me{background:
 .btn:disabled{opacity:.4;cursor:default}
 .ncard{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border-radius:18px;padding:14px 16px;margin-top:14px}.nci{width:38px;height:38px;border-radius:12px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:18px;flex:none}.nct{flex:1;min-width:0;display:grid;gap:4px}.nct>b{font-size:15px}.nct>span{font-size:13px;color:var(--muted);line-height:1.4}.ncb{display:flex;align-items:center;gap:10px;margin-top:6px;flex-wrap:wrap}.nclater{border:none;background:none;color:var(--muted);font:600 13px var(--body);cursor:pointer;padding:6px 0;justify-self:start}
 .bchips{display:flex;flex-wrap:wrap;gap:6px}
+.nstep{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font:800 13px var(--body);display:flex;align-items:center;justify-content:center;flex:none}
 .pfh{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;background:var(--surface);border-radius:22px;padding:22px 16px 18px;margin-top:8px}
 .pfav{width:88px;height:88px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;color:#fff;font:800 28px var(--display);letter-spacing:-.02em;box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--pc);margin-bottom:6px;flex:none}.pfav img{width:100%;height:100%;object-fit:cover}
 .pfn{margin:0;font-size:24px;line-height:1.15}
@@ -622,7 +623,7 @@ body.kahoot .acct{background:#fff;color:#46178f}body.kahoot .acct.me{background:
 (function(){
 function load(){var x=JSON.parse(document.getElementById('state').textContent);x.meetings=x.meetings||[];x.photos=x.photos||[];x.news=x.news||[];x.faces=x.faces||{};return x}
 var S=load(),curM=null,slide=0,openScout=null,openEvent=null;
-var TABS=['home','progress','events','history','quiz','login','me','order','orders','inst'];
+var TABS=['home','progress','events','history','quiz','login','me','order','orders','inst','notif'];
 var tab='home',openGroup=null,openPts=null;
 function route(h){h=(h==null?(location.hash||'#home').slice(1):h).split('/');var t=h[0]==='points'?'progress':h[0];if(TABS.indexOf(t)<0)t='home';tab=t;openGroup=null;openPts=null;openScout=null;openEvent=null;openCP=null;var x=h[1]||'';
  if(t==='progress'){if(x.indexOf('g-')===0)openGroup=x.slice(2);else if(x.indexOf('cp-')===0&&pat(x.slice(3))){openCP=x.slice(3);openGroup=openCP}else if(x.indexOf('pts-')===0)openPts=x.slice(4);else if(x.indexOf('s-')===0){var sc=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc){openScout=sc.id;openGroup=sc.patrol}}}
@@ -1106,7 +1107,7 @@ var IINST='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="c
 function menuBtn(){return '<button class="hamb" data-act="menu" aria-label="Menu" aria-expanded="'+MENU+'"><span></span><span></span><span></span></button>'}
 function drawer(){if(!MENU)return visSheet();
  return '<div class="drw-bg" data-act="menuclose"></div><nav class="drw" aria-label="Menu"><div class="drwh">'+(ACC?'<button class="drwme" data-act="acct">'+accAv('drwi')+'<span><b>'+esc(ACC.name)+'</b><span>Voir mon profil</span></span></button>':'<button class="drwme" data-menunav="login"><span class="drwi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span><b>Se connecter</b><span>Avec ton compte</span></span></button>')+'<button class="drwx" data-act="menuclose" aria-label="Fermer">×</button></div>'+
-  NAVL.slice(0,2).concat([['inst',IINST,'Installations']],NAVL.slice(2)).concat(!ACC?[['order',ICART,'Commande Coop']]:ACC.u!==QZ_ADMIN?[['order',ICART,'Ma commande']]:[]).concat(isChef()?[['orders',IBOX,'Commande troupe']]:[]).map(function(x){return '<button class="drwl'+(tab===x[0]?' on':'')+'" data-menunav="'+x[0]+'"><span class="drwi">'+x[1]+'</span>'+esc(x[2])+'</button>'}).join('')+
+  NAVL.slice(0,2).concat([['inst',IINST,'Installations']],NAVL.slice(2)).concat(!ACC?[['order',ICART,'Commande Coop']]:ACC.u!==QZ_ADMIN?[['order',ICART,'Ma commande']]:[]).concat(isChef()?[['orders',IBOX,'Commande troupe']]:[]).concat(CP_ON?[['notif','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>','Notifications']]:[]).map(function(x){return '<button class="drwl'+(tab===x[0]?' on':'')+'" data-menunav="'+x[0]+'"><span class="drwi">'+x[1]+'</span>'+esc(x[2])+'</button>'}).join('')+
   '</nav>'}
 function header(){return '<div class="acbar">'+menuBtn()+(CP_ON?acctBtn():'<span style="flex:1"></span>')+'</div>'+drawer()+heroTop()+
  '<div class="tabbar"></div>'+
@@ -1167,10 +1168,24 @@ function notifInit(){
  window.OneSignalDeferred=window.OneSignalDeferred||[];
  var t=document.createElement('script');t.src='https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js';t.defer=true;document.head.appendChild(t);
  OneSignalDeferred.push(function(OS){return OS.init({appId:'3c44d331-0f92-49cd-b15b-00ae9c7e6d94',serviceWorkerPath:'OneSignalSDKWorker.js',serviceWorkerParam:{scope:'/'},notifyButton:{enable:false}}).then(function(){NOTIF.os=OS;NOTIF.ready=true;notifSync();
-  try{OS.User.PushSubscription.addEventListener('change',function(){notifSync();if(tab==='home')render()})}catch(e){}if(tab==='home')render()})});
+  try{OS.User.PushSubscription.addEventListener('change',function(){notifSync();if(tab==='home'||tab==='notif')render()})}catch(e){}if(tab==='home'||tab==='notif')render()})});
 }
 function notifOn(){try{return !!(NOTIF.os&&NOTIF.os.User.PushSubscription.optedIn)}catch(e){return false}}
 function notifSync(){var OS=NOTIF.os;if(!OS)return;try{if(ACC){OS.login(ACC.u);var p=pat(ACC.patrol);OS.User.addTags({patrol:p?p.name:'',role:ACC.role||'Scout'})}}catch(e){}}
+function notifInApp(){return /Instagram|FBAN|FBAV|WhatsApp|Snapchat|TikTok|Line\//.test(navigator.userAgent)}
+function notifPage(){
+ var h='<h2>Notifications</h2><div class="meta" style="margin:-4px 0 12px">Reçois sur ton téléphone les annonces de la troupe : nouveau quiz, activités, commandes…</div>';
+ var ios=notifIOS(),sa=notifStandalone(),st,body='';
+ function step(n,t){return '<div class="pfr"><span class="nstep">'+n+'</span><span class="pfl"><b style="font-weight:500">'+t+'</b></span></div>'}
+ if(!CP_ON){return h+'<p class="meta">Disponible sur le site troupeimpeesa.github.io.</p>'}
+ if(notifInApp()){st='Ouvre le site dans ton navigateur';body='<div class="pfg">'+step(1,'Touche <b>⋯</b> en haut à droite')+step(2,'Choisis <b>Ouvrir dans '+(ios?'Safari':'Chrome')+'</b>')+step(3,'Reviens ici : ☰ → <b>Notifications</b>')+'</div>'}
+ else if(ios&&!sa){st='Sur iPhone, ajoute d’abord le site à l’écran d’accueil';body='<div class="pfg">'+step(1,'Ouvre le site dans <b>Safari</b>')+step(2,'Touche <b>Partager</b> (le carré avec la flèche)')+step(3,'Choisis <b>« Sur l’écran d’accueil »</b> puis <b>Ajouter</b>')+step(4,'Ouvre le site depuis la nouvelle icône <b>Impeesa</b>')+step(5,'Reviens ici : ☰ → <b>Notifications</b> → Activer')+'</div><p class="meta" style="margin-top:8px">Il faut iOS 16.4 ou plus récent.</p>'}
+ else if(!('Notification' in window)||!('serviceWorker' in navigator)){st='Ton navigateur ne permet pas les notifications';body='<p class="meta">Essaie avec Chrome (Android ou ordinateur) ou Safari (iPhone, depuis l’écran d’accueil).</p>'}
+ else if(Notification.permission==='denied'){st='Les notifications sont bloquées';body='<div class="pfg">'+step(1,'Touche le <b>🔒</b> (ou ⓘ) à gauche de l’adresse du site')+step(2,'<b>Notifications</b> → <b>Autoriser</b>')+step(3,'Recharge la page et reviens ici')+'</div>'}
+ else if(!NOTIF.ready){st='Chargement…';body='<p class="meta">Si ça reste comme ça, recharge la page.</p>'}
+ else if(notifOn()){st='✅ Notifications activées';body='<p class="meta">Tu recevras les annonces de la troupe sur cet appareil.</p><button class="btn ghost" data-act="notifoff"'+(NOTIF.busy?' disabled':'')+' style="margin-top:10px">Désactiver</button>'}
+ else{st='Notifications désactivées';body='<button class="btn" data-act="notifon"'+(NOTIF.busy?' disabled':'')+' style="width:100%">'+(NOTIF.busy?'…':'🔔 Activer les notifications')+'</button><p class="meta" style="margin-top:8px">Ton téléphone va demander l’autorisation : touche <b>Autoriser</b>.</p>'}
+ return h+'<div class="osum"><b>'+st+'</b></div>'+body}
 function notifCard(){
  if(!CP_ON||editing)return '';
  var hid=0;try{hid=+localStorage.getItem('ti-notif-later')||0}catch(e){}
@@ -1184,6 +1199,7 @@ function notifCard(){
 }
 function notifClick(b){var a=b.dataset.act;
  if(a==='notiflater'){try{localStorage.setItem('ti-notif-later',String(Date.now()+7*864e5))}catch(e){}render();return true}
+ if(a==='notifoff'){if(!NOTIF.os)return true;NOTIF.busy=true;render();Promise.resolve(NOTIF.os.User.PushSubscription.optOut()).catch(function(){}).then(function(){NOTIF.busy=false;render()});return true}
  if(a==='notifon'){if(!NOTIF.os)return true;NOTIF.busy=true;render();var OS=NOTIF.os;
   Promise.resolve(OS.Notifications.requestPermission()).then(function(){return OS.User.PushSubscription.optIn()}).catch(function(){}).then(function(){NOTIF.busy=false;notifSync();render()});return true}
  return false}
@@ -1997,7 +2013,7 @@ function render(){
  var app=document.getElementById('app');
  var keep=editing;try{visTick();if(visCan()&&CP_ON)visListen()}catch(e){}
  try{document.body.classList.toggle('kahoot',tab==='quiz');document.body.classList.toggle('lgpage',tab==='login'&&!ACC)}catch(e){}
- var body=header()+(tab==='home'||(tab==='progress'&&(openGroup||openPts))?'':backHome())+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():tab==='quiz'?quiz():tab==='login'?loginPage():tab==='me'?mePage():tab==='inst'?instPage():tab==='order'?orderPage():tab==='orders'?troupeOrderPage():events())+(full?settings():'');
+ var body=header()+(tab==='home'||(tab==='progress'&&(openGroup||openPts))?'':backHome())+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():tab==='quiz'?quiz():tab==='login'?loginPage():tab==='me'?mePage():tab==='inst'?instPage():tab==='order'?orderPage():tab==='orders'?troupeOrderPage():tab==='notif'?notifPage():events())+(full?settings():'');
  editing=keep;
  if(openScout) body+=profile();
  if(openEvent) body+=eventPage();
@@ -2128,7 +2144,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="25245fd4348a">
-<script>(function(){var B="25245fd4348a";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="cd30a263dae8">
+<script>(function(){var B="cd30a263dae8";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

@@ -1,0 +1,29 @@
+name: Notifications
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: notify
+  cancel-in-progress: false
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Envoyer les notifications
+        env:
+          ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
+        run: python3 scripts/notify.py
+      - name: Enregistrer l'état
+        run: |
+          if [ -n "$(git status --porcelain data/notif-state.json)" ]; then
+            git config user.name "troupe-bot"
+            git config user.email "troupe-bot@users.noreply.github.com"
+            git add data/notif-state.json
+            git commit -m "Notifications : état [skip ci]"
+            for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
+          fi

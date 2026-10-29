@@ -129,6 +129,9 @@ def fmt(x):
 
 
 def main():
+    if os.environ.get('VERIFY') == '1':  # teste la clé sans rien envoyer à personne
+        send('test', 'test', uid='__verify__')
+        return
     n = now()
     today, cur = n.date().isoformat(), quiz_week(n)
     try:

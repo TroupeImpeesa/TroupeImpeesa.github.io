@@ -3,6 +3,10 @@ on:
   schedule:
     - cron: '*/5 * * * *'
   workflow_dispatch:
+    inputs:
+      verify:
+        description: 'Tester la clé seulement'
+        default: '0'
 permissions:
   contents: write
 concurrency:
@@ -17,6 +21,7 @@ jobs:
       - name: Envoyer les notifications
         env:
           ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
+          VERIFY: ${{ inputs.verify }}
         run: python3 scripts/notify.py
       - name: Enregistrer l'état
         run: |

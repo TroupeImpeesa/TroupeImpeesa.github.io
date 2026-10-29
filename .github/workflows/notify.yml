@@ -11,6 +11,15 @@ on:
       verify:
         description: 'Tester la clé seulement'
         default: '0'
+      title:
+        description: 'Titre (message manuel à tout le monde)'
+        default: ''
+      body:
+        description: 'Message'
+        default: ''
+      page:
+        description: 'Page du site, ex. #uni'
+        default: ''
 permissions:
   contents: write
 concurrency:
@@ -26,6 +35,9 @@ jobs:
         env:
           ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
           VERIFY: ${{ inputs.verify }}
+          MSG_TITLE: ${{ inputs.title }}
+          MSG_BODY: ${{ inputs.body }}
+          MSG_PAGE: ${{ inputs.page }}
         run: python3 scripts/notify.py
       - name: Enregistrer l'état
         run: |

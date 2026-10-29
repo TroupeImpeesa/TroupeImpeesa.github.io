@@ -99,7 +99,7 @@ def totals(S, U, A, today, cur):
 
 def send(title, body, uid=None):
     msg = {'app_id': APP_ID, 'target_channel': 'push', 'headings': {'en': title}, 'contents': {'en': body},
-           'url': SITE, 'chrome_web_icon': ICON, 'firefox_icon': ICON}
+           'url': SITE + os.environ.get('MSG_PAGE', ''), 'chrome_web_icon': ICON, 'firefox_icon': ICON}
     if uid:
         msg['filters'] = [{'field': 'tag', 'key': 'uid', 'relation': '=', 'value': uid}]
     else:
@@ -131,6 +131,9 @@ def fmt(x):
 
 
 def main():
+    if os.environ.get('MSG_TITLE') and os.environ.get('MSG_BODY'):  # message manuel à tout le monde
+        r = send(os.environ['MSG_TITLE'], os.environ['MSG_BODY'])
+        sys.exit(0 if r == 200 else 1)
     if os.environ.get('VERIFY') == '1':  # teste la clé sans rien envoyer à personne
         r = send('test', 'test', uid='__verify__')
         sys.exit(0 if r in (200, 400) else 1)

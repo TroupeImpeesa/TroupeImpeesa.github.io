@@ -26,6 +26,7 @@ QFULL = 10
 AUTO_FROM, AUTO_MIN, AUTO_PTS = '2026-10-17', 10, 10
 DAILY_HOUR = 20
 DRY = os.environ.get('DRY') == '1'
+NAMES = {}  # sid -> nom affiché sur le site
 
 
 def now():
@@ -60,7 +61,7 @@ def quiz_week(n):
 
 
 def ranking(W, U, pids):
-    E = [{'k': k, 'p': U[k]['patrol'], 'sid': U[k].get('sid') or '', 'name': U[k].get('name') or '?',
+    E = [{'k': k, 'p': U[k]['patrol'], 'sid': U[k].get('sid') or '', 'name': NAMES.get(U[k].get('sid')) or U[k].get('name') or '?',
           's': (W[k] or {}).get('s') or 0, 'at': (W[k] or {}).get('at') or 0}
          for k in (W or {}) if U.get(k) and U[k].get('ok') is True and U[k].get('role') != 'Maîtrise'
          and U[k].get('patrol') in pids]
@@ -145,6 +146,7 @@ def main():
         st = {}
     old = json.dumps(st, sort_keys=True)
     S = site_state()
+    NAMES.update({x['id']: x['name'] for x in S['scouts']})
     pids = {p['id'] for p in S['patrols']}
     names = {p['id']: p['name'] for p in S['patrols']}
     U = fb('quiz/users') or {}

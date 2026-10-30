@@ -1900,7 +1900,7 @@ function qClick(b){
 var UNI={ev:'2026-10-31',close:Date.UTC(2026,9,30,13,0),hideAfter:'2026-11-08',cap:25,d:null,busy:false,msg:'',pick:null,view:'cl',pf:'all',on:false};
 var UGR=[{k:'a',t:'Bloc A',h:['12h20 – 12h35','12h35 – 12h50'],o:['LIP201','BDG207']},{k:'b',t:'Bloc B',h:['13h05 – 13h20','13h20 – 13h35'],o:['BPR502','VDP301']},{k:'e',t:'Électif',h:['13h35 – 13h50'],o:['E1','E2']}];
 var UROOM={LIP201:'Salle 1',BDG207:'Salle 2',BPR502:'Salle 1',VDP301:'Salle 2',E1:'Salle 1',E2:'Salle 2',LBP224:'Toute la troupe'};
-var UCOLS=['LIP201','BDG207','LBP224','BPR502','VDP301','EL'],UPTS=[100,80,60,40],ULOG=[];
+var UCOLS=['LIP201','BDG207','LBP224','BPR502','VDP301','EL'],UPTS=[160,130,110,100],ULOG=[];
 function uOpen(){return Date.now()<UNI.close}
 function uScouts(){return S.scouts.filter(function(x){return pat(x.patrol)})}
 function uName(sid){var x=S.scouts.filter(function(q){return q.id===sid})[0];return x?x.name:sid}
@@ -1997,7 +1997,7 @@ function uAdmin(){
 function uGrades(ed){var A=uAssign(),sc=uScouts(),G=UNI.d.grades||{},h='';
  var P=uPatGPA(),ord=S.patrols.filter(function(p){return P[p.id]!=null}).sort(function(a,b){return P[b.id]-P[a.id]});
  h+='<div class="ugpa up">'+S.patrols.map(function(p){var r=ord.indexOf(p);return '<div style="--gc:'+col(p)+'"><b>'+(P[p.id]==null?'–':P[p.id].toFixed(2))+'</b><span>'+esc(p.name)+(r>=0&&(ed||UNI.d.pub)?' · '+(UPTS[r]||0)+' pts':'')+'</span></div>'}).join('')+'</div>';
- if(ed)h+='<div class="upub"><span>'+(UNI.d.pub?'✅ Résultats publiés : les points comptent pour les patrouilles (1er 100, 2e 80, 3e 60, 4e 40).':'Les points des patrouilles (100 / 80 / 60 / 40) comptent quand tu publies les résultats.')+'</span><button class="pdfbtn" data-act="unipub">'+(UNI.d.pub?'Retirer':'Publier les résultats')+'</button></div>';
+ if(ed)h+='<div class="upub"><span>'+(UNI.d.pub?'✅ Résultats publiés : les points comptent pour les patrouilles (1er 160, 2e 130, 3e 110, 4e 100).':'Les points des patrouilles (160 / 130 / 110 / 100) comptent quand tu publies les résultats.')+'</span><button class="pdfbtn" data-act="unipub">'+(UNI.d.pub?'Retirer':'Publier les résultats')+'</button></div>';
  h+='<div class="utabs sm">'+[['all','Troupe']].concat(S.patrols.map(function(p){return [p.id,p.name]})).map(function(t){return '<button class="'+(UNI.pf===t[0]?'on':'')+'" data-act="unipf" data-v="'+t[0]+'">'+esc(t[1])+'</button>'}).join('')+'</div>';
  h+=''+(ed?'<p class="meta">Note chaque cours sur 4 (ex. 3.5). Le GPA est la moyenne des cours notés.</p>':'<p class="meta">Notes sur 4 · le GPA est la moyenne des cours notés.</p>')+'<div class="utw"><table class="ugt"><colgroup><col class="n"><col><col><col><col><col><col><col class="g"></colgroup><tr><th>Scout</th>'+UCOLS.map(function(k){return '<th>'+(k==='EL'?'Él.':k.slice(0,3))+'</th>'}).join('')+'<th>GPA</th></tr>';
  sc.filter(function(x){return UNI.pf==='all'||x.patrol===UNI.pf}).forEach(function(x){var g=G[x.id]||{},q=uGPA(x.id),p=pat(x.patrol);
@@ -2432,7 +2432,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="b23b5697a1f1">
-<script>(function(){var B="b23b5697a1f1";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="3a40bec73905">
+<script>(function(){var B="3a40bec73905";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

@@ -1477,6 +1477,7 @@ function accClick(b){
  if(a==='acclogin'){
   var raw=val('acc-u'),u=qUname(raw).replace(/[._-]/g,''),pw=(document.getElementById('acc-p')||{}).value||'';
   if(raw.trim().toLowerCase()===QZ_ADMIN)u=QZ_ADMIN;
+  u=({jeanpaulbeainy:'jeanpaulgautier'})[u]||u;
   if(!u||!pw){ACCF.msg='Entre ton nom d’utilisateur et ton mot de passe.';render();return true}
   ACCF.busy=true;ACCF.msg='';render();
   fbAuth().then(function(){return firebase.auth().signInWithEmailAndPassword(u+QZ_DOM,pw)}).then(function(c){
@@ -2355,7 +2356,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="a4193f5325c9">
-<script>(function(){var B="a4193f5325c9";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="e66b5e496f44">
+<script>(function(){var B="e66b5e496f44";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

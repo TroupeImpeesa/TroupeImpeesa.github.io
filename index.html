@@ -763,6 +763,15 @@ body.kahoot .btab{background:rgba(255,255,255,.95)}body.kahoot .btab button.on{c
 .lkb{filter:blur(5px);opacity:.75;pointer-events:none;user-select:none}
 .lkwall{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:12px 14px;margin:10px 0}
 .lkwall b{font-size:.92rem}
+.maihero{background:linear-gradient(135deg,#0f2342,#1b3a6b);color:#fff;border-radius:24px;padding:20px 18px;margin:6px 0 12px;display:flex;flex-direction:column;gap:2px}
+.maihero span{font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#f5c542}.maihero b{font-size:1.6rem;font-weight:900}.maihero small{opacity:.8}
+.maistats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.maistats div{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:10px;text-align:center}.maistats b{display:block;font-size:1.3rem;font-weight:900}.maistats span{font-size:.72rem;color:var(--muted)}
+.maibd{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:12px 14px;margin-bottom:10px}.maibd>b{display:block;margin-bottom:6px}.maibd div{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-top:1px solid var(--line)}.maibd em{font-style:normal;font-weight:700;color:#b45309;white-space:nowrap;font-size:.85rem}
+.maiq{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;margin-bottom:8px}
+.maichips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.maichips button{border:none;border-radius:99px;padding:7px 12px;background:var(--surface);color:var(--fg);font:inherit;font-size:.85rem;font-weight:700;box-shadow:var(--shadow);cursor:pointer}.maichips button.on{background:var(--navy);color:#fff}.maichips select{margin-left:auto;border-radius:99px;padding:6px 10px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;font-size:.82rem}
+.mailist{display:flex;flex-direction:column;gap:10px}.maic{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:12px 14px;border-left:5px solid var(--gc)}
+.maih{display:flex;gap:10px;align-items:center;margin-bottom:8px}.maih b{display:block}.maih em{font-style:normal;font-size:.7rem;background:var(--navy);color:#fff;border-radius:6px;padding:1px 5px;vertical-align:2px}.maih small{color:var(--muted);font-size:.78rem}
+.maic dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:.9rem}.maic dt{color:var(--muted);font-size:.8rem;padding-top:1px}.maic dd{margin:0;word-break:break-word}.maic dd a{color:var(--navy);font-weight:700;text-decoration:none}
 </style>
 </head>
 <body>
@@ -775,7 +784,7 @@ var S=load(),curM=null,slide=0,openScout=null,openEvent=null;
 var TABS=['home','progress','events','history','quiz','login','me','order','orders','inst'];
 var tab='home',openGroup=null,openPts=null;
 function route(h){h=(h==null?(location.hash||'#home').slice(1):h).split('/');var t=h[0]==='points'?'progress':h[0];if(TABS.indexOf(t)<0)t='home';tab=t;openGroup=null;openPts=null;openScout=null;openEvent=null;openCP=null;var x=h[1]||'';
- if(t==='progress'){if(x.indexOf('g-')===0)openGroup=x.slice(2);else if(x.indexOf('cp-')===0&&pat(x.slice(3))){openCP=x.slice(3);openGroup=openCP}else if(x.indexOf('pts-')===0)openPts=x.slice(4);else if(x.indexOf('s-')===0&&!ACC){var sc0=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc0)openGroup=sc0.patrol}else if(x.indexOf('s-')===0){var sc=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc){openScout=sc.id;openGroup=sc.patrol}}}
+ if(t==='progress'){if(x==='mai')openGroup='mai';else if(x.indexOf('g-')===0)openGroup=x.slice(2);else if(x.indexOf('cp-')===0&&pat(x.slice(3))){openCP=x.slice(3);openGroup=openCP}else if(x.indexOf('pts-')===0)openPts=x.slice(4);else if(x.indexOf('s-')===0&&!ACC){var sc0=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc0)openGroup=sc0.patrol}else if(x.indexOf('s-')===0){var sc=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc){openScout=sc.id;openGroup=sc.patrol}}}
  if(x.indexOf('e-')===0&&S.events.some(function(e){return e.id===x.slice(2)}))openEvent=x.slice(2);
  if(!openCP)cpLock();if(!openPts)ptsLock();if(typeof ORD!=='undefined'&&ORD){if(t==='orders'&&!ORD.tbusy){ORD.all=null;ORD.tmsg=''}if(t==='order'&&!ORD.dirty)ORD.my=null}}
 function go(h){try{history.pushState({ia:1},'','#'+h)}catch(e){}route(h);render()}
@@ -1472,7 +1481,47 @@ function ptsPage(){
  if(editing||pts.ok) h+='<div class="editbox"><h4>Points d’une réunion</h4><div class="fields"><input id="mp-date" type="date" value="'+today()+'" aria-label="Date de la réunion"></div><div class="fields mpf">'+CATS.map(function(c){return '<label class="lbl">'+c[1]+'<input id="mp-'+c[0]+'" type="number" inputmode="numeric" placeholder="0"></label>'}).join('')+'</div><div class="fields"><input id="mp-reason" placeholder="Raison (facultatif, ex. Défi JOTA-JOTI)" aria-label="Raison"><button class="btn" data-act="addmeetpts">Ajouter les points</button></div><span class="meta">Mets un nombre négatif pour enlever des points.</span></div>';
  return h+ptsBar()}
 function animalOf(name){return esc(String(name).trim().charAt(0).toUpperCase()||'·')}
+
+/* Espace Maîtrise : toutes les infos de tous les scouts, réservé à la maîtrise */
+var MAI={busy:false,data:null,err:'',pf:'all',sort:'pat'};
+function maiOk(){return isChef()&&ACCK&&ACCK.scope==='chef'&&ACCK.dk&&Object.keys(ACCK.dk).length>0}
+function maiBtn(){if(!isChef())return '';return '<button class="cpbtn cpon" data-act="maiopen" style="margin:14px 0 4px"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Espace Maîtrise</b><span>Toutes les infos de chaque scout, réservé à la maîtrise</span></span><span class="evgo" aria-hidden="true">›</span></button>'}
+function maiKey(pid){return crypto.subtle.importKey('raw',u8(ACCK.dk[pid]),'AES-GCM',false,['decrypt'])}
+function maiLoad(){if(MAI.busy||MAI.data)return;MAI.busy=true;MAI.err='';accApply();
+ Promise.all(S.patrols.map(function(p){return ghJson('data/contacts-'+p.id+'.json').then(function(c){if(!c||!ACCK.dk[p.id])return {};var j=JSON.parse(b64d(c.content));return maiKey(p.id).then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:u8(j.iv)},k,u8(j.ct))}).then(function(b){return JSON.parse(new TextDecoder().decode(b))}).catch(function(){return {}})}).catch(function(){return {}})}))
+ .then(function(L){var o={};L.forEach(function(x){Object.keys(x||{}).forEach(function(k){o[k]=x[k]})});MAI.data=o;MAI.busy=false;render()})
+ .catch(function(){MAI.busy=false;MAI.err='Impossible de charger les infos. Vérifie ta connexion.';render()})}
+function maiDob(v){v=(v||'').trim();var m=v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/)||null,y,mo,d;if(m){y=+m[1];mo=+m[2];d=+m[3]}else{m=v.match(/^(\d{1,2})[\/.\- ](\d{1,2})[\/.\- ](\d{2,4})$/);if(!m)return null;d=+m[1];mo=+m[2];y=+m[3];if(y<100)y+=2000}
+ if(!(mo>=1&&mo<=12&&d>=1&&d<=31))return null;var t=new Date(),age=t.getFullYear()-y-((t.getMonth()+1<mo||(t.getMonth()+1===mo&&t.getDate()<d))?1:0);
+ var nx=new Date(t.getFullYear(),mo-1,d);if(nx<new Date(t.getFullYear(),t.getMonth(),t.getDate()))nx=new Date(t.getFullYear()+1,mo-1,d);var days=Math.round((nx-new Date(t.getFullYear(),t.getMonth(),t.getDate()))/864e5);
+ return {y:y,m:mo,d:d,age:age,days:days,txt:('0'+d).slice(-2)+'/'+('0'+mo).slice(-2)+'/'+y}}
+function maiAtt(s){var n=0,k=0;(S.meetings||[]).forEach(function(m){if((m.patrols||[]).indexOf(s.patrol)<0)return;n++;if((m.present||[]).indexOf(s.id)>=0)k++});return {n:n,k:k}}
+function maiTel(v){return v?'<a href="tel:'+esc(String(v).replace(/[^\d+]/g,''))+'">'+esc(v)+'</a>':'<span class="meta">–</span>'}
+function maiPage(){
+ var back='<button class="back" data-act="maiback"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Maîtrise</span></button>';
+ var h=back+'<div class="maihero"><span>🔒 Réservé à la maîtrise</span><b>Espace Maîtrise</b><small>Toutes les infos de chaque scout</small></div>';
+ if(!isChef())return h+'<div class="cpcard"><p class="cplead">Cet espace est réservé à la maîtrise.</p></div>';
+ if(!maiOk())return h+'<div class="cpcard"><p class="cplead">Pour voir les infos privées, déconnecte-toi puis reconnecte-toi avec ton compte maîtrise.</p></div>';
+ if(!MAI.data){maiLoad();return h+(MAI.err?'<p class="cperr">'+esc(MAI.err)+'</p><button class="btn" data-act="mairetry">Réessayer</button>':'<p class="meta">Chargement et déchiffrement…</p>')}
+ var C=MAI.data,L=S.scouts.filter(function(s){return pat(s.patrol)&&(MAI.pf==='all'||s.patrol===MAI.pf)});
+ var bd=S.scouts.filter(function(s){return pat(s.patrol)}).map(function(s){return {s:s,b:maiDob((C[s.id]||{}).dob)}}).filter(function(x){return x.b&&x.b.days<=30}).sort(function(a,b){return a.b.days-b.b.days});
+ if(MAI.sort==='name')L.sort(function(a,b){return a.name.localeCompare(b.name)});else if(MAI.sort==='age')L.sort(function(a,b){var x=maiDob((C[a.id]||{}).dob),y=maiDob((C[b.id]||{}).dob);return (x?x.y*400+x.m*32+x.d:9e9)-(y?y.y*400+y.m*32+y.d:9e9)});
+ var miss=S.scouts.filter(function(s){var c=C[s.id]||{};return pat(s.patrol)&&!(c.dob&&(c.phone||c.phone2))}).length;
+ h+='<div class="maistats"><div><b>'+S.scouts.filter(function(s){return pat(s.patrol)}).length+'</b><span>scouts</span></div><div><b>'+bd.length+'</b><span>anniv. ≤ 30 j</span></div><div><b>'+miss+'</b><span>fiches incomplètes</span></div></div>';
+ if(bd.length)h+='<div class="maibd"><b>🎂 Anniversaires à venir</b>'+bd.map(function(x){return '<div><span>'+esc(x.s.name)+' <span class="meta">· '+esc((pat(x.s.patrol)||{}).name||'')+'</span></span><em>'+(x.b.days===0?'Aujourd’hui ! '+x.b.age+' ans':x.b.days===1?'Demain · '+(x.b.age+1)+' ans':'dans '+x.b.days+' j · '+(x.b.age+1)+' ans')+'</em></div>'}).join('')+'</div>';
+ h+='<input class="maiq" id="mai-q" type="search" placeholder="Chercher un nom, un parent, un numéro…" autocomplete="off">';
+ h+='<div class="maichips">'+[['all','Tous']].concat(S.patrols.map(function(p){return [p.id,p.name]})).map(function(c){return '<button class="'+(MAI.pf===c[0]?'on':'')+'" data-maipf="'+c[0]+'">'+esc(c[1])+'</button>'}).join('')+'<select data-maisort><option value="pat"'+(MAI.sort==='pat'?' selected':'')+'>Par patrouille</option><option value="name"'+(MAI.sort==='name'?' selected':'')+'>Par nom</option><option value="age"'+(MAI.sort==='age'?' selected':'')+'>Du plus âgé</option></select></div>';
+ h+='<div class="mailist">'+L.map(function(s){var c=C[s.id]||{},p=pat(s.patrol),b=maiDob(c.dob),a=maiAtt(s),nb=s.badgeList?s.badgeList.length:(s.badges||0);
+  var q=[s.name,p.name,s.role,c.father,c.mother,c.phone,c.phone2,c.dob].join(' ').toLowerCase();
+  return '<div class="maic" data-maiq="'+esc(q)+'" style="--gc:'+col(p)+'"><div class="maih">'+avatar(s,'tav')+'<span><b>'+esc(s.name)+(s.role?' <em>'+esc(s.role)+'</em>':'')+'</b><small><i class="kpat" style="background:'+col(p)+'">'+esc(p.name)+'</i> '+esc(S.stages[s.stage||0]||'')+' · 🏅 '+nb+' · ✅ '+a.k+'/'+a.n+'</small></span></div>'+
+   '<dl><dt>Naissance</dt><dd>'+(b?b.txt+' <span class="meta">('+b.age+' ans)</span>':c.dob?esc(c.dob):'<span class="meta">–</span>')+'</dd><dt>Père</dt><dd>'+(c.father?esc(c.father):'<span class="meta">–</span>')+'</dd><dt>Mère</dt><dd>'+(c.mother?esc(c.mother):'<span class="meta">–</span>')+'</dd><dt>Téléphone</dt><dd>'+maiTel(c.phone)+'</dd><dt>Parents</dt><dd>'+maiTel(c.phone2)+'</dd></dl></div>'}).join('')+'</div>';
+ h+='<p class="meta" style="text-align:center;margin:14px 0">Pour modifier une info, va dans l’Espace CP/SP de la patrouille → Membres.</p>';
+ return h}
+document.addEventListener('input',function(ev){if(ev.target&&ev.target.id==='mai-q'){var v=ev.target.value.toLowerCase().trim();[].forEach.call(document.querySelectorAll('.maic'),function(e){e.style.display=!v||e.dataset.maiq.indexOf(v)>=0?'':'none'})}});
+document.addEventListener('change',function(ev){if(ev.target&&ev.target.hasAttribute&&ev.target.hasAttribute('data-maisort')){MAI.sort=ev.target.value;render()}});
+
 function progress(){
+ if(openGroup==='mai')return maiPage();
  if(openCP&&pat(openCP)) return cpPage();
  if(openPts&&pat(openPts)) return ptsPage();
  function grp(name,count,color,rows,em,pre){return '<section class="gview" style="--gc:'+color+'"><header class="ghero"><span class="tcirc">'+(em||'🐾')+'</span><span class="gname">'+esc(name)+'</span><span class="gcount">'+count+'</span></header>'+(pre||'')+'<div class="mgrid">'+rows+'</div></section>'}
@@ -1480,7 +1529,7 @@ function progress(){
   return '<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+grp('Commissaires',S.commissaires.length+' commissaires','#7a3f78',S.commissaires.map(function(m){return '<div class="mcard staff" style="--gc:#7a3f78">'+(m.photo?'<span class="av"><img src="'+m.photo+'" alt=""></span>':'<span class="av" style="background:#7a3f78">'+esc(initials(m.name))+'</span>')+'<span class="mname">'+esc(m.name)+'</span><span class="mtag">'+esc(m.role)+'</span></div>'}).join(''),'C');
  }
  if(openGroup==='staff'&&S.staff){
-  return '<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+grp('Maîtrise',S.staff.length+' chefs','var(--navy)',S.staff.map(function(m){return '<div class="mcard staff">'+(m.photo?'<span class="av"><img src="'+m.photo+'" alt=""></span>':'<span class="av" style="background:var(--navy)">'+esc(initials(m.name))+'</span>')+'<span class="mname">'+esc(m.name)+'</span><span class="mtag">'+esc(m.role)+'</span>'+(m.phone?'<a class="mphone" href="tel:'+esc(m.phone.replace(/\s/g,''))+'">'+esc(m.phone)+'</a>':'')+'</div>'}).join(''),'M');
+  return '<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+grp('Maîtrise',S.staff.length+' chefs','var(--navy)',S.staff.map(function(m){return '<div class="mcard staff">'+(m.photo?'<span class="av"><img src="'+m.photo+'" alt=""></span>':'<span class="av" style="background:var(--navy)">'+esc(initials(m.name))+'</span>')+'<span class="mname">'+esc(m.name)+'</span><span class="mtag">'+esc(m.role)+'</span>'+(m.phone?'<a class="mphone" href="tel:'+esc(m.phone.replace(/\s/g,''))+'">'+esc(m.phone)+'</a>':'')+'</div>'}).join(''),'M',maiBtn());
  }
  var gp=openGroup&&pat(openGroup);
  if(gp){
@@ -1529,7 +1578,7 @@ function scName(sid,fb){var x=sid&&S.scouts.filter(function(q){return q.id===sid
 function accFromProfile(u,v){
  ACC={uid:u.uid,u:u.email.split('@')[0],name:scName(v.sid,v.name||u.email.split('@')[0]),sid:v.sid||'',patrol:v.patrol||'',role:v.role||''};accSave();
 }
-function accLogout(){ORD.my=null;ORD.all=null;ORD.done={};try{firebase.auth().signOut()}catch(e){}ACC=null;ACCK=null;accSave();cpLock();go('home')}
+function accLogout(){MAI.data=null;ORD.my=null;ORD.all=null;ORD.done={};try{firebase.auth().signOut()}catch(e){}ACC=null;ACCK=null;accSave();cpLock();go('home')}
 function accDecrypt(uname,pw){
  return fetch('data/keys.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(K){var e=K['u:'+uname];if(!e)return null;
   return crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey'])
@@ -1806,6 +1855,9 @@ function cpPage(){
 }
 function cpClick(b){
  var D=cp.data,a=b.dataset.act;
+ if(a==='maiopen'){go('progress/mai');window.scrollTo(0,0);return true}
+ if(a==='maiback'){go('progress/g-staff');window.scrollTo(0,0);return true}
+ if(a==='mairetry'){MAI.err='';render();return true}
  if(a==='cpopen'){go('progress/cp-'+openGroup);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return true}
  if(a==='cpunlock'){var pw=val('cp-pw').toLowerCase().replace(/[\s\u2010-\u2015\u2212]+/g,function(x){return /\s/.test(x)?'':'-'});if(!pw)return true;cp.busy=true;cp.err='';render();
   unlock(pw,openCP).then(function(x){cp.token=x.token;cp.scope=x.scope;cp.busy=false;cp.dk=x.dk;cp.data=null;if(cp.relock&&cp.relock.patrol===openCP&&x.token){cp.data=cp.relock;cp.patrol=openCP;cp.dirty=true;cp.relock=null;cp.err='';cp.msg='Mot de passe OK. Appuie sur Enregistrer.';ghJson('data/'+openCP+'.json').then(function(j){cp.sha=j?j.sha:null;return ghJson('data/contacts-'+openCP+'.json')}).then(function(c){cp.csha=c?c.sha:null}).catch(function(){})}render()})
@@ -2463,6 +2515,7 @@ document.addEventListener('click',function(ev){
  msg='';
  if(b.dataset.delpatrol){S.patrols=S.patrols.filter(function(p){return p.id!==b.dataset.delpatrol});S.scouts=S.scouts.filter(function(s){return s.patrol!==b.dataset.delpatrol});return touch()}
  if(b.dataset.pdf){exportPDF(b.dataset.pdf);return}
+ if(b.dataset.maipf){MAI.pf=b.dataset.maipf;render();return}
  if(b.dataset.scout&&!ACC){LOGINWHY='Connecte-toi pour voir la fiche des scouts.';go('login');return}if(b.dataset.scout){go('progress/s-'+b.dataset.scout);var pr=document.querySelector('.profile');if(pr)pr.scrollTop=0;return}
  if(b.dataset.slide){showSlide(+b.dataset.slide);return}
  if(b.dataset.delphoto){S.photos=S.photos.filter(function(x){return x.id!==b.dataset.delphoto});return touch()}
@@ -2560,7 +2613,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="45794fb55c74">
-<script>(function(){var B="45794fb55c74";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="e50defe3b2be">
+<script>(function(){var B="e50defe3b2be";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

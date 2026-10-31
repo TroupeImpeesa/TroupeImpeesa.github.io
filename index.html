@@ -758,6 +758,11 @@ body.kahoot .btab{background:rgba(255,255,255,.95)}body.kahoot .btab button.on{c
 .editbtn{bottom:calc(90px + env(safe-area-inset-bottom,0px))!important}
 .cpsave{bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;margin:16px 0 0!important;border-radius:20px;border:1px solid var(--line)!important;box-shadow:0 10px 30px rgba(15,23,42,.18);padding:10px 14px!important;z-index:29!important}
 .wrap{padding-block:0 190px}
+/* points verrouillés pour les visiteurs */
+.lkn{font-size:.95em}
+.lkb{filter:blur(5px);opacity:.75;pointer-events:none;user-select:none}
+.lkwall{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:12px 14px;margin:10px 0}
+.lkwall b{font-size:.92rem}
 </style>
 </head>
 <body>
@@ -1402,8 +1407,10 @@ function home(){
  var t=today(),nx=S.events.filter(function(e){return !evOver(e)}).sort(function(a,b){return a.date<b.date?-1:1})[0];
  return h}
 function homeRank(){var t=totals(),L=S.patrols.slice().sort(function(a,b){return t[b.id]-t[a.id]}),mx=Math.max(1,Math.max.apply(null,L.map(function(p){return t[p.id]})));
- return '<div class="hrank"><div class="hrh"><b>Classement des patrouilles</b><button data-menunav="progress">Tout voir</button></div>'+L.map(function(p){return '<div class="hbar" role="button" tabindex="0" data-ptab="'+p.id+'"><i style="background:'+col(p)+'">'+esc(p.name.charAt(0))+'</i><span class="hpn">'+esc(p.name)+'</span><span class="htr"><u style="width:'+Math.max(2,t[p.id]/mx*100)+'%;background:'+col(p)+'"></u></span><em>'+fmtPts(t[p.id])+'</em></div>'}).join('')+'</div>'}
+ return '<div class="hrank"><div class="hrh"><b>Classement des patrouilles</b><button data-menunav="progress">Tout voir</button></div>'+L.map(function(p){return '<div class="hbar" role="button" tabindex="0" data-ptab="'+p.id+'"><i style="background:'+col(p)+'">'+esc(p.name.charAt(0))+'</i><span class="hpn">'+esc(p.name)+'</span><span class="htr'+lkB()+'"><u style="width:'+Math.max(2,t[p.id]/mx*100)+'%;background:'+col(p)+'"></u></span><em>'+ptsL(t[p.id])+'</em></div>'}).join('')+'</div>'}
 function fmtPts(n){return (Math.round(n*10)/10).toString()}
+function ptsL(n){return ACC?fmtPts(n):'<span class="lkn" title="Connecte-toi pour voir les points">🔒</span>'}
+function lkB(){return ACC?'':' lkb'}
 
 var ANIMALS=[['poney','🐎'],['requin','🦈'],['castor','🦫'],['boa','🐍']];
 function leaderRun(){return;
@@ -1431,12 +1438,12 @@ function points(){
  h+='<h2>Classement des patrouilles</h2>';
  if(!S.patrols.length) h+='<p class="empty">Aucune patrouille pour l’instant.</p>';
  h+='<div class="meta" style="margin:-4px 0 10px">Touche une patrouille pour voir ses points par réunion.</div><div class="board">'+sorted.map(function(p,i){return '<div class="row rowlink'+(t[p.id]>0&&t[p.id]===t[sorted[0].id]?' first':'')+'" data-ptab="'+p.id+'" role="button" tabindex="0"><div class="rank">'+(1+sorted.filter(function(q){return t[q.id]>t[p.id]}).length)+'</div><div style="min-width:0"><div class="pname"><span class="dot" style="background:'+col(p)+'"></span>'+
-  esc(p.name)+'</div><div class="bar"><i style="width:'+Math.max(0,t[p.id])/max*100+'%;background:'+col(p)+'"></i></div></div><div class="pts">'+t[p.id]+'<small>pts</small></div></div>'}).join('')+'</div>';
+  esc(p.name)+'</div><div class="bar'+lkB()+'"><i style="width:'+Math.max(0,t[p.id])/max*100+'%;background:'+col(p)+'"></i></div></div><div class="pts">'+(ACC?t[p.id]+'<small>pts</small>':ptsL(0))+'</div></div>'}).join('')+'</div>';
  if(editing){
   h+='<div class="editbox"><h4>Attribuer des points</h4><div class="fields"><select id="ap-patrol">'+S.patrols.map(function(p){return '<option value="'+p.id+'">'+esc(p.name)+'</option>'}).join('')+'</select><select id="ap-cat" aria-label="Catégorie">'+CATS.map(function(c){return '<option value="'+c[0]+'">'+c[1]+'</option>'}).join('')+'</select><input id="ap-pts" type="number" placeholder="Points (ex. 10 ou -5)"><input id="ap-date" type="date" value="'+today()+'"></div><div class="fields"><input id="ap-reason" placeholder="Raison (ex. relais de nœuds)"><button class="btn" data-act="award">Ajouter</button></div></div>';
  }
  var log=allLog().sort(function(a,b){return a.date<b.date?1:-1});
- h+='<h2>Historique des points</h2>'+(log.length?'<ul class="log">'+log.map(function(l){var p=pat(l.patrol),n=Number(l.pts)||0;return '<li><span class="delta '+(n<0?'neg':'pos')+'">'+(n>0?'+':'')+n+'</span><span style="min-width:0">'+esc(l.reason||catName(l.cat)||'Points')+'<br><span class="meta">'+(p?esc(p.name):'Patrouille supprimée')+(l.cat&&l.reason?' · '+catName(l.cat):'')+'</span></span><span class="meta">'+fmtDate(l.date)+(editing&&!l.auto?' <button class="x" data-dellog="'+l.id+'" aria-label="Retirer">×</button>':'')+'</span></li>'}).join('')+'</ul>':'<p class="empty">Aucun point attribué pour l’instant.</p>');
+ h+='<h2>Historique des points</h2>'+(log.length?'<ul class="log'+lkB()+'">'+(ACC?log:log.slice(0,4)).map(function(l){var p=pat(l.patrol),n=Number(l.pts)||0;return '<li><span class="delta '+(n<0?'neg':'pos')+'">'+(n>0?'+':'')+n+'</span><span style="min-width:0">'+esc(l.reason||catName(l.cat)||'Points')+'<br><span class="meta">'+(p?esc(p.name):'Patrouille supprimée')+(l.cat&&l.reason?' · '+catName(l.cat):'')+'</span></span><span class="meta">'+fmtDate(l.date)+(editing&&!l.auto?' <button class="x" data-dellog="'+l.id+'" aria-label="Retirer">×</button>':'')+'</span></li>'}).join('')+'</ul>':'<p class="empty">Aucun point attribué pour l’instant.</p>');
  return h}
 
 function initials(n){return n.replace(/\./g,'').split(' ').filter(Boolean).slice(0,2).map(function(w){return w[0]}).join('').toUpperCase()}
@@ -1454,14 +1461,14 @@ function ptsPage(){
  QL.forEach(function(l){var k=catName(l.cat)?l.cat:'autre';if(tot[k]==null)k=cols[0][0];tot[k]+=Number(l.pts)||0});
  cols.forEach(function(c){grand+=tot[c[0]]});
  var h='<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+
-  '<section class="gview" style="--gc:'+col(p)+'"><header class="ghero"><span class="tcirc">'+animalOf(p.name)+'</span><span class="gname">'+esc(p.name)+'</span><span class="gcount">'+grand+' points au total</span></header></section>'+ptsTop();
- h+='<div class="ptwrap" style="--gc:'+col(p)+'"><table class="pt"><thead><tr><th>Réunion</th>'+cols.map(function(c){return '<th>'+c[1]+'</th>'}).join('')+'<th>Total</th>'+((editing||pts.ok)?'<th></th>':'')+'</tr></thead><tbody>';
+  '<section class="gview" style="--gc:'+col(p)+'"><header class="ghero"><span class="tcirc">'+animalOf(p.name)+'</span><span class="gname">'+esc(p.name)+'</span><span class="gcount">'+(ACC?grand+' points au total':'🔒 Points réservés aux membres')+'</span></header></section>'+ptsTop();
+ h+=(ACC?'':'<div class="lkwall"><b>🔒 Connecte-toi pour voir les points</b><button class="btn" data-act="acct">Se connecter</button></div>')+'<div class="ptwrap'+lkB()+'" style="--gc:'+col(p)+'"><table class="pt"><thead><tr><th>Réunion</th>'+cols.map(function(c){return '<th>'+c[1]+'</th>'}).join('')+'<th>Total</th>'+((editing||pts.ok)?'<th></th>':'')+'</tr></thead><tbody>';
  if(!dates.length) h+='<tr><td colspan="'+(cols.length+2)+'" class="ptempty">Aucun point pour l’instant.</td></tr>';
  dates.forEach(function(d){var rt=0;h+='<tr><th>'+fmtDate(d)+'</th>'+cols.map(function(c){var v=days[d][c[0]];if(v)rt+=v;return '<td class="'+(v<0?'neg':'')+'">'+(v?v:'–')+'</td>'}).join('')+'<td class="ptot">'+rt+'</td>'+((editing||pts.ok)?'<td><button class="x" data-delday="'+d+'" aria-label="Supprimer cette réunion">×</button></td>':'')+'</tr>'});
  h+='</tbody><tfoot><tr><th>Total</th>'+cols.map(function(c){return '<td>'+tot[c[0]]+'</td>'}).join('')+'<td class="ptot">'+grand+'</td>'+((editing||pts.ok)?'<td></td>':'')+'</tr></tfoot></table></div>';
  var QW={};(typeof QLOG!=='undefined'&&QLOG||[]).filter(function(l){return l.patrol===p.id}).forEach(function(l){var w=l.week||String(l.id).split('-').slice(2,5).join('-');QW[w]=QW[w]||{w:w,n:0,top:0,full:0,pts:0,live:!!l.live};if(l.kind==='full')QW[w].full=Number(l.pts)||0;else{QW[w].top+=Number(l.pts)||0;QW[w].n+=l.n||0}QW[w].pts+=Number(l.pts)||0});
  var QZL=Object.keys(QW).map(function(k){return QW[k]}).sort(function(x,y){return x.w<y.w?1:-1});
- if(QZL.length||(typeof QB_FROM!=='undefined'))h+='<h3 class="psec">Quiz Prêt</h3>'+(QZL.length?'<div class="osum">'+QZL.map(function(q){return '<div class="orow2"><span>Semaine du '+esc(longDate(q.w))+(q.live?' <span class="meta">(en cours)</span>':'')+'<span class="meta" style="display:block">'+(q.n?q.n+' scout'+(q.n>1?'s':'')+' dans le top 10 (+'+q.top+')':'Personne dans le top 10')+(q.full?' · toute la patrouille a joué (+'+q.full+')':'')+'</span></span><b>+'+q.pts+'</b></div>'}).join('')+'<div class="orow2 otot"><span>Total Quiz Prêt</span><b>+'+QZL.reduce(function(a,q){return a+q.pts},0)+'</b></div></div>':'<p class="meta">Pas encore de points du Quiz Prêt.</p>');
+ if(QZL.length||(typeof QB_FROM!=='undefined'))h+='<h3 class="psec">Quiz Prêt</h3>'+(QZL.length?'<div class="osum'+lkB()+'">'+QZL.map(function(q){return '<div class="orow2"><span>Semaine du '+esc(longDate(q.w))+(q.live?' <span class="meta">(en cours)</span>':'')+'<span class="meta" style="display:block">'+(q.n?q.n+' scout'+(q.n>1?'s':'')+' dans le top 10 (+'+q.top+')':'Personne dans le top 10')+(q.full?' · toute la patrouille a joué (+'+q.full+')':'')+'</span></span><b>+'+q.pts+'</b></div>'}).join('')+'<div class="orow2 otot"><span>Total Quiz Prêt</span><b>+'+QZL.reduce(function(a,q){return a+q.pts},0)+'</b></div></div>':'<p class="meta">Pas encore de points du Quiz Prêt.</p>');
  if(editing||pts.ok) h+='<div class="editbox"><h4>Points d’une réunion</h4><div class="fields"><input id="mp-date" type="date" value="'+today()+'" aria-label="Date de la réunion"></div><div class="fields mpf">'+CATS.map(function(c){return '<label class="lbl">'+c[1]+'<input id="mp-'+c[0]+'" type="number" inputmode="numeric" placeholder="0"></label>'}).join('')+'</div><div class="fields"><input id="mp-reason" placeholder="Raison (facultatif, ex. Défi JOTA-JOTI)" aria-label="Raison"><button class="btn" data-act="addmeetpts">Ajouter les points</button></div><span class="meta">Mets un nombre négatif pour enlever des points.</span></div>';
  return h+ptsBar()}
 function animalOf(name){return esc(String(name).trim().charAt(0).toUpperCase()||'·')}
@@ -1484,7 +1491,7 @@ function progress(){
    return '<button class="tmem" data-scout="'+s.id+'">'+avatar(s,'tav')+'<span class="tmt"><b>'+esc(s.name)+(s.role?'<em>'+esc(s.role)+'</em>':'')+'</b><span class="tsteps" title="'+esc(S.stages[st]||'')+'">'+[1,2,3].map(function(i){return '<i'+(st>=i?' class="f"':'')+'></i>'}).join('')+'</span><small>'+esc(S.stages[st]||'')+(k?' · 🔥'+k:'')+'</small></span>'+(nb?'<span class="tbd">🏅 '+nb+'</span>':'')+'<span class="mgo" aria-hidden="true">'+(ACC?'›':'🔒')+'</span></button>'}).join('');
   if(!list.length) rows='<p class="empty" style="padding:14px 16px">Aucun scout dans cette patrouille.</p>';
   return '<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+'<section class="phero2" style="--gc:'+col(gp)+'"><span class="phem">'+patEmoji(gp.name)+'</span><small>PATROUILLE · '+(rk===1?'🥇 1ÈRE':rk+'E')+'</small><b>'+esc(gp.name)+'</b><span>'+[cp?'CP '+esc(cp.name):'',sp?'SP '+esc(sp.name):''].filter(Boolean).join(' · ')+'</span></section>'+
-   '<div class="pstats"><div><b>'+fmtPts(TT0[gp.id]||0)+'</b><span>points</span></div><div><b>'+list.length+'</b><span>membres</span></div><div><b>'+bd+'</b><span>badges</span></div><div><b>'+(lp==null?'–':lp+'/'+list.length)+'</b><span>présents</span></div></div>'+
+   '<div class="pstats"><div><b>'+ptsL(TT0[gp.id]||0)+'</b><span>points</span></div><div><b>'+list.length+'</b><span>membres</span></div><div><b>'+bd+'</b><span>badges</span></div><div><b>'+(lp==null?'–':lp+'/'+list.length)+'</b><span>présents</span></div></div>'+
    cpBtn(gp)+'<div class="tseg"><button class="on">Membres</button><button data-ptab="'+gp.id+'">Points</button></div><div class="tlist" style="--gc:'+col(gp)+'">'+rows+'</div>';
  }
  var TT=totals(),L=S.patrols.slice().sort(function(a,b){return (TT[b.id]||0)-(TT[a.id]||0)}),rkOf=function(p){return 1+S.patrols.filter(function(q){return (TT[q.id]||0)>(TT[p.id]||0)}).length};
@@ -1494,9 +1501,9 @@ function progress(){
  h+='<div style="height:12px"></div>';
  var P3=L.slice(0,3);
  if(P3.length===3&&(TT[P3[0].id]||0)>0){var ord=[P3[1],P3[0],P3[2]],ht=[64,88,46];
-  h+='<div class="tpod">'+ord.map(function(p,i){var r=rkOf(p);return '<button data-group="'+p.id+'"><em>'+patEmoji(p.name)+'</em><b>'+esc(p.name)+'</b><span>'+fmtPts(TT[p.id]||0)+' pts</span><u style="height:'+ht[i]+'px;background:'+col(p)+'">'+r+'</u></button>'}).join('')+'</div>'}
+  h+='<div class="tpod">'+ord.map(function(p,i){var r=rkOf(p);return '<button data-group="'+p.id+'"><em>'+patEmoji(p.name)+'</em><b>'+esc(p.name)+'</b><span>'+(ACC?fmtPts(TT[p.id]||0)+' pts':ptsL(0))+'</span><u style="height:'+ht[i]+'px;background:'+col(p)+'">'+r+'</u></button>'}).join('')+'</div>'}
  h+='<div class="tgrid">'+L.map(function(p){var M=S.scouts.filter(function(x){return x.patrol===p.id}),r=rkOf(p);
-  return '<button class="tpc" data-group="'+p.id+'" style="--gc:'+col(p)+'"><span class="trk">'+(r===1?'🥇 1er':r+'e')+'</span><span class="tpn"><b>'+esc(p.name)+'</b><small>'+M.length+' membres · '+fmtPts(TT[p.id]||0)+' pts</small></span><span class="tavs">'+M.slice(0,3).map(function(x){var f=S.faces[x.id];return '<i>'+(f?'<img src="'+f+'" alt="">':esc(initials(x.name)))+'</i>'}).join('')+(M.length>3?'<i>+'+(M.length-3)+'</i>':'')+'</span><span class="tem">'+patEmoji(p.name)+'</span></button>'}).join('')+'</div>';
+  return '<button class="tpc" data-group="'+p.id+'" style="--gc:'+col(p)+'"><span class="trk">'+(r===1?'🥇 1er':r+'e')+'</span><span class="tpn"><b>'+esc(p.name)+'</b><small>'+M.length+' membres · '+(ACC?fmtPts(TT[p.id]||0)+' pts':ptsL(0))+'</small></span><span class="tavs">'+M.slice(0,3).map(function(x){var f=S.faces[x.id];return '<i>'+(f?'<img src="'+f+'" alt="">':esc(initials(x.name)))+'</i>'}).join('')+(M.length>3?'<i>+'+(M.length-3)+'</i>':'')+'</span><span class="tem">'+patEmoji(p.name)+'</span></button>'}).join('')+'</div>';
  h+='<div class="trank">'+points()+'</div>';
  return h}
 var TRV='pat';
@@ -2552,7 +2559,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="0a5aed824c27">
-<script>(function(){var B="0a5aed824c27";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="9e0e813df15c">
+<script>(function(){var B="9e0e813df15c";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

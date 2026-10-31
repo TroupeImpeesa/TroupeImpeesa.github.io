@@ -2022,9 +2022,10 @@ function uAssign(){
 function uSeats(g,c){var R=(UNI.d&&UNI.d.reg)||{},n=0;uScouts().forEach(function(x){var r=R[x.id];if(r&&r[g.k]===c)n++});return n}
 function uGPA(sid){var G=((UNI.d&&UNI.d.grades)||{})[sid]||{},t=0,n=0;UCOLS.forEach(function(k){var v=G[k];if(typeof v==='number'){t+=v;n++}});return n?{g:t/n,n:n}:null}
 function uPatGPA(){var r={};S.patrols.forEach(function(p){var t=0,n=0;S.scouts.forEach(function(x){if(x.patrol!==p.id)return;var g=uGPA(x.id);if(g){t+=g.g;n++}});r[p.id]=n?t/n:null});return r}
+function uRanks(P){var v=[];S.patrols.forEach(function(p){if(P[p.id]!=null){var x=Math.round(P[p.id]*100);if(v.indexOf(x)<0)v.push(x)}});v.sort(function(a,b){return b-a});var r={};S.patrols.forEach(function(p){if(P[p.id]!=null)r[p.id]=v.indexOf(Math.round(P[p.id]*100))});return r}
 function uCompute(){
  var out=[];if(UNI.d&&UNI.d.grades){var P=uPatGPA(),L=S.patrols.filter(function(p){return P[p.id]!=null}).sort(function(a,b){return P[b.id]-P[a.id]});
-  L.forEach(function(p,i){var rk=i;while(rk>0&&Math.abs(P[L[rk-1].id]-P[p.id])<1e-9)rk--;out.push({id:'uni-'+p.id+'-'+UNI.ev,patrol:p.id,cat:'jeux',pts:UPTS[rk]||0,reason:'Université Impeesa : '+(rk+1)+(rk?'e':'re')+' place, GPA '+P[p.id].toFixed(2)+' / 4',date:UNI.ev,auto:true})})}
+  var RK=uRanks(P);L.forEach(function(p,i){var rk=RK[p.id];out.push({id:'uni-'+p.id+'-'+UNI.ev,patrol:p.id,cat:'jeux',pts:UPTS[rk]||0,reason:'Université Impeesa : '+(rk+1)+(rk?'e':'re')+' place, GPA '+P[p.id].toFixed(2)+' / 4',date:UNI.ev,auto:true})})}
  var k=JSON.stringify(out),chg=k!==JSON.stringify(ULOG);ULOG=out;return chg;
 }
 function uListen(){
@@ -2100,7 +2101,7 @@ function uAdmin(){
 }
 function uGrades(ed){var A=uAssign(),sc=uScouts(),G=UNI.d.grades||{},h='';
  var P=uPatGPA(),ord=S.patrols.filter(function(p){return P[p.id]!=null}).sort(function(a,b){return P[b.id]-P[a.id]});
- h+='<div class="ugpa up">'+S.patrols.map(function(p){var r=ord.indexOf(p);return '<div style="--gc:'+col(p)+'"><b>'+(P[p.id]==null?'–':P[p.id].toFixed(2))+'</b><span>'+esc(p.name)+(r>=0?' · '+(UPTS[r]||0)+' pts':'')+'</span></div>'}).join('')+'</div>';
+ h+='<div class="ugpa up">'+S.patrols.map(function(p){var r=P[p.id]==null?-1:uRanks(P)[p.id];return '<div style="--gc:'+col(p)+'"><b>'+(P[p.id]==null?'–':P[p.id].toFixed(2))+'</b><span>'+esc(p.name)+(r>=0?' · '+(UPTS[r]||0)+' pts':'')+'</span></div>'}).join('')+'</div>';
  if(ed)h+='<div class="upub"><span>⚡ En direct : dès qu’une note est entrée, le classement des patrouilles se met à jour (1er 160, 2e 130, 3e 110, 4e 100 points).</span></div>';
  h+='<div class="utabs sm">'+[['all','Troupe']].concat(S.patrols.map(function(p){return [p.id,p.name]})).map(function(t){return '<button class="'+(UNI.pf===t[0]?'on':'')+'" data-act="unipf" data-v="'+t[0]+'">'+esc(t[1])+'</button>'}).join('')+'</div>';
  h+=''+(ed?'<p class="meta">Note chaque cours sur 4 (ex. 3.5). Le GPA est la moyenne des cours notés.</p>':'<p class="meta">Notes sur 4 · le GPA est la moyenne des cours notés.</p>')+'<div class="utw"><table class="ugt"><colgroup><col class="n"><col><col><col><col><col><col><col class="g"></colgroup><tr><th>Scout</th>'+UCOLS.map(function(k){return '<th>'+(k==='EL'?'Él.':k.slice(0,3))+'</th>'}).join('')+'<th>GPA</th></tr>';
@@ -2559,7 +2560,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="0a97dfc17238">
-<script>(function(){var B="0a97dfc17238";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="b3a9ac49da19">
+<script>(function(){var B="b3a9ac49da19";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

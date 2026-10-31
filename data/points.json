@@ -223,6 +223,22 @@
    "pts": 10,
    "reason": "",
    "date": "2026-10-31"
+  },
+  {
+   "id": "lmvwd1lf7l4f",
+   "patrol": "p2",
+   "cat": "esprit",
+   "pts": 10,
+   "reason": "",
+   "date": "2026-10-31"
+  },
+  {
+   "id": "lmvwd1lf7zex",
+   "patrol": "p2",
+   "cat": "animation",
+   "pts": 10,
+   "reason": "",
+   "date": "2026-10-31"
   }
  ]
 }

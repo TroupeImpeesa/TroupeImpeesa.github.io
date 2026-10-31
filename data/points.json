@@ -239,6 +239,38 @@
    "pts": 10,
    "reason": "",
    "date": "2026-10-31"
+  },
+  {
+   "id": "uni-p1-2026-10-31",
+   "patrol": "p1",
+   "cat": "jeux",
+   "pts": 130,
+   "reason": "Université Impeesa : 2e place, GPA 2.86 / 4",
+   "date": "2026-10-31"
+  },
+  {
+   "id": "uni-p2-2026-10-31",
+   "patrol": "p2",
+   "cat": "jeux",
+   "pts": 110,
+   "reason": "Université Impeesa : 3e place, GPA 2.58 / 4",
+   "date": "2026-10-31"
+  },
+  {
+   "id": "uni-p3-2026-10-31",
+   "patrol": "p3",
+   "cat": "jeux",
+   "pts": 130,
+   "reason": "Université Impeesa : 2e place, GPA 2.86 / 4",
+   "date": "2026-10-31"
+  },
+  {
+   "id": "uni-p4-2026-10-31",
+   "patrol": "p4",
+   "cat": "jeux",
+   "pts": 160,
+   "reason": "Université Impeesa : 1re place, GPA 3.22 / 4",
+   "date": "2026-10-31"
   }
  ]
 }

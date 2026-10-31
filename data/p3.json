@@ -38,7 +38,12 @@
    "name": "Mateo Tawk",
    "role": "",
    "stage": 1,
-   "badges": []
+   "badges": [
+    "Intendant",
+    "Sport de balles",
+    "Meneur de jeu",
+    "Animaux domestiques"
+   ]
   },
   {
    "id": "p3-4",
@@ -155,5 +160,5 @@
    ]
   }
  ],
- "updated": "2026-10-31T09:34:57.932Z"
+ "updated": "2026-10-31T10:04:59.605Z"
 }

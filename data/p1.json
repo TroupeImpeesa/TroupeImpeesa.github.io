@@ -4,7 +4,7 @@
   {
    "id": "p1-1",
    "name": "Georges Khadra",
-   "role": "CP",
+   "role": "",
    "stage": 3,
    "badges": [
     "Ami de Dieu Jaune",
@@ -29,7 +29,15 @@
    "name": "Jawad Obeid",
    "role": "SP",
    "stage": 2,
-   "badges": []
+   "badges": [
+    "Cuisinier",
+    "Intendant",
+    "Animateur",
+    "Animaux domestiques",
+    "Secouriste",
+    "Secrétaire",
+    "Guetteur"
+   ]
   },
   {
    "id": "p1-3",
@@ -168,5 +176,5 @@
    ]
   }
  ],
- "updated": "2026-10-31T13:11:32.650Z"
+ "updated": "2026-10-31T17:14:54.229Z"
 }

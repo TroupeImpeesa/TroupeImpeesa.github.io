@@ -770,7 +770,7 @@ var S=load(),curM=null,slide=0,openScout=null,openEvent=null;
 var TABS=['home','progress','events','history','quiz','login','me','order','orders','inst','uni'];
 var tab='home',openGroup=null,openPts=null;
 function route(h){h=(h==null?(location.hash||'#home').slice(1):h).split('/');var t=h[0]==='points'?'progress':h[0];if(TABS.indexOf(t)<0)t='home';tab=t;openGroup=null;openPts=null;openScout=null;openEvent=null;openCP=null;var x=h[1]||'';
- if(t==='progress'){if(x.indexOf('g-')===0)openGroup=x.slice(2);else if(x.indexOf('cp-')===0&&pat(x.slice(3))){openCP=x.slice(3);openGroup=openCP}else if(x.indexOf('pts-')===0)openPts=x.slice(4);else if(x.indexOf('s-')===0){var sc=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc){openScout=sc.id;openGroup=sc.patrol}}}
+ if(t==='progress'){if(x.indexOf('g-')===0)openGroup=x.slice(2);else if(x.indexOf('cp-')===0&&pat(x.slice(3))){openCP=x.slice(3);openGroup=openCP}else if(x.indexOf('pts-')===0)openPts=x.slice(4);else if(x.indexOf('s-')===0&&!ACC){var sc0=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc0)openGroup=sc0.patrol}else if(x.indexOf('s-')===0){var sc=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc){openScout=sc.id;openGroup=sc.patrol}}}
  if(x.indexOf('e-')===0&&S.events.some(function(e){return e.id===x.slice(2)}))openEvent=x.slice(2);
  if(!openCP)cpLock();if(!openPts)ptsLock();if(typeof ORD!=='undefined'&&ORD){if(t==='orders'&&!ORD.tbusy){ORD.all=null;ORD.tmsg=''}if(t==='order'&&!ORD.dirty)ORD.my=null}}
 function go(h){try{history.pushState({ia:1},'','#'+h)}catch(e){}route(h);render()}
@@ -1481,7 +1481,7 @@ function progress(){
   var cp=list.filter(function(x){return x.role==='CP'})[0],sp=list.filter(function(x){return x.role==='SP'})[0],bd=list.reduce(function(a,x){return a+(x.badgeList?x.badgeList.length:(x.badges||0))},0);
   var lm=S.meetings.filter(function(m){return m.patrols.indexOf(gp.id)>=0&&m.date<=today()}).sort(function(a,b){return a.date<b.date?1:-1})[0],ids={};list.forEach(function(x){ids[x.id]=1});var lp=lm?lm.present.filter(function(i){return ids[i]}).length:null;
   var rows=list.map(function(s){var st=s.stage||0,nb=s.badgeList?s.badgeList.length:(s.badges||0),k=streakOf(s);
-   return '<button class="tmem" data-scout="'+s.id+'">'+avatar(s,'tav')+'<span class="tmt"><b>'+esc(s.name)+(s.role?'<em>'+esc(s.role)+'</em>':'')+'</b><span class="tsteps" title="'+esc(S.stages[st]||'')+'">'+[1,2,3].map(function(i){return '<i'+(st>=i?' class="f"':'')+'></i>'}).join('')+'</span><small>'+esc(S.stages[st]||'')+(k?' · 🔥'+k:'')+'</small></span>'+(nb?'<span class="tbd">🏅 '+nb+'</span>':'')+'<span class="mgo" aria-hidden="true">›</span></button>'}).join('');
+   return '<button class="tmem" data-scout="'+s.id+'">'+avatar(s,'tav')+'<span class="tmt"><b>'+esc(s.name)+(s.role?'<em>'+esc(s.role)+'</em>':'')+'</b><span class="tsteps" title="'+esc(S.stages[st]||'')+'">'+[1,2,3].map(function(i){return '<i'+(st>=i?' class="f"':'')+'></i>'}).join('')+'</span><small>'+esc(S.stages[st]||'')+(k?' · 🔥'+k:'')+'</small></span>'+(nb?'<span class="tbd">🏅 '+nb+'</span>':'')+'<span class="mgo" aria-hidden="true">'+(ACC?'›':'🔒')+'</span></button>'}).join('');
   if(!list.length) rows='<p class="empty" style="padding:14px 16px">Aucun scout dans cette patrouille.</p>';
   return '<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+'<section class="phero2" style="--gc:'+col(gp)+'"><span class="phem">'+patEmoji(gp.name)+'</span><small>PATROUILLE · '+(rk===1?'🥇 1ÈRE':rk+'E')+'</small><b>'+esc(gp.name)+'</b><span>'+[cp?'CP '+esc(cp.name):'',sp?'SP '+esc(sp.name):''].filter(Boolean).join(' · ')+'</span></section>'+
    '<div class="pstats"><div><b>'+fmtPts(TT0[gp.id]||0)+'</b><span>points</span></div><div><b>'+list.length+'</b><span>membres</span></div><div><b>'+bd+'</b><span>badges</span></div><div><b>'+(lp==null?'–':lp+'/'+list.length)+'</b><span>présents</span></div></div>'+
@@ -1530,8 +1530,9 @@ function accDecrypt(uname,pw){
    .then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:u8(e.iv)},k,u8(e.ct))})
    .then(function(b){return JSON.parse(new TextDecoder().decode(b))}).catch(function(){return null})}).catch(function(){return null});
 }
+var LOGINWHY='';
 function loginPage(){
- if(!ACC)return '<div class="lgwrap"><div class="lgcard"><img class="lglogo" src="logo.png?v=2" alt=""><div class="lgtroop">'+esc(S.troop)+'</div><h2 class="lgh">Connexion</h2><p class="lgsub">Utilise le nom d’utilisateur et le mot de passe que la maîtrise t’a donnés.</p>'+
+ if(!ACC)return '<div class="lgwrap"><div class="lgcard"><img class="lglogo" src="logo.png?v=2" alt=""><div class="lgtroop">'+esc(S.troop)+'</div><h2 class="lgh">Connexion</h2>'+(LOGINWHY?'<p class="lgsub" style="color:#b45309;font-weight:700">🔒 '+esc(LOGINWHY)+'</p>':'')+'<p class="lgsub">Utilise le nom d’utilisateur et le mot de passe que la maîtrise t’a donnés.</p>'+
   '<label class="lgl">Nom d’utilisateur<input id="acc-u" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="ex. joegeagea"></label>'+
   '<label class="lgl">Mot de passe<span class="lgpw"><input id="acc-p" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="••••••"><button type="button" class="lgeye" data-act="accshow" aria-label="Afficher le mot de passe">Afficher</button></span></label>'+
   (ACCF.msg?'<p class="cperr">'+esc(ACCF.msg)+'</p>':'')+
@@ -2454,7 +2455,7 @@ document.addEventListener('click',function(ev){
  msg='';
  if(b.dataset.delpatrol){S.patrols=S.patrols.filter(function(p){return p.id!==b.dataset.delpatrol});S.scouts=S.scouts.filter(function(s){return s.patrol!==b.dataset.delpatrol});return touch()}
  if(b.dataset.pdf){exportPDF(b.dataset.pdf);return}
- if(b.dataset.scout){go('progress/s-'+b.dataset.scout);var pr=document.querySelector('.profile');if(pr)pr.scrollTop=0;return}
+ if(b.dataset.scout&&!ACC){LOGINWHY='Connecte-toi pour voir la fiche des scouts.';go('login');return}if(b.dataset.scout){go('progress/s-'+b.dataset.scout);var pr=document.querySelector('.profile');if(pr)pr.scrollTop=0;return}
  if(b.dataset.slide){showSlide(+b.dataset.slide);return}
  if(b.dataset.delphoto){S.photos=S.photos.filter(function(x){return x.id!==b.dataset.delphoto});return touch()}
  if(b.dataset.delday){var dd=b.dataset.delday;S.log=S.log.filter(function(l){return !(l.patrol===openPts&&l.date===dd)});if(pts.ok){pts.dirty=true;pts.msg=''}return touch()}
@@ -2551,7 +2552,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="c29ef4583bae">
-<script>(function(){var B="c29ef4583bae";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="0a5aed824c27">
+<script>(function(){var B="0a5aed824c27";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

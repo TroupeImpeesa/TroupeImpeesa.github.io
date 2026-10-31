@@ -736,7 +736,7 @@ body.kahoot .brand{color:#fff}body.kahoot .acbar .acct{background:rgba(255,255,2
 .hdate{width:54px;flex:none;text-align:center;border-radius:14px;background:color-mix(in srgb,#2563eb 12%,var(--surface));color:var(--accent);padding:6px 0}
 .hdate small{display:block;font:800 11px var(--body);text-transform:uppercase}.hdate b{display:block;font:900 22px/1.1 var(--display)}
 .hnt{flex:1;min-width:0}.hnt b{display:block;font:800 16px var(--body)}.hnt span{display:block;font:600 13px var(--body);color:var(--muted)}
-.htiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.htiles{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
 .htile{border:none;border-radius:22px;padding:16px;height:118px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;color:#fff;cursor:pointer;box-shadow:var(--shadow);font-family:var(--body)}
 .htile span{font:600 12px var(--body);opacity:.85}.htile b{font:900 21px/1.05 var(--display);letter-spacing:-.01em}
 .htile.hq{background:linear-gradient(135deg,#6d28d9,#4f46e5)}.htile.hu{background:linear-gradient(135deg,#0f2342,#1e40af)}
@@ -1397,7 +1397,7 @@ function home(){
  var N=S.news.slice().reverse().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:0}).slice(0,editing?30:3);
  var nx0=S.events.filter(function(e){return !evOver(e)}).sort(function(a,b){return a.date<b.date?-1:1})[0];
  h+='<div class="hcard">'+heroTop()+(nx0?(function(){var p=nx0.date.split('-');return '<div class="hnext" role="button" tabindex="0" data-event="'+nx0.id+'"><span class="hdate"><small>'+MONTHS[+p[1]-1]+'</small><b>'+(+p[2])+'</b></span><span class="hnt"><b>'+esc(nx0.title)+'</b><span>'+[span(nx0),hours(nx0)].filter(Boolean).map(esc).join(' · ')+'</span></span><span class="evgo">›</span></div>'})():'')+'</div>';
- h+='<div class="htiles"><button class="htile hq" data-nav="quiz"><span>Chaque semaine</span><b>Quiz<br>Prêt!</b></button>'+(today()<=UNI.hideAfter?'<button class="htile hu" data-nav="uni"><span>Samedi 31</span><b>🎓 Mon<br>programme</b></button>':'<button class="htile hu" data-nav="events"><span>Activités</span><b>📅 Calen&shy;drier</b></button>')+'</div>';
+ h+='<div class="htiles"><button class="htile hq" data-nav="quiz"><span>Chaque semaine</span><b>Quiz Prêt!</b></button></div>';
  h+=homeRank();
  h+='<div class="igrow">'+(CP_ON?(visCan()?'<button class="online" id="online" data-act="vis" title="Voir qui est sur le site">':'<span class="online" id="online" title="Personnes sur le site en ce moment">')+'<i></i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><b id="online-n">'+(visNum()==null?'·':visNum())+'</b>'+(visCan()?'</button>':'</span>'):'')+'</div>';
  
@@ -2560,7 +2560,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="2698d76127c8">
-<script>(function(){var B="2698d76127c8";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="6f9a49db0b2e">
+<script>(function(){var B="6f9a49db0b2e";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

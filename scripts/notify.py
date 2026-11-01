@@ -55,9 +55,16 @@ def site_state():
     return S
 
 
+QZ_OPEN = {'2026-11-02': '2026-11-01T18:00:00+02:00'}  # semaines ouvertes en avance (même liste que index.html)
+
+
 def quiz_week(n):
     d = (n - timedelta(hours=14)).date()
-    return (d - timedelta(days=d.weekday())).isoformat()
+    w = (d - timedelta(days=d.weekday())).isoformat()
+    for k, t in QZ_OPEN.items():
+        if k > w and n >= datetime.fromisoformat(t):
+            w = k
+    return w
 
 
 def ranking(W, U, pids):

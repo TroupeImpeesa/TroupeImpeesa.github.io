@@ -105,7 +105,7 @@ input{font:inherit}
 /* ===== WHO REALLY ARE YOU? — jeu de la troupe, juste pour le fun (aucun point) ===== */
 var CFG={apiKey:"AIzaSyAhV_fKJll1oxnyrCJymQOJuceHxPeKqp8",authDomain:"troupe-impeesa.firebaseapp.com",databaseURL:"https://troupe-impeesa-default-rtdb.europe-west1.firebasedatabase.app",projectId:"troupe-impeesa",appId:"1:916383056692:web:e832acceb60a2b2bb3db61"};
 firebase.initializeApp(CFG);var db=firebase.database();
-var MINP=6,MAXP=20,MEET_EVERY=120000,ANS_T=20000,VOTE_T=45000,RES_T=6000,KILL_CD=25000,KILL_R=70,USE_R=80,REP_R=95,SPEED=200,TASKS_PER=4;
+var MINP=6,MAXP=20,MEET_EVERY=120000,ANS_T=20000,VOTE_T=90000,RES_T=6000,KILL_CD=25000,KILL_R=70,USE_R=80,REP_R=95,SPEED=200,TASKS_PER=4;
 var COLORS=['#e5484d','#1368ce','#26890c','#d89e00','#8a3ffc','#ff7ab6','#00b5ad','#f2f2f2','#ff8c1a','#6b4423','#7ed957','#2b2b2b','#00d1ff','#c0392b','#9b59b6','#16a085','#f1c40f','#e67e22','#34495e','#ff4f9a'];
 var CHARS={
  bp:{n:'Baden-Powell',e:'⚜️',f:[['⏳','Âge à sa mort','83 ans'],['📅','Année de naissance','1857 (à Londres)'],['✝️','Année de sa mort','1941 (au Kenya)']]},
@@ -289,19 +289,20 @@ function drawTask(){var e=$('tk');if(!e){e=document.createElement('div');e.id='t
 function sendAns(){var v=($('ans')||{}).value;v=String(v||'').trim().slice(0,6);if(!v)return;db.ref('games/'+CODE+'/meet/ans/'+ME.uid).set(v)}
 function vote(t){if(!amAlive()||!G.meet||G.meet.ph!=='vote'||(G.meet.votes||{})[ME.uid])return;db.ref('games/'+CODE+'/meet/votes/'+ME.uid).set(t)}
 /* ===== affichage ===== */
-/* ===== chat : salle d'attente et rassemblements, seuls les vivants parlent ===== */
+/* ===== chat : seulement pendant le vote, seuls les vivants parlent ===== */
 var CH={open:false,seen:0,n:-1};
 function chatMsgs(){var c=(G&&G.chat)||{};return Object.keys(c).map(function(k){return c[k]}).filter(function(m){return m&&m.t}).sort(function(a,b){return (a.at||0)-(b.at||0)}).slice(-60)}
-function canTalk(){return !!(G&&ME&&!SPEC&&(G.state==='lobby'||(G.state==='meet'&&amAlive())))}
-function chatSync(){var on=G&&(UI==='lobby'||UI==='meet'),b=$('cbtn'),pn=$('cpanel');
+function inVote(){return !!(G&&G.state==='meet'&&G.meet&&(G.meet.ph==='vote'||G.meet.ph==='res'))}
+function canTalk(){return !!(G&&ME&&!SPEC&&G.state==='meet'&&G.meet&&G.meet.ph==='vote'&&amAlive())}
+function chatSync(){var on=G&&UI==='meet'&&inVote(),b=$('cbtn'),pn=$('cpanel');
  if(!on){if(b)b.remove();if(pn)pn.remove();CH.open=false;return}
  var M=chatMsgs();
  if(!b){b=document.createElement('button');b.id='cbtn';b.onclick=function(){CH.open=true;CH.n=-1;chatSync();setTimeout(function(){var i=$('cin');if(i&&!i.disabled)i.focus()},60)};document.body.appendChild(b)}
  b.style.display=CH.open?'none':'';var un=CH.open?0:Math.max(0,M.length-CH.seen);b.innerHTML='💬'+(un?'<em>'+un+'</em>':'');
  if(!CH.open){if(pn)pn.remove();return}CH.seen=M.length;
- if(!pn){pn=document.createElement('div');pn.id='cpanel';pn.innerHTML='<div class="ch"><span>💬 Chat'+(G.state==='meet'?' du rassemblement':'')+'</span><button id="cclose" aria-label="Fermer">×</button></div><div id="clist"></div><div class="cf"><input id="cin" maxlength="140" autocomplete="off" enterkeyhint="send"><button id="csend">Envoyer</button></div>';document.body.appendChild(pn);
+ if(!pn){pn=document.createElement('div');pn.id='cpanel';pn.innerHTML='<div class="ch"><span>💬 Chat du vote</span><button id="cclose" aria-label="Fermer">×</button></div><div id="clist"></div><div class="cf"><input id="cin" maxlength="140" autocomplete="off" enterkeyhint="send"><button id="csend">Envoyer</button></div>';document.body.appendChild(pn);
   $('cclose').onclick=function(){CH.open=false;chatSync()};$('csend').onclick=sendChat;$('cin').onkeydown=function(e){if(e.key==='Enter')sendChat()};CH.n=-1}
- var ok=canTalk(),inp=$('cin');inp.disabled=!ok;$('csend').disabled=!ok;inp.placeholder=ok?'Écris un message…':SPEC?'👀 Les spectateurs ne parlent pas':(G.state==='meet'?'👻 Les fantômes ne parlent pas':'Le chat s’ouvre aux rassemblements');
+ var ok=canTalk(),inp=$('cin');inp.disabled=!ok;$('csend').disabled=!ok;inp.placeholder=ok?'Accuse, défends-toi…':SPEC?'👀 Les spectateurs ne parlent pas':!amAlive()?'👻 Les fantômes ne parlent pas':'Le vote est terminé';
  if(CH.n!==M.length){CH.n=M.length;var L=$('clist');L.innerHTML=M.length?M.map(function(m){return '<div class="cm'+(m.u===ME.uid?' me':'')+'"><b style="color:'+colorOf(m.u)+'">'+esc(m.n||'?')+'</b>'+esc(m.t)+'</div>'}).join(''):'<div class="cm sys">Pas encore de message</div>';L.scrollTop=L.scrollHeight}}
 function sendChat(){var i=$('cin');if(!i||!canTalk())return;var t=String(i.value||'').trim().slice(0,140);if(!t)return;i.value='';
  db.ref('games/'+CODE+'/chat').push({u:ME.uid,n:myName(),t:t,at:firebase.database.ServerValue.TIMESTAMP});i.focus()}
@@ -357,7 +358,7 @@ function endH(){var e=G.end||{},R=e.roles||{},host=G.host===ME.uid,me=R[ME.uid]|
  var h='<div class="scr"><div class="big">'+(e.w==='imp'?'🦊':'⚜️')+'</div><div class="mh" style="margin-top:10px"><small>'+(won?'VICTOIRE !':'DÉFAITE')+'</small>'+(e.w==='imp'?'Les Zoros gagnent':'Les scouts gagnent')+'</div><div class="hint">'+esc(e.why||'')+'</div><div style="margin-top:14px">';
  plist().forEach(function(p){var r=R[p.uid]||{};h+='<div class="rl">'+avH(p.uid,1)+esc(p.name)+(p.alive===false?' 💀':'')+'<em class="'+(r.imp?'i':'')+'">'+(r.imp?'Zoro':esc((CHARS[r.c]||{}).n||'Scout'))+'</em></div>'});
  return h+'</div>'+(host?'<button class="btn y" id="again">↻ Rejouer avec la même salle</button>':'<div class="hint">L’hôte peut relancer une partie.</div>')+'<button class="btn" id="leave">Quitter</button></div>'}
-function rulesH(){return '<div class="card rules"><b style="font-size:16px">📜 Les règles</b><p>👥 De <b>6 à 20 joueurs</b>. L’hôte crée la salle et partage le code. <b>1 Zoro pour 4 joueurs.</b></p><p>⚜️ Les <b>scouts</b> reçoivent un personnage secret : Baden-Powell, Saint Georges, le Père Jacques Sevin, Abouna Yaacoub, ou un animal de patrouille (Castor, Boa, Poney, Requin), avec 3 infos chiffrées. <b>Retiens-les !</b> Plusieurs scouts ont le même personnage.</p><p>🦊 Les <b>Zoros</b> n’ont pas de personnage. Ils éliminent les scouts en douce.</p><p>🏕️ Dans le camp, fais tes tâches (★ jaune). Trouve un corps 💀 ? Touche <b>Signaler</b>.</p><p>🔥 À chaque <b>rassemblement</b> (signalement ou toutes les 2 min), tout le monde répond à une question sur son personnage. Les réponses s’affichent ensemble, puis on <b>vote</b>.</p><p>🏆 Les scouts gagnent s’ils éjectent tous les Zoros ou finissent toutes les tâches. Les Zoros gagnent s’ils sont aussi nombreux que les scouts.</p><p style="color:#9fb0cc">Juste pour le fun : ce jeu ne rapporte aucun point.</p></div>'}
+function rulesH(){return '<div class="card rules"><b style="font-size:16px">📜 Les règles</b><p>👥 De <b>6 à 20 joueurs</b>. L’hôte crée la salle et partage le code. <b>1 Zoro pour 4 joueurs.</b></p><p>⚜️ Les <b>scouts</b> reçoivent un personnage secret : Baden-Powell, Saint Georges, le Père Jacques Sevin, Abouna Yaacoub, ou un animal de patrouille (Castor, Boa, Poney, Requin), avec 3 infos chiffrées. <b>Retiens-les !</b> Plusieurs scouts ont le même personnage.</p><p>🦊 Les <b>Zoros</b> n’ont pas de personnage. Ils éliminent les scouts en douce.</p><p>🏕️ Dans le camp, fais tes tâches (★ jaune). Trouve un corps 💀 ? Touche <b>Signaler</b>.</p><p>🔥 À chaque <b>rassemblement</b> (signalement ou toutes les 2 min), tout le monde répond à une question sur son personnage. Les réponses s’affichent ensemble, puis on <b>vote</b> : 1 min 30 pour accuser et se défendre dans le 💬 chat (seuls les vivants parlent).</p><p>🏆 Les scouts gagnent s’ils éjectent tous les Zoros ou finissent toutes les tâches. Les Zoros gagnent s’ils sont aussi nombreux que les scouts.</p><p style="color:#9fb0cc">Juste pour le fun : ce jeu ne rapporte aucun point.</p></div>'}
 function drawFlash(){var e=$('fl');if(FLASH){if(!e){e=document.createElement('div');e.id='fl';e.className='flash';document.body.appendChild(e);e.onclick=function(){FLASH=null;e.remove()}}e.innerHTML='<b>'+esc(FLASH.b)+'</b><span>'+esc(FLASH.s||'')+'</span><span style="font-size:12px;margin-top:20px">Touche pour continuer</span>'}else if(e)e.remove()}
 function bind(){var b;
  if(b=$('create'))b.onclick=createRoom;

@@ -776,6 +776,7 @@ body.kahoot .btab{background:rgba(255,255,255,.95)}body.kahoot .btab button.on{c
 .pressh{width:min(420px,calc(100vw - 24px))}.presm{border-top:1px solid var(--line);padding:10px 0}.presh{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.presh b{font-size:.95rem}.presh em{font-style:normal;font-weight:800;font-size:.85rem;background:var(--surface);border-radius:99px;padding:2px 9px}.presh em.full{background:#16a34a;color:#fff}
 .presl{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}.presl span{font-size:.78rem;font-weight:700;border-radius:99px;padding:3px 9px}.pin{background:color-mix(in srgb,var(--gc) 18%,transparent);color:var(--fg)}.pout{background:transparent;color:var(--muted);text-decoration:line-through;border:1px dashed var(--line)}
 .presa div{display:grid;grid-template-columns:1fr 70px 34px;gap:8px;align-items:center;padding:4px 0;font-size:.85rem}.presa i{height:6px;border-radius:9px;background:var(--line);overflow:hidden}.presa u{display:block;height:100%;background:var(--gc)}.presa b{text-align:right;font-size:.8rem}
+.htile.hw{background:linear-gradient(135deg,#0b1424,#1b3a6b)!important;color:#fff!important}.htile.hw b{color:#f5c542}
 </style>
 </head>
 <body>
@@ -1419,7 +1420,7 @@ function home(){
  var N=S.news.slice().reverse().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:0}).slice(0,editing?30:3);
  var nx0=S.events.filter(function(e){return !evOver(e)}).sort(function(a,b){return a.date<b.date?-1:1})[0];
  h+='<div class="hcard">'+heroTop()+(nx0?(function(){var p=nx0.date.split('-');return '<div class="hnext" role="button" tabindex="0" data-event="'+nx0.id+'"><span class="hdate"><small>'+MONTHS[+p[1]-1]+'</small><b>'+(+p[2])+'</b></span><span class="hnt"><b>'+esc(nx0.title)+'</b><span>'+[span(nx0),hours(nx0)].filter(Boolean).map(esc).join(' · ')+'</span></span><span class="evgo">›</span></div>'})():'')+'</div>';
- h+='<div class="htiles"><button class="htile hq" data-nav="quiz"><span>Chaque semaine</span><b>Quiz Prêt!</b></button></div>';
+ h+='<div class="htiles"><button class="htile hq" data-nav="quiz"><span>Chaque semaine</span><b>Quiz Prêt!</b></button><button class="htile hw" data-nav="game"><span>Jeu de la troupe · juste pour le fun</span><b>🦊 WHO REALLY ARE YOU?</b></button></div>';
  h+=homeRank();
  h+='<div class="igrow">'+(CP_ON?(visCan()?'<button class="online" id="online" data-act="vis" title="Voir qui est sur le site">':'<span class="online" id="online" title="Personnes sur le site en ce moment">')+'<i></i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><b id="online-n">'+(visNum()==null?'·':visNum())+'</b>'+(visCan()?'</button>':'</span>'):'')+'</div>';
  
@@ -2551,7 +2552,7 @@ document.addEventListener('click',function(ev){
  if(b&&qClick(b))return;
  if(!b){var pt=ev.target.closest('[data-ptab]');if(pt&&!ev.target.closest('input,select,textarea')){go('progress/pts-'+pt.dataset.ptab);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return}
   var evl=ev.target.closest('[data-event]');if(evl){go(tab+'/e-'+evl.dataset.event);var pr=document.querySelector('.profile');if(pr)pr.scrollTop=0}return}
- if(b.dataset.nav){go(b.dataset.nav);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);if(tab==='progress')leaderRun();return}
+ if(b.dataset.nav){if(b.dataset.nav==='game'){location.href='game.html';return}go(b.dataset.nav);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);if(tab==='progress')leaderRun();return}
  if(b.dataset.group){go('progress/g-'+b.dataset.group);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return}
  if(b.dataset.tab){prevTab=tab;try{history.replaceState(null,'','#'+b.dataset.tab)}catch(e){}route(b.dataset.tab);render();if(tab==='progress')leaderRun();return}
  msg='';
@@ -2656,7 +2657,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="4391d3df4404">
-<script>(function(){var B="4391d3df4404";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="1100f87298b1">
+<script>(function(){var B="1100f87298b1";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

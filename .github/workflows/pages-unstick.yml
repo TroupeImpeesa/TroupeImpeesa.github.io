@@ -1,0 +1,17 @@
+name: Débloquer Pages
+on:
+  push:
+    paths: ['.github/workflows/pages-unstick.yml']
+permissions:
+  pages: write
+  contents: read
+jobs:
+  cancel:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          for id in 8c4ec8f5ec9c529e533223b0015d16a45cca8bd5; do
+            curl -s -X POST -H "Authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github+json" \
+              https://api.github.com/repos/${{ github.repository }}/pages/deployments/$id/cancel; echo " -> $id"
+          done
+          curl -s -H "Authorization: Bearer ${{ github.token }}" https://api.github.com/repos/${{ github.repository }}/pages/deployments/8c4ec8f5ec9c529e533223b0015d16a45cca8bd5

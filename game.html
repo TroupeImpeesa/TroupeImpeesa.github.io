@@ -150,7 +150,7 @@ function colorOf(uid){var L=plist(),i=L.map(function(p){return p.uid}).indexOf(u
 function onGame(s){var g=s.val();var prev=G;G=g;BUSY='';
  if(!g||g.closed){FLASH={b:'Salle fermée',s:'L’hôte a fermé la salle.'};leave();return}
  if(g.host===ME.uid&&g.hostGone)db.ref('games/'+CODE+'/hostGone').remove();
- if(g.hostGone&&g.host!==ME.uid&&!HG)HG=setTimeout(function(){HG=null;if(G&&G.hostGone){FLASH={b:'Partie arrêtée',s:'L’hôte a quitté la partie.'};leave()}},20000);
+
  if(!g.players||!g.players[ME.uid]){if(UI!=='home'){FLASH={b:'Tu n’es plus dans la salle',s:''};leave()}return}
  if(!prev||prev.state!==g.state)onDisc();
  if(g.state==='lobby'){ROLE=null;HOSTSEC=null;MYT=[];TDONE={};seenMeetN=-1;UI='lobby';stopLoop()}
@@ -193,7 +193,7 @@ function resolveVote(){var m=G.meet,tally={},al=alivePl().map(function(p){return
  var up={};up['games/'+CODE+'/meet/ph']='res';up['games/'+CODE+'/meet/ends']=res.ends;up['games/'+CODE+'/meet/tally']=tally;up['games/'+CODE+'/meet/out']=res.out;up['games/'+CODE+'/meet/wasImp']=res.wasImp;
  if(out){up['games/'+CODE+'/players/'+out+'/alive']=false;up['games/'+CODE+'/players/'+out+'/ejected']=true}db.ref().update(up)}
 function startMeet(by,body){db.ref('games/'+CODE+'/meet').transaction(function(cur){if(cur)return;return {ph:'ans',ends:now()+ANS_T,by:by||'',body:body||'',q:(G.mn||0)%3,n:(G.mn||0)+1}}).then(function(r){if(r.committed)db.ref('games/'+CODE).update({state:'meet',mn:(G.mn||0)+1})})}
-function checkWin(){var g=G,L=plist().filter(function(p){return !p.gone}),ai=0,ac=0;L.forEach(function(p){if(p.alive===false)return;if(HOSTSEC[p.uid]&&HOSTSEC[p.uid].imp)ai++;else ac++});
+function checkWin(){var g=G,L=plist(),ai=0,ac=0;L.forEach(function(p){if(p.alive===false)return;if(HOSTSEC[p.uid]&&HOSTSEC[p.uid].imp)ai++;else ac++});
  var td=0;Object.keys(g.tdone||{}).forEach(function(k){if(HOSTSEC[k]&&!HOSTSEC[k].imp)td+=Math.min(TASKS_PER,g.tdone[k]||0)});
  var w=null,why='';if(ai===0){w='crew';why='Tous les Zoros ont été démasqués !'}else if(ai>=ac){w='imp';why='Les Zoros sont aussi nombreux que les scouts.'}else if(g.need&&td>=g.need){w='crew';why='Toutes les tâches du camp sont faites !'}
  if(!w)return false;db.ref('games/'+CODE).update({state:'end',end:{w:w,why:why,roles:HOSTSEC}});return true}
@@ -266,7 +266,7 @@ function draw(){var app=$('app'),h='';var keep=UI==='play'&&$('game')&&G&&G.stat
   h='<div class="scr"><button class="back" id="leave">‹ Quitter la salle</button><div class="card code"><small>CODE DE LA SALLE</small><b>'+esc(CODE)+'</b><small>Partage-le à tes amis</small></div>'+
   '<div class="pl">'+L.map(function(p){return '<div class="p">'+avH(p.uid)+esc(p.name)+(p.uid===G.host?' 👑':'')+'</div>'}).join('')+'</div>'+
   '<div class="hint">'+n+' joueur'+(n>1?'s':'')+(n>=MINP?' · '+Math.max(1,Math.floor(n/4))+' Zoro'+(Math.floor(n/4)>1?'s':''):' · il en faut au moins '+MINP)+'<br>(6 minimum · 20 maximum)'+(n>=MINP&&n<10?'<br>Petite carte (moins de 10 joueurs)':'')+'</div>'+
-  (host?'<button class="btn y" id="start"'+(n<MINP?' disabled':'')+'>▶ Lancer la partie</button>':'<div class="hint">En attente de l’hôte 👑…</div>')+(ERR?'<div class="err">'+esc(ERR)+'</div>':'')+rulesH()+'</div>'}
+  (G.hostGone&&!host?'<div class="hint" style="color:#f5c542">L’hôte 👑 a quitté la page, la salle l’attend.</div>':'')+(host?'<button class="btn y" id="start"'+(n<MINP?' disabled':'')+'>▶ Lancer la partie</button>':'<div class="hint">En attente de l’hôte 👑…</div>')+(ERR?'<div class="err">'+esc(ERR)+'</div>':'')+rulesH()+'</div>'}
  else if(UI==='role'){if(!ROLE)h='<div class="scr"><div class="big">🦊</div><div class="hint">Distribution des rôles…</div></div>';
   else if(ROLE.imp)h='<div class="scr"><div class="role imp"><div class="t">TU ES</div><div class="port">🦊</div><h2>ZORO</h2><div class="fact"><span>Ton but</span>Éliminer les scouts sans te faire repérer</div><div class="fact"><span>Ton problème</span>Tu ne connais pas les personnages… il faudra deviner les réponses !</div><div class="fact"><span>'+((ROLE.mates||[]).length?'Ton complice':'Complice')+'</span>'+((ROLE.mates||[]).map(function(u){return esc((G.players[u]||{}).name||'?')}).join(', ')||'Tu es seul !')+'</div></div><div class="hint">La partie commence dans quelques secondes…</div></div>';
   else{var C=CHARS[ROLE.c];h='<div class="scr"><div class="role"><div class="t">TON PERSONNAGE SECRET</div><div class="port">'+C.e+'</div><h2>'+esc(C.n)+'</h2>'+C.f.map(function(x,i){return '<div class="fact"><span>Question n°'+(i+1)+' · '+x[0]+' '+esc(x[1])+'</span>'+esc(x[2])+'</div>'}).join('')+'</div><div class="hint">Retiens bien ces infos : on va te les demander !<br>Fais tes tâches et démasque les Zoros.</div></div>'}}
@@ -278,10 +278,10 @@ function draw(){var app=$('app'),h='';var keep=UI==='play'&&$('game')&&G&&G.stat
 function refreshHud(){var tl=$('tl');if(!tl)return;var W=world(G.big),imp=ROLE&&ROLE.imp;
  tl.innerHTML='<b>'+(imp?'🦊 Zoro — fais semblant':'Tes tâches')+'</b>'+MYT.map(function(id){var z=W.z.filter(function(x){return x.id===id})[0];return z?'<div class="'+(TDONE[id]?'ok':'')+'">'+(TDONE[id]?'☑':'☐')+' '+esc(z.t)+'</div>':''}).join('')+(imp?'':'<div class="bar"><i style="width:'+totalPct()+'%"></i></div><div style="font-size:10px;color:#cfd8ea;margin-top:3px">Toute la troupe</div>');
  var c=$('clk');if(c){var s=Math.max(0,Math.ceil(((G.nextMeet||0)-now())/1000));c.innerHTML='⏱ '+Math.floor(s/60)+':'+('0'+s%60).slice(-2)+'<br><span style="font-weight:600;color:#cfd8ea">rassemblement</span>'}
- var gh=$('gh');if(gh)gh.innerHTML=amAlive()?'':'<div class="ghost">👻 Tu es un fantôme : finis tes tâches</div>'}
+ var gh=$('gh');if(gh)gh.innerHTML=(G.hostGone?'<div class="ghost" style="top:calc(160px + env(safe-area-inset-top,0px))">⏸ L’hôte 👑 n’est plus sur la page : la partie reprend quand il revient</div>':'')+(amAlive()?'':'<div class="ghost">👻 Tu es un fantôme : finis tes tâches</div>')}
 function totalPct(){var td=0;Object.keys(G.tdone||{}).forEach(function(k){td+=Math.min(TASKS_PER,G.tdone[k]||0)});return G.need?Math.min(100,Math.round(td/(G.need+(G.nImp||0)*TASKS_PER)*100)):0}
 setInterval(function(){if(UI==='play')refreshHud();if(UI==='meet'){var t=$('mt');if(t&&G&&G.meet)t.textContent=Math.max(0,Math.ceil((G.meet.ends-now())/1000))+' s'}},500);
-function meetH(){var m=G.meet||{},L=plist().filter(function(p){return !p.gone}),al=amAlive(),h='<div class="ov"><div class="scr">';
+function meetH(){var m=G.meet||{},L=plist().filter(function(p){return !p.gone}),al=amAlive(),h='<div class="ov"><div class="scr">'+(G.hostGone?'<div class="hint" style="color:#f5c542">⏸ L’hôte 👑 n’est plus sur la page : le jeu reprend quand il revient.</div>':'');
  if(m.ph==='ans'){h+='<div class="mh"><small>RASSEMBLEMENT '+(m.by?'· 🔔 '+esc((G.players[m.by]||{}).name||'')+' a trouvé '+esc((G.players[m.body]||{}).name||'un corps'):'· AUTOMATIQUE')+'</small>'+esc(QS[m.q||0])+'</div>'+(ROLE?'<div class="hint" style="font-size:15px;color:#fff">'+(ROLE.imp?'🦊 Tu n’as pas de carte : bluffe un nombre crédible !':(function(){var x=CHARS[ROLE.c].f[m.q||0];return 'Pour toi ('+esc(CHARS[ROLE.c].n)+') : '+x[0]+' <b>'+esc(x[1])+'</b> ?'})())+'</div>':'');
   var mine=(m.ans||{})[ME.uid];if(!al)h+='<div class="card" style="text-align:center">👻 Tu es éliminé : tu regardes sans répondre.</div>';else if(mine)h+='<div class="card" style="text-align:center">Ta réponse : <b style="color:#f5c542;font-size:22px">'+esc(mine)+'</b><div class="hint">On attend les autres…</div></div>';
   else h+='<div class="card"><input class="inp" id="ans" type="text" inputmode="numeric" maxlength="6" placeholder="?" autocomplete="off" style="letter-spacing:.05em"><button class="btn y" id="sans">Valider</button></div>';

@@ -1,0 +1,23 @@
+name: Supprimer les comptes retirés
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: delete-accounts
+  cancel-in-progress: false
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Effacer les connexions Firebase
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+        run: |
+          if [ -z "$FIREBASE_SA" ]; then echo "Secret FIREBASE_SA absent"; exit 0; fi
+          pip install -q firebase-admin
+          python3 scripts/delete_accounts.py

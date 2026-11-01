@@ -2030,13 +2030,13 @@ function qFinish(){
 function alertQ(t){QZ.msg=t;render()}
 function qAdmin(){
  var U={};Object.keys(QZ.users||{}).forEach(function(k){if(k!==QZ.user.uid)U[k]=QZ.users[k]});var P=Object.keys(U).filter(function(k){return U[k].ok!==true}),A=Object.keys(U).filter(function(k){return U[k].ok===true});
- function row(k,pend){var u=U[k],p=pat(u.patrol);return '<div class="kadr"><span class="knm">'+esc(u.name||'?')+'<i class="kpat" style="background:'+(p?pdfCol(p):'#46178f')+'">'+(p?esc(p.name):'Maîtrise')+'</i></span>'+(pend?'<button class="kab ok" data-act="qok" data-u="'+k+'">Approuver</button>':'')+'<button class="kab no" data-act="qno" data-u="'+k+'">'+(pend?'Refuser':'Retirer')+'</button></div>'}
+ function row(k,pend){var u=U[k],p=pat(u.patrol);return '<div class="kadr"><span class="knm">'+esc(u.name||'?')+'<i class="kpat" style="background:'+(p?pdfCol(p):'#46178f')+'">'+(p?esc(p.name):'Maîtrise')+'</i></span>'+(pend?'<button class="kab ok" data-act="qok" data-u="'+k+'">Approuver</button>':'')+'<button class="kab no" data-act="qno" data-u="'+k+'">'+(QZ.delArm===k?'Supprimer le compte ?':(pend?'Refuser':'Supprimer'))+'</button></div>'}
  A.sort(function(x,y){return (U[x].patrol||'z').localeCompare(U[y].patrol||'z')||String(U[x].name).localeCompare(U[y].name)});
  if(!QZ.users&&!QZ.rsLoad){QZ.rsLoad=1;setTimeout(qBoards,0)}
  var dn=function(k){var u=QZ.users[k]||{};return String(scName(u.sid,u.name||'?'))},all=Object.keys(QZ.users||{}).sort(function(x,y){return dn(x).localeCompare(dn(y),'fr')}),wk=QZ.week||{};
  var rs='<div class="kcard kadm"><b>🔄 Réinitialiser un essai</b><span class="ksub" style="display:block;margin:4px 0 8px">Semaine du '+esc(longDate(qWeek()))+' : efface le début et le score, la personne peut rejouer.</span><select id="qz-rs" style="margin-bottom:8px"><option value="">Choisis une personne…</option>'+all.map(function(k){var u=QZ.users[k],sc=wk[k];return '<option value="'+k+'"'+(QZ.rsU===k?' selected':'')+'>'+esc(scName(u.sid,u.name||'?'))+(sc?' · '+sc.s+' pts':'')+'</option>'}).join('')+'</select>'+
   '<button class="kbtn'+(QZ.rsArm?' kgo':'')+'" data-act="qreset"'+(QZ.busy?' disabled':'')+'>'+(QZ.rsArm?'Confirmer : effacer l’essai de '+esc((QZ.users[QZ.rsU]||{}).name||'')+' ?':'Réinitialiser')+'</button>'+(QZ.rsMsg?'<p class="'+(/Échec|Erreur/.test(QZ.rsMsg)?'kerr':'ksub')+'" style="margin-top:8px">'+esc(QZ.rsMsg)+'</p>':'')+'</div>';
- return rs+'<div class="kcard kadm"><b>👥 Comptes du site ('+A.length+')</b><button class="klink2" data-act="qadm">'+(QZ.admOpen?'Cacher la liste':'Voir la liste')+'</button>'+(QZ.admOpen?A.map(function(k){return row(k,false)}).join(''):'')+(QZ.msg?'<p class="kerr">'+esc(QZ.msg)+'</p>':'')+'</div>';
+ return rs+'<div class="kcard kadm"><b>👥 Comptes du site ('+A.length+')</b><button class="klink2" data-act="qadm">'+(QZ.admOpen?'Cacher la liste':'Voir la liste')+'</button>'+(QZ.admOpen?'<span class="ksub" style="display:block;margin:6px 0">« Supprimer » (2 touches) retire le compte du site, puis sa connexion est effacée de Firebase dans les minutes qui suivent.</span>':'')+(QZ.admOpen?A.map(function(k){return row(k,false)}).join(''):'')+(QZ.msg?'<p class="kerr">'+esc(QZ.msg)+'</p>':'')+'</div>';
 }
 function qClick(b){
  var a=b.dataset.act;if(!a||a.charAt(0)!=='q'||a==='qq')return false;
@@ -2069,8 +2069,10 @@ function qClick(b){
  if(a==='qresume'){var g=QZ.resume;if(!g)return true;QZ.resume=null;var st=qSet();QZ.play={i:g.i,s:g.s,n:g.n,pick:null,t0:Date.now(),start:g.start};if(g.i>=st.qs.length){qFinish();return true}render();qTick();return true}
  if(a==='qpick'){qAnswer(+b.dataset.i);return true}
  if(a==='qcheck'){QZ.ok=null;render();qMe();return true}
- if(a==='qok'||a==='qno'){var id=b.dataset.u,r=firebase.database().ref('quiz/users/'+id+(a==='qok'?'/ok':''));b.disabled=true;
-  (a==='qok'?r.set(true):r.remove()).then(function(){if(a==='qok'&&QZ.users[id])QZ.users[id].ok=true;else delete QZ.users[id];if(id===QZ.user.uid)QZ.ok=a==='qok';render()}).catch(function(){b.disabled=false;alertQ('Échec. As-tu bien mis à jour les règles Firebase ?')});return true}
+ if(a==='qok'||a==='qno'){var id=b.dataset.u,r=firebase.database().ref('quiz/users/'+id+(a==='qok'?'/ok':''));
+  if(a==='qno'&&QZ.delArm!==id){QZ.delArm=id;render();return true}
+  b.disabled=true;var dq={};if(a==='qno'){QZ.delArm=null;dq['quiz/users/'+id]=null;dq['quiz/delq/'+id]={at:firebase.database.ServerValue.TIMESTAMP,name:String((QZ.users[id]||{}).name||'')}}
+  (a==='qok'?r.set(true):firebase.database().ref().update(dq)).then(function(){if(a==='qok'&&QZ.users[id])QZ.users[id].ok=true;else delete QZ.users[id];if(id===QZ.user.uid)QZ.ok=a==='qok';render()}).catch(function(){b.disabled=false;alertQ('Échec. As-tu bien mis à jour les règles Firebase ?')});return true}
  if(a==='qadm'){QZ.admOpen=!QZ.admOpen;render();return true}
  if(a==='qkpq'){QZ.kpOpen=QZ.kpOpen===b.dataset.pid?null:b.dataset.pid;render();return true}
  return false;
@@ -2642,7 +2644,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="112cbfb30b15">
-<script>(function(){var B="112cbfb30b15";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="7aaebb72eb06">
+<script>(function(){var B="7aaebb72eb06";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

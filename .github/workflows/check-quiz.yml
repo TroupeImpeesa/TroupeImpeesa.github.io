@@ -1,0 +1,22 @@
+name: Vérif quiz (temporaire)
+on: workflow_dispatch
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          python3 - <<'PY'
+          import json, urllib.request
+          FB='https://troupe-impeesa-default-rtdb.europe-west1.firebasedatabase.app/quiz/'
+          def get(p):
+              try:
+                  with urllib.request.urlopen(FB+p+'.json?shallow=true',timeout=30) as r: return json.loads(r.read()) or {}
+              except Exception as e: print('ERREUR lecture',p,e); return None
+          S=get('scores'); T=get('starts')
+          if S is None or T is None: raise SystemExit(1)
+          for w in sorted(set(S)|set(T)):
+              s=set(get('scores/'+w) or {}); t=set(get('starts/'+w) or {})
+              print(f'{w}: {len(s)} scores, {len(t)} starts')
+              for u in sorted(s-t): print('  score SANS start :',u)
+              for u in sorted(t-s): print('  start SANS score :',u)
+          PY

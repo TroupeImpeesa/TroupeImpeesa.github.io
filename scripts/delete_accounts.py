@@ -29,3 +29,12 @@ for uid, info in q.items():
         print('Déjà supprimée :', name or uid)
     db.reference('quiz/delq/' + uid).delete()
 print(len(q), 'demande(s) traitée(s)')
+
+# salles du jeu « Who really are you? » de plus de 12 h
+import time
+G = db.reference('games').get(shallow=False) or {}
+old = [c for c, g in G.items() if isinstance(g, dict) and (g.get('created') or 0) < (time.time() - 12 * 3600) * 1000]
+for c in old:
+    db.reference('games/' + c).delete()
+    db.reference('groles/' + c).delete()
+print(len(old), 'salle(s) de jeu supprimée(s)')

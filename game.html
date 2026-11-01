@@ -149,8 +149,8 @@ function enter(c){CODE=c;try{localStorage.setItem('wray-room',JSON.stringify({c:
  pr.transaction(function(cur){if(cur){cur.gone=null;return cur}return {name:myName(),alive:true,j:firebase.database.ServerValue.TIMESTAMP}}).then(function(){
   if(REF)REF.off();REF=db.ref('games/'+c);REF.on('value',onGame,function(e){BUSY='';ERR=fbErr(e,'lire la salle');UI='home';G=null;draw()});onDisc()}).catch(function(e){BUSY='';ERR=fbErr(e,'entrer dans la salle');draw()});}
 function onDisc(){if(!G)return;var pr=db.ref('games/'+CODE+'/players/'+ME.uid);pr.onDisconnect().cancel();pr.child('gone').onDisconnect().set(true);
- if(G.host===ME.uid)db.ref('games/'+CODE+'/hostGone').onDisconnect().set(true)}
-function leave(){if(CODE&&G){if(G.host===ME.uid&&G.state==='lobby')db.ref('games/'+CODE).update({closed:true});else if(G.state==='lobby')db.ref('games/'+CODE+'/players/'+ME.uid).remove();else db.ref('games/'+CODE+'/players/'+ME.uid+'/gone').set(true)}
+ var hg=db.ref('games/'+CODE+'/hostGone');hg.onDisconnect().cancel();if(G.host===ME.uid)hg.onDisconnect().set(true)}
+function leave(){if(CODE&&G){var nx=nextHost();if(G.host===ME.uid&&nx){var u={host:nx,hostGone:null};if(G.state==='lobby')u['players/'+ME.uid]=null;else u['players/'+ME.uid+'/gone']=true;if(HOSTSEC&&G.state!=='lobby')db.ref('groles/'+CODE+'/_all').set(HOSTSEC);db.ref('games/'+CODE).update(u)}else if(G.host===ME.uid&&G.state==='lobby')db.ref('games/'+CODE).update({closed:true});else if(G.state==='lobby')db.ref('games/'+CODE+'/players/'+ME.uid).remove();else db.ref('games/'+CODE+'/players/'+ME.uid+'/gone').set(true)}
  try{localStorage.removeItem('wray-room')}catch(e){}if(REF)REF.off();REF=null;G=null;CODE=null;ROLE=null;HOSTSEC=null;UI='home';stopLoop();try{history.replaceState(null,'','#')}catch(e){}draw()}
 function plist(g){g=g||G;var p=(g&&g.players)||{};return Object.keys(p).map(function(k){var o=p[k];o.uid=k;return o}).sort(function(a,b){return (a.j||0)-(b.j||0)})}
 function colorOf(uid){var L=plist(),i=L.map(function(p){return p.uid}).indexOf(uid);return COLORS[(i<0?0:i)%COLORS.length]}
@@ -159,7 +159,7 @@ function onGame(s){var g=s.val();var prev=G;G=g;BUSY='';
  if(CONN!==false&&(g.players&&g.players[ME.uid]&&g.players[ME.uid].gone||(g.host===ME.uid&&g.hostGone)))here();
 
  if(!g.players||!g.players[ME.uid]){if(UI!=='home'){FLASH={b:'Tu n’es plus dans la salle',s:''};leave()}return}
- if(!prev||prev.state!==g.state)onDisc();
+ if(!prev||prev.state!==g.state||prev.host!==g.host){onDisc();if(g.host===ME.uid)loadSec()}
  if(g.state==='lobby'){ROLE=null;HOSTSEC=null;MYT=[];TDONE={};seenMeetN=-1;UI='lobby';stopLoop()}
  else if(g.state==='role'||g.state==='play'||g.state==='meet'){
   if(!ROLE)loadRole();
@@ -170,6 +170,11 @@ function onGame(s){var g=s.val();var prev=G;G=g;BUSY='';
  if(g.host===ME.uid)hostTick();
  draw()}
 function loadRole(){db.ref('groles/'+CODE+'/'+ME.uid).once('value').then(function(s){ROLE=s.val();if(ROLE&&ROLE.all)HOSTSEC=ROLE.all;if(ROLE&&!MYT.length)pickTasks();draw()})}
+function loadSec(){if(HOSTSEC||!G||G.host!==ME.uid||G.state==='lobby')return;db.ref('groles/'+CODE+'/_all').once('value').then(function(s){if(s.val())HOSTSEC=s.val()}).catch(function(){})}
+/* nouvel hôte si l'hôte n'est plus là depuis 8 s : le joueur présent arrivé en premier prend la main */
+function nextHost(){var L=plist().filter(function(p){return !p.gone&&p.uid!==(G&&G.host)});return L.length?L[0].uid:null}
+var AWAY=0;setInterval(function(){if(!G||!CODE||!ME||G.state==='end'||G.closed)return;var h=G.players&&G.players[G.host],away=!h||h.gone||G.hostGone;if(!away){AWAY=0;return}if(!AWAY)AWAY=Date.now();if(Date.now()-AWAY<8000)return;
+ if(nextHost()!==ME.uid)return;var old=G.host;db.ref('games/'+CODE+'/host').transaction(function(cur){return cur===old?ME.uid:undefined}).then(function(r){if(r.committed){AWAY=0;db.ref('games/'+CODE+'/hostGone').remove();onDisc();loadSec()}})},2000);
 function pickTasks(){var W=world(G.big),z=W.z.slice();var h=0;for(var i=0;i<ME.uid.length;i++)h=(h*31+ME.uid.charCodeAt(i))>>>0;
  z.sort(function(a,b){return ((h^a.id.charCodeAt(0)*977)%101)-((h^b.id.charCodeAt(0)*977)%101)});MYT=z.slice(0,TASKS_PER).map(function(x){return x.id})}
 /* ===== hôte ===== */
@@ -179,7 +184,7 @@ function startGame(){var L=plist().filter(function(p){return !p.gone});if(L.leng
  for(var a=ck.length-1;a>0;a--){var b=Math.floor(Math.random()*(a+1)),tt=ck[a];ck[a]=ck[b];ck[b]=tt}ck=ck.slice(0,Math.max(2,Math.min(ck.length,Math.ceil(crew.length/2))));
  var cs=[];for(var c=0;c<crew.length;c++)cs.push(ck[c%ck.length]);for(var j=cs.length-1;j>0;j--){var q=Math.floor(Math.random()*(j+1)),u=cs[j];cs[j]=cs[q];cs[q]=u}
  imps.forEach(function(id){all[id]={imp:true}});crew.forEach(function(id,i){all[id]={imp:false,c:cs[i]}});
- ids.forEach(function(id){var r=all[id].imp?{imp:true,mates:imps.filter(function(x){return x!==id})}:{imp:false,c:all[id].c};if(id===ME.uid)r.all=all;up['groles/'+CODE+'/'+id]=r});
+ ids.forEach(function(id){var r=all[id].imp?{imp:true,mates:imps.filter(function(x){return x!==id})}:{imp:false,c:all[id].c};if(id===ME.uid)r.all=all;up['groles/'+CODE+'/'+id]=r});up['groles/'+CODE+'/_all']=all;
  var big=ids.length>=10;up['games/'+CODE+'/state']='role';up['games/'+CODE+'/big']=big;up['games/'+CODE+'/nImp']=nImp;up['games/'+CODE+'/need']=crew.length*TASKS_PER;up['games/'+CODE+'/tdone']=null;up['games/'+CODE+'/bodies']=null;up['games/'+CODE+'/meet']=null;up['games/'+CODE+'/end']=null;up['games/'+CODE+'/pos']=null;up['games/'+CODE+'/mn']=0;
  up['games/'+CODE+'/roleEnds']=now()+9000;
  db.ref().update(up).catch(function(){ERR='Impossible de lancer (règles Firebase ?).';draw()})}

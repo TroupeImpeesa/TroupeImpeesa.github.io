@@ -38,3 +38,7 @@ for c in old:
     db.reference('games/' + c).delete()
     db.reference('groles/' + c).delete()
 print(len(old), 'salle(s) de jeu supprimée(s)')
+R = db.reference('rooms').get() or {}
+for k, r in R.items():
+    if not isinstance(r, dict) or (r.get('at') or 0) < (time.time() - 12 * 3600) * 1000:
+        db.reference('rooms/' + k).delete()

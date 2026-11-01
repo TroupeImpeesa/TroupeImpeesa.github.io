@@ -1496,7 +1496,7 @@ function ptsPage(){
 function animalOf(name){return esc(String(name).trim().charAt(0).toUpperCase()||'·')}
 
 /* Espace Maîtrise : toutes les infos de tous les scouts, réservé à la maîtrise */
-var MAI={busy:false,data:null,err:'',pf:'all',sort:'pat'};
+var MAI={busy:false,data:null,err:'',pf:'all',sort:'pat',yr:''};
 function maiOk(){return isChef()&&ACCK&&ACCK.scope==='chef'&&ACCK.dk&&Object.keys(ACCK.dk).length>0}
 function maiBtn(){if(!isChef())return '';return '<button class="cpbtn cpon" data-act="maiopen" style="margin:14px 0 4px"><span class="cpic">'+LOCK+'</span><span class="cptx"><b>Espace Maîtrise</b><span>Toutes les infos de chaque scout, réservé à la maîtrise</span></span><span class="evgo" aria-hidden="true">›</span></button>'}
 function maiKey(pid){return crypto.subtle.importKey('raw',u8(ACCK.dk[pid]),'AES-GCM',false,['decrypt'])}
@@ -1516,14 +1516,16 @@ function maiPage(){
  if(!isChef())return h+'<div class="cpcard"><p class="cplead">Cet espace est réservé à la maîtrise.</p></div>';
  if(!maiOk())return h+'<div class="cpcard"><p class="cplead">Pour voir les infos privées, déconnecte-toi puis reconnecte-toi avec ton compte maîtrise.</p></div>';
  if(!MAI.data){maiLoad();return h+(MAI.err?'<p class="cperr">'+esc(MAI.err)+'</p><button class="btn" data-act="mairetry">Réessayer</button>':'<p class="meta">Chargement et déchiffrement…</p>')}
- var C=MAI.data,L=S.scouts.filter(function(s){return pat(s.patrol)&&(MAI.pf==='all'||s.patrol===MAI.pf)});
+ var C=MAI.data,YRS={};S.scouts.forEach(function(s){var b=pat(s.patrol)&&maiDob((C[s.id]||{}).dob);if(b)YRS[b.y]=(YRS[b.y]||0)+1});var L=S.scouts.filter(function(s){if(!pat(s.patrol)||(MAI.pf!=='all'&&s.patrol!==MAI.pf))return false;if(MAI.yr){var b=maiDob((C[s.id]||{}).dob);return MAI.yr==='?'?!b:!!b&&String(b.y)===MAI.yr}return true});
  var bd=S.scouts.filter(function(s){return pat(s.patrol)}).map(function(s){return {s:s,b:maiDob((C[s.id]||{}).dob)}}).filter(function(x){return x.b&&x.b.days<=30}).sort(function(a,b){return a.b.days-b.b.days});
  if(MAI.sort==='name')L.sort(function(a,b){return a.name.localeCompare(b.name)});else if(MAI.sort==='age')L.sort(function(a,b){var x=maiDob((C[a.id]||{}).dob),y=maiDob((C[b.id]||{}).dob);return (x?x.y*400+x.m*32+x.d:9e9)-(y?y.y*400+y.m*32+y.d:9e9)});
  var miss=S.scouts.filter(function(s){var c=C[s.id]||{};return pat(s.patrol)&&!(c.dob&&(c.phone||c.phone2))}).length;
  h+='<div class="maistats"><div><b>'+S.scouts.filter(function(s){return pat(s.patrol)}).length+'</b><span>scouts</span></div><div><b>'+bd.length+'</b><span>anniv. ≤ 30 j</span></div><div><b>'+miss+'</b><span>fiches incomplètes</span></div></div>';
  if(bd.length)h+='<div class="maibd"><b>🎂 Anniversaires à venir</b>'+bd.map(function(x){return '<div><span>'+esc(x.s.name)+' <span class="meta">· '+esc((pat(x.s.patrol)||{}).name||'')+'</span></span><em>'+(x.b.days===0?'Aujourd’hui ! '+x.b.age+' ans':x.b.days===1?'Demain · '+(x.b.age+1)+' ans':'dans '+x.b.days+' j · '+(x.b.age+1)+' ans')+'</em></div>'}).join('')+'</div>';
  h+='<input class="maiq" id="mai-q" type="search" placeholder="Chercher un nom, un parent, un numéro…" autocomplete="off">';
- h+='<div class="maichips">'+[['all','Tous']].concat(S.patrols.map(function(p){return [p.id,p.name]})).map(function(c){return '<button class="'+(MAI.pf===c[0]?'on':'')+'" data-maipf="'+c[0]+'">'+esc(c[1])+'</button>'}).join('')+'<select data-maisort><option value="pat"'+(MAI.sort==='pat'?' selected':'')+'>Par patrouille</option><option value="name"'+(MAI.sort==='name'?' selected':'')+'>Par nom</option><option value="age"'+(MAI.sort==='age'?' selected':'')+'>Du plus âgé</option></select></div>';
+ h+='<div class="maichips">'+[['all','Tous']].concat(S.patrols.map(function(p){return [p.id,p.name]})).map(function(c){return '<button class="'+(MAI.pf===c[0]?'on':'')+'" data-maipf="'+c[0]+'">'+esc(c[1])+'</button>'}).join('')+'<select data-maisort><option value="pat"'+(MAI.sort==='pat'?' selected':'')+'>Par patrouille</option><option value="name"'+(MAI.sort==='name'?' selected':'')+'>Par nom</option><option value="age"'+(MAI.sort==='age'?' selected':'')+'>Du plus âgé</option></select></div>'+
+ '<div class="maichips">'+[['','Toutes les années']].concat(Object.keys(YRS).sort().map(function(y){return [y,'Né en '+y+' ('+YRS[y]+')']})).concat([['?','Sans date']]).map(function(c){return '<button class="'+(MAI.yr===c[0]?'on':'')+'" data-maiyr="'+c[0]+'">'+esc(c[1])+'</button>'}).join('')+'</div>'+
+ (MAI.yr&&L.length?'<div class="maibd"><b>'+L.length+' scout'+(L.length>1?'s':'')+(MAI.yr==='?'?' sans date de naissance':' nés en '+esc(MAI.yr))+'</b><div style="display:block;border:none;user-select:text;-webkit-user-select:text">'+L.map(function(s){return esc(s.name)+' · '+esc(pat(s.patrol).name)}).join('<br>')+'</div></div>':'');
  h+='<div class="mailist">'+L.map(function(s){var c=C[s.id]||{},p=pat(s.patrol),b=maiDob(c.dob),a=maiAtt(s),nb=s.badgeList?s.badgeList.length:(s.badges||0);
   var q=[s.name,p.name,s.role,c.father,c.mother,c.phone,c.phone2,c.dob].join(' ').toLowerCase();
   return '<div class="maic" data-maiq="'+esc(q)+'" style="--gc:'+col(p)+'"><div class="maih">'+avatar(s,'tav')+'<span><b>'+esc(s.name)+(s.role?' <em>'+esc(s.role)+'</em>':'')+'</b><small><i class="kpat" style="background:'+col(p)+'">'+esc(p.name)+'</i> '+esc(S.stages[s.stage||0]||'')+' · 🏅 '+nb+' · ✅ '+a.k+'/'+a.n+'</small></span></div>'+
@@ -2532,6 +2534,7 @@ document.addEventListener('click',function(ev){
  if(b.dataset.delpatrol){S.patrols=S.patrols.filter(function(p){return p.id!==b.dataset.delpatrol});S.scouts=S.scouts.filter(function(s){return s.patrol!==b.dataset.delpatrol});return touch()}
  if(b.dataset.pdf){exportPDF(b.dataset.pdf);return}
  if(b.dataset.maipf){MAI.pf=b.dataset.maipf;render();return}
+ if(b.hasAttribute('data-maiyr')){MAI.yr=b.dataset.maiyr;render();return}
  if(b.dataset.scout&&!ACC){LOGINWHY='Connecte-toi pour voir la fiche des scouts.';go('login');return}if(b.dataset.scout){go('progress/s-'+b.dataset.scout);var pr=document.querySelector('.profile');if(pr)pr.scrollTop=0;return}
  if(b.dataset.slide){showSlide(+b.dataset.slide);return}
  if(b.dataset.delphoto){S.photos=S.photos.filter(function(x){return x.id!==b.dataset.delphoto});return touch()}
@@ -2629,7 +2632,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="4ec15cf78311">
-<script>(function(){var B="4ec15cf78311";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="c5063ec8b83e">
+<script>(function(){var B="c5063ec8b83e";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

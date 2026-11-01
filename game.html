@@ -124,6 +124,9 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){retur
 function $(id){return document.getElementById(id)}
 try{ACC=JSON.parse(localStorage.getItem('ti-acc')||'null')}catch(e){}
 db.ref('.info/serverTimeOffset').on('value',function(s){SKEW=s.val()||0});
+/* présence : à chaque (re)connexion on se remet « présent » dans la salle */
+var CONN=false;db.ref('.info/connected').on('value',function(s){CONN=s.val()===true;if(CONN&&CODE&&ME&&G){onDisc();here()}});
+function here(){var me=G&&G.players&&G.players[ME.uid];if(me&&me.gone)db.ref('games/'+CODE+'/players/'+ME.uid+'/gone').remove();if(G&&G.host===ME.uid&&G.hostGone)db.ref('games/'+CODE+'/hostGone').remove()}
 firebase.auth().onAuthStateChanged(function(u){ME=u;AUTHOK=true;if(!u){UI='noacc';draw();return}
  if(ACC&&ACC.a&&ACC.a.role==='Viewer'){UI='viewer';draw();return}
  var m=location.hash.match(/^#([A-Z0-9]{4})$/),sv=null;try{sv=JSON.parse(localStorage.getItem('wray-room')||'null')}catch(e){}
@@ -149,7 +152,7 @@ function plist(g){g=g||G;var p=(g&&g.players)||{};return Object.keys(p).map(func
 function colorOf(uid){var L=plist(),i=L.map(function(p){return p.uid}).indexOf(uid);return COLORS[(i<0?0:i)%COLORS.length]}
 function onGame(s){var g=s.val();var prev=G;G=g;BUSY='';
  if(!g||g.closed){FLASH={b:'Salle fermée',s:'L’hôte a fermé la salle.'};leave();return}
- if(g.host===ME.uid&&g.hostGone)db.ref('games/'+CODE+'/hostGone').remove();
+ if(CONN!==false&&(g.players&&g.players[ME.uid]&&g.players[ME.uid].gone||(g.host===ME.uid&&g.hostGone)))here();
 
  if(!g.players||!g.players[ME.uid]){if(UI!=='home'){FLASH={b:'Tu n’es plus dans la salle',s:''};leave()}return}
  if(!prev||prev.state!==g.state)onDisc();

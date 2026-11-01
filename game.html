@@ -126,6 +126,10 @@ try{ACC=JSON.parse(localStorage.getItem('ti-acc')||'null')}catch(e){}
 db.ref('.info/serverTimeOffset').on('value',function(s){SKEW=s.val()||0});
 /* présence : à chaque (re)connexion on se remet « présent » dans la salle */
 var CONN=false;db.ref('.info/connected').on('value',function(s){CONN=s.val()===true;if(CONN&&CODE&&ME&&G){onDisc();here()}});
+/* retour sur la page (changement d'app, onglet, bouton retour) : on se reconnecte et on redevient présent */
+function wake(){if(document.visibilityState==='hidden'||!CODE||!ME)return;try{db.goOffline();db.goOnline()}catch(e){}setTimeout(function(){if(CODE&&G){onDisc();here()}},800)}
+document.addEventListener('visibilitychange',wake);window.addEventListener('pageshow',function(e){if(e.persisted)wake()});
+setInterval(function(){if(document.visibilityState!=='hidden'&&CODE&&G&&ME)here()},4000);
 function here(){var me=G&&G.players&&G.players[ME.uid];if(me&&me.gone)db.ref('games/'+CODE+'/players/'+ME.uid+'/gone').remove();if(G&&G.host===ME.uid&&G.hostGone)db.ref('games/'+CODE+'/hostGone').remove()}
 firebase.auth().onAuthStateChanged(function(u){ME=u;AUTHOK=true;if(!u){UI='noacc';draw();return}
  if(ACC&&ACC.a&&ACC.a.role==='Viewer'){UI='viewer';draw();return}

@@ -118,34 +118,36 @@ var ZB=[ // x,y,w,h en unités monde (grande carte 2200x1640)
 function world(big){return big?{w:2200,h:1640,z:ZB}:{w:2200,h:1100,z:ZB.filter(function(z){return !z.big})}}
 function zc(z){return {x:z.x+z.w/2,y:z.y+z.h/2}}
 /* état */
-var HG=null,ME=null,ACC=null,CODE=null,G=null,ROLE=null,UI='home',ERR='',SKEW=0,REF=null,HOSTSEC=null,LASTMEET=0,pos={x:1100,y:820,vx:0,vy:0},LASTSYNC=0,LASTSENT='',KREADY=0,TASK=null,MYT=[],TDONE={},FLASH=null,keys={},lastFrame=0,OTH={},seenState='',seenMeetN=-1,seenAlive=true,joyV={x:0,y:0},TV=null;
+var HG=null,BUSY='',AUTHOK=false,ME=null,ACC=null,CODE=null,G=null,ROLE=null,UI='home',ERR='',SKEW=0,REF=null,HOSTSEC=null,LASTMEET=0,pos={x:1100,y:820,vx:0,vy:0},LASTSYNC=0,LASTSENT='',KREADY=0,TASK=null,MYT=[],TDONE={},FLASH=null,keys={},lastFrame=0,OTH={},seenState='',seenMeetN=-1,seenAlive=true,joyV={x:0,y:0},TV=null;
 function now(){return Date.now()+SKEW}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function $(id){return document.getElementById(id)}
 try{ACC=JSON.parse(localStorage.getItem('ti-acc')||'null')}catch(e){}
 db.ref('.info/serverTimeOffset').on('value',function(s){SKEW=s.val()||0});
-firebase.auth().onAuthStateChanged(function(u){ME=u;if(!u){UI='noacc';draw();return}
+firebase.auth().onAuthStateChanged(function(u){ME=u;AUTHOK=true;if(!u){UI='noacc';draw();return}
  if(ACC&&ACC.a&&ACC.a.role==='Viewer'){UI='viewer';draw();return}
- var m=location.hash.match(/^#([A-Z0-9]{4})$/);if(m&&UI==='home'){joinRoom(m[1])}else draw()});
+ var m=location.hash.match(/^#([A-Z0-9]{4})$/),sv=null;try{sv=JSON.parse(localStorage.getItem('wray-room')||'null')}catch(e){}
+ if(!m&&sv&&sv.c&&Date.now()-sv.t<12*3600e3)m=[0,sv.c];if(m&&UI==='home'){joinRoom(m[1],true)}else draw()});
 function myName(){var n=ACC&&ACC.a&&ACC.a.name;if(!n&&ME)n=(ME.email||'').split('@')[0];var w=String(n||'Scout').trim().split(/\s+/);return (w[0]+(w[1]?' '+w[1].charAt(0)+'.':'')).slice(0,14)}
 /* ===== salle ===== */
 function genCode(){var A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',s='';for(var i=0;i<4;i++)s+=A[Math.floor(Math.random()*A.length)];return s}
-function createRoom(){ERR='';var c=genCode();db.ref('games/'+c).transaction(function(cur){if(cur)return;return {host:ME.uid,state:'lobby',created:firebase.database.ServerValue.TIMESTAMP,players:{}}}).then(function(r){if(!r.committed){createRoom();return}enter(c)}).catch(function(){ERR='Impossible de créer la salle. Vérifie ta connexion.';draw()})}
-function joinRoom(c){ERR='';c=String(c||'').toUpperCase().trim();if(!/^[A-Z0-9]{4}$/.test(c)){ERR='Le code a 4 caractères.';draw();return}
- db.ref('games/'+c).once('value').then(function(s){var g=s.val();if(!g||g.closed){ERR='Aucune salle avec ce code.';draw();return}
-  var pl=g.players||{};if(!pl[ME.uid]){if(g.state!=='lobby'){ERR='La partie a déjà commencé.';draw();return}if(Object.keys(pl).length>=MAXP){ERR='La salle est pleine (20 joueurs).';draw();return}}
-  enter(c)}).catch(function(){ERR='Impossible de rejoindre. Vérifie ta connexion.';draw()})}
-function enter(c){CODE=c;try{history.replaceState(null,'','#'+c)}catch(e){}
+function createRoom(){if(!ME){ERR='Connexion en cours, réessaie dans une seconde.';draw();return}ERR='';BUSY='create';draw();var c=genCode();db.ref('games/'+c).transaction(function(cur){if(cur)return;return {host:ME.uid,state:'lobby',created:firebase.database.ServerValue.TIMESTAMP,players:{}}}).then(function(r){if(!r.committed){createRoom();return}enter(c)}).catch(function(e){BUSY='';ERR=fbErr(e,'créer la salle');draw()})}
+function fbErr(e,what){return /permission/i.test(String(e&&(e.code||e.message)||''))?'Firebase refuse ('+what+') : les règles du jeu ne sont pas encore publiées.':'Impossible de '+what+'. Vérifie ta connexion.'}
+function joinRoom(c,auto){if(!ME){ERR='Connexion en cours, réessaie dans une seconde.';draw();return}ERR='';c=String(c||'').toUpperCase().trim();if(!/^[A-Z0-9]{4}$/.test(c)){ERR='Le code a 4 caractères.';draw();return}BUSY='join';draw();
+ db.ref('games/'+c).once('value').then(function(s){var g=s.val();if(!g||g.closed){BUSY='';if(auto){try{localStorage.removeItem('wray-room')}catch(e){}try{history.replaceState(null,'','#')}catch(e){}ERR=''}else ERR='Aucune salle avec ce code.';draw();return}
+  var pl=g.players||{};if(!pl[ME.uid]){if(g.state!=='lobby'){BUSY='';if(auto){try{localStorage.removeItem('wray-room')}catch(e){}ERR=''}else ERR='La partie a déjà commencé.';draw();return}if(Object.keys(pl).filter(function(k){return !pl[k].gone}).length>=MAXP){BUSY='';ERR='La salle est pleine (20 joueurs).';draw();return}}
+  enter(c)}).catch(function(e){BUSY='';ERR=fbErr(e,'rejoindre');draw()})}
+function enter(c){CODE=c;try{localStorage.setItem('wray-room',JSON.stringify({c:c,t:Date.now()}))}catch(e){}try{history.replaceState(null,'','#'+c)}catch(e){}
  var pr=db.ref('games/'+c+'/players/'+ME.uid);
  pr.transaction(function(cur){if(cur){cur.gone=null;return cur}return {name:myName(),alive:true,j:firebase.database.ServerValue.TIMESTAMP}}).then(function(){
-  if(REF)REF.off();REF=db.ref('games/'+c);REF.on('value',onGame);onDisc()});}
-function onDisc(){if(!G)return;var pr=db.ref('games/'+CODE+'/players/'+ME.uid);pr.onDisconnect().cancel();if(G.state==='lobby')pr.onDisconnect().remove();else pr.child('gone').onDisconnect().set(true);
+  if(REF)REF.off();REF=db.ref('games/'+c);REF.on('value',onGame,function(e){BUSY='';ERR=fbErr(e,'lire la salle');UI='home';G=null;draw()});onDisc()}).catch(function(e){BUSY='';ERR=fbErr(e,'entrer dans la salle');draw()});}
+function onDisc(){if(!G)return;var pr=db.ref('games/'+CODE+'/players/'+ME.uid);pr.onDisconnect().cancel();pr.child('gone').onDisconnect().set(true);
  if(G.host===ME.uid)db.ref('games/'+CODE+'/hostGone').onDisconnect().set(true)}
 function leave(){if(CODE&&G){if(G.host===ME.uid&&G.state==='lobby')db.ref('games/'+CODE).update({closed:true});else if(G.state==='lobby')db.ref('games/'+CODE+'/players/'+ME.uid).remove();else db.ref('games/'+CODE+'/players/'+ME.uid+'/gone').set(true)}
- if(REF)REF.off();REF=null;G=null;CODE=null;ROLE=null;HOSTSEC=null;UI='home';stopLoop();try{history.replaceState(null,'','#')}catch(e){}draw()}
+ try{localStorage.removeItem('wray-room')}catch(e){}if(REF)REF.off();REF=null;G=null;CODE=null;ROLE=null;HOSTSEC=null;UI='home';stopLoop();try{history.replaceState(null,'','#')}catch(e){}draw()}
 function plist(g){g=g||G;var p=(g&&g.players)||{};return Object.keys(p).map(function(k){var o=p[k];o.uid=k;return o}).sort(function(a,b){return (a.j||0)-(b.j||0)})}
 function colorOf(uid){var L=plist(),i=L.map(function(p){return p.uid}).indexOf(uid);return COLORS[(i<0?0:i)%COLORS.length]}
-function onGame(s){var g=s.val();var prev=G;G=g;
+function onGame(s){var g=s.val();var prev=G;G=g;BUSY='';
  if(!g||g.closed){FLASH={b:'Salle fermée',s:'L’hôte a fermé la salle.'};leave();return}
  if(g.host===ME.uid&&g.hostGone)db.ref('games/'+CODE+'/hostGone').remove();
  if(g.hostGone&&g.host!==ME.uid&&!HG)HG=setTimeout(function(){HG=null;if(G&&G.hostGone){FLASH={b:'Partie arrêtée',s:'L’hôte a quitté la partie.'};leave()}},20000);
@@ -255,11 +257,11 @@ function sendAns(){var v=($('ans')||{}).value;v=String(v||'').trim().slice(0,6);
 function vote(t){if(!amAlive()||!G.meet||G.meet.ph!=='vote'||(G.meet.votes||{})[ME.uid])return;db.ref('games/'+CODE+'/meet/votes/'+ME.uid).set(t)}
 /* ===== affichage ===== */
 function avH(uid,sm){return '<div class="av'+(sm?' sm':'')+'" style="background:'+colorOf(uid)+'"><i></i></div>'}
-function draw(){var app=$('app'),h='';var keep=UI==='play'&&$('game')&&G&&G.state==='play'&&(!!$('bk'))===!!(ROLE&&ROLE.imp);var oldAns=$('ans')?$('ans').value:null;
+function draw(){var app=$('app'),h='';var keep=UI==='play'&&$('game')&&G&&G.state==='play'&&(!!$('bk'))===!!(ROLE&&ROLE.imp);var oldAns=$('ans')?$('ans').value:null;var oldCode=$('code')?$('code').value:null;
  if(keep){refreshHud();drawFlash();return}
  if(UI==='noacc'||UI==='viewer'){h='<div class="scr"><a class="back" href="./">‹ Retour au site</a><div class="logo">WHO REALLY<span>ARE YOU?</span></div><div class="card" style="text-align:center">'+(UI==='viewer'?'Le compte Viewer ne peut pas jouer. Ce jeu est réservé aux scouts et à la maîtrise.':'Connecte-toi d’abord sur le site avec ton compte de la troupe, puis reviens ici.')+'</div><a class="btn y" href="./#login" style="text-decoration:none">Se connecter</a></div>'}
  else if(UI==='home'||!G){h='<div class="scr"><a class="back" href="./">‹ Retour au site</a><div class="logo">WHO REALLY<span>ARE YOU?</span></div><div class="sub">Le jeu de la troupe · juste pour le fun · 0 point</div>'+
-  '<button class="btn y" id="create" style="margin-top:30px">＋ Créer une salle</button><div class="card"><div style="font-weight:800;text-align:center">Rejoindre une salle</div><input class="inp" id="code" maxlength="4" placeholder="CODE" autocomplete="off" autocapitalize="characters"><button class="btn" id="join">Rejoindre</button></div>'+(ERR?'<div class="err">'+esc(ERR)+'</div>':'')+rulesH()+'</div>'}
+  '<button class="btn y" id="create" style="margin-top:30px"'+(BUSY||!ME?' disabled':'')+'>'+(!ME?'Connexion…':BUSY==='create'?'Création…':'＋ Créer une salle')+'</button><div class="card"><div style="font-weight:800;text-align:center">Rejoindre une salle</div><input class="inp" id="code" maxlength="4" placeholder="CODE" autocomplete="off" autocapitalize="characters"><button class="btn" id="join"'+(BUSY||!ME?' disabled':'')+'>'+(BUSY==='join'?'Connexion à la salle…':'Rejoindre')+'</button></div>'+(ERR?'<div class="err">'+esc(ERR)+'</div>':'')+rulesH()+'</div>'}
  else if(UI==='lobby'){var L=plist().filter(function(p){return !p.gone}),host=G.host===ME.uid,n=L.length;
   h='<div class="scr"><button class="back" id="leave">‹ Quitter la salle</button><div class="card code"><small>CODE DE LA SALLE</small><b>'+esc(CODE)+'</b><small>Partage-le à tes amis</small></div>'+
   '<div class="pl">'+L.map(function(p){return '<div class="p">'+avH(p.uid)+esc(p.name)+(p.uid===G.host?' 👑':'')+'</div>'}).join('')+'</div>'+
@@ -272,7 +274,7 @@ function draw(){var app=$('app'),h='';var keep=UI==='play'&&$('game')&&G&&G.stat
   '<div class="joy" id="joy"><i id="knob"></i></div><div class="acts">'+(ROLE&&ROLE.imp?'<button class="act k" id="bk" disabled>ÉLIMINER</button>':'')+'<button class="act u" id="bu" disabled>✋<br>UTILISER</button><button class="act rp" id="br" disabled>🔔<br>SIGNALER</button></div><div id="gh"></div></div>'}
  else if(UI==='meet')h=meetH();
  else if(UI==='end')h=endH();
- app.innerHTML=h;if(oldAns&&$('ans'))$('ans').value=oldAns;bind();drawFlash();if(UI==='play'){cv=$('cv');ctx=cv.getContext('2d');mini=$('mini');refreshHud()}else{cv=null;mini=null}}
+ app.innerHTML=h;if(oldAns&&$('ans'))$('ans').value=oldAns;if(oldCode&&$('code'))$('code').value=oldCode;bind();drawFlash();if(UI==='play'){cv=$('cv');ctx=cv.getContext('2d');mini=$('mini');refreshHud()}else{cv=null;mini=null}}
 function refreshHud(){var tl=$('tl');if(!tl)return;var W=world(G.big),imp=ROLE&&ROLE.imp;
  tl.innerHTML='<b>'+(imp?'🦊 Zoro — fais semblant':'Tes tâches')+'</b>'+MYT.map(function(id){var z=W.z.filter(function(x){return x.id===id})[0];return z?'<div class="'+(TDONE[id]?'ok':'')+'">'+(TDONE[id]?'☑':'☐')+' '+esc(z.t)+'</div>':''}).join('')+(imp?'':'<div class="bar"><i style="width:'+totalPct()+'%"></i></div><div style="font-size:10px;color:#cfd8ea;margin-top:3px">Toute la troupe</div>');
  var c=$('clk');if(c){var s=Math.max(0,Math.ceil(((G.nextMeet||0)-now())/1000));c.innerHTML='⏱ '+Math.floor(s/60)+':'+('0'+s%60).slice(-2)+'<br><span style="font-weight:600;color:#cfd8ea">rassemblement</span>'}

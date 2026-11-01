@@ -1931,7 +1931,10 @@ var QZ_T=20,QZ_DOM='@quiz.troupeimpeesa.github.io';
 function bDate(d){try{return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Beirut',year:'numeric',month:'2-digit',day:'2-digit'}).format(d||new Date())}catch(e){return today()}}
 var QZ_OPEN={'2026-11-02':'2026-11-01T18:00:00+02:00'};
 function qWeek(){var t=bDate(new Date(Date.now()-14*36e5)),d=new Date(t+'T12:00:00Z'),wd=(d.getUTCDay()+6)%7;d.setUTCDate(d.getUTCDate()-wd);var w=d.toISOString().slice(0,10);Object.keys(QZ_OPEN).forEach(function(k){if(k>w&&Date.now()>=Date.parse(QZ_OPEN[k]))w=k});return w}
-function qSet0(){return QZ.data&&QZ.data.weeks?QZ.data.weeks[qWeek()]:null}
+/* questions dans Firebase (quiz/sets/<semaine>) : lisibles seulement à partir de l'ouverture de la semaine */
+var QLD={};
+function qLoadSet(){var w=qWeek();if(QLD[w])return QLD[w];QLD[w]=firebase.database().ref('quiz/sets/'+w).once('value').then(function(s){var v=s.val();if(v&&v.qs){if(!Array.isArray(v.qs))v.qs=Object.keys(v.qs).sort(function(a,b){return a-b}).map(function(k){return v.qs[k]});v.qs.forEach(function(q){if(q.o&&!Array.isArray(q.o))q.o=Object.keys(q.o).sort(function(a,b){return a-b}).map(function(k){return q.o[k]})});QZ.data.weeks[w]=v}}).catch(function(){QLD[w]=null});return QLD[w]}
+function qSet0(){var w=qWeek();if(QZ.data&&QZ.data.weeks&&QZ.data.weeks[w])return QZ.data.weeks[w];if(QZ.data&&!QLD[w]&&typeof firebase!=='undefined'&&firebase.apps&&firebase.apps.length){var pr=qLoadSet();if(pr&&pr.then)pr.then(function(){if(QZ.data.weeks[w]&&tab==='quiz'&&!QZ.play)render()})}return null}
 /* ordre des questions et des réponses mélangé pour chaque joueur (toujours le même pour lui cette semaine) */
 var QSH={k:null,v:null};
 function qSet(){var b=qSet0();if(!b||!b.qs||!QZ.user)return b;var w=qWeek(),k=w+'|'+QZ.user.uid;if(QSH.k===k&&QSH.src===b)return QSH.v;
@@ -1946,8 +1949,8 @@ function qInit(){
  if(QZ.ready||QZ.busy)return;
  if(!/github\.io$/.test(location.hostname)&&!/localhost|127\.0\.0\.1/.test(location.hostname)){QZ.err='off';return}
  QZ.busy=true;
- fetch('data/quiz.json',{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){QZ.data=j}).catch(function(){QZ.data={weeks:{}}})
- .then(fbAuth).then(function(){
+ QZ.data={weeks:{}};
+ fbAuth().then(qLoadSet).then(function(){
   firebase.auth().onAuthStateChanged(function(u){if(!u&&ACC){ACC=null;ACCK=null;accSave();cpLock();if(tab!=='quiz')render()}QZ.user=u;QZ.ok=null;QZ.admin=false;QZ.msg='';QZ.ready=true;QZ.busy=false;QZ.mine=null;QZ.started=false;if(u)qMe();qBoards();render()});
  }).catch(function(){QZ.busy=false;QZ.err='net';if(tab==='quiz')render()});
 }
@@ -2653,7 +2656,7 @@ if(window.claude&&window.claude.use){
 })();
 </script>
 
-<meta data-build="eb6f200c1905">
-<script>(function(){var B="eb6f200c1905";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="d77c28146248">
+<script>(function(){var B="d77c28146248";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

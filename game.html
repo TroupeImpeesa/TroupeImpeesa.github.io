@@ -186,7 +186,7 @@ function here(){if(SPEC)return;var me=G&&G.players&&G.players[ME.uid];if(me&&me.
 firebase.auth().onAuthStateChanged(function(u){ME=u;AUTHOK=true;if(!u){UI='noacc';draw();return}
  var m=location.hash.match(/^#([A-Z0-9]{4})$/),sv=null;try{sv=JSON.parse(localStorage.getItem('wray-room')||'null')}catch(e){}
  if(!m&&sv&&sv.c&&Date.now()-sv.t<12*3600e3)m=[0,sv.c];if(m&&UI==='home'&&!watchOnly()){joinRoom(m[1],true)}else draw()});
-function watchOnly(){return !!(ME&&(ME.email==='impeesa.admin@quiz.troupeimpeesa.github.io'||(ACC&&ACC.a&&ACC.a.role==='Viewer')))}
+function watchOnly(){return !!(ME&&ME.email==='impeesa.admin@quiz.troupeimpeesa.github.io')}
 function myName(){var n=ACC&&ACC.a&&ACC.a.name;if(!n&&ME)n=(ME.email||'').split('@')[0];var w=String(n||'Scout').trim().split(/\s+/);return (w[0]+(w[1]?' '+w[1].charAt(0)+'.':'')).slice(0,14)}
 /* ===== salle ===== */
 function genCode(){var A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',s='';for(var i=0;i<4;i++)s+=A[Math.floor(Math.random()*A.length)];return s}

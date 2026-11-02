@@ -108,7 +108,7 @@ input{font:inherit}
 /* ===== ZORO — jeu de la troupe, juste pour le fun (aucun point) ===== */
 var CFG={apiKey:"AIzaSyAhV_fKJll1oxnyrCJymQOJuceHxPeKqp8",authDomain:"troupe-impeesa.firebaseapp.com",databaseURL:"https://troupe-impeesa-default-rtdb.europe-west1.firebasedatabase.app",projectId:"troupe-impeesa",appId:"1:916383056692:web:e832acceb60a2b2bb3db61"};
 firebase.initializeApp(CFG);var db=firebase.database();
-var MINP=6,MAXP=50,MEET_EVERY=120000,VIS_C=270,VIS_Z=360,ANS_T=20000,VOTE_T=90000,RES_T=6000,KILL_CD=25000,KILL_R=70,USE_R=80,REP_R=95,SPEED=210,TASKS_PER=6,NPL=0,PINT=140,CMAP={};
+var MINP=6,MAXP=50,MEET_EVERY=120000,VIS_C=420,VIS_Z=500,ANS_T=20000,VOTE_T=90000,RES_T=6000,KILL_CD=25000,KILL_R=70,USE_R=80,REP_R=95,SPEED=210,TASKS_PER=6,NPL=0,PINT=140,CMAP={};
 function impFor(n){return Math.max(1,Math.floor(n/(n<=20?4:5)))}
 function meetEvery(){return NPL>20?150000:MEET_EVERY}
 var COLORS=['#e5484d','#1368ce','#26890c','#d89e00','#8a3ffc','#ff7ab6','#00b5ad','#f2f2f2','#ff8c1a','#6b4423','#7ed957','#2b2b2b','#00d1ff','#c0392b','#9b59b6','#16a085','#f1c40f','#e67e22','#34495e','#ff4f9a'];
@@ -310,7 +310,7 @@ function render(){var w=cv.clientWidth,h=cv.clientHeight,dpr=window.devicePixelR
  ctx.restore();
  /* nuit : on ne voit que autour de sa lanterne */
  var px=pos.x-cx,py=pos.y-cy;
- if(fog){var gd=ctx.createRadialGradient(px,py,VR*0.45,px,py,VR);gd.addColorStop(0,'rgba(3,7,14,0)');gd.addColorStop(1,'rgba(3,7,14,.88)');ctx.fillStyle=gd;ctx.fillRect(0,0,w,h)}
+ if(fog){var gd=ctx.createRadialGradient(px,py,VR*0.6,px,py,VR);gd.addColorStop(0,'rgba(3,7,14,0)');gd.addColorStop(1,'rgba(3,7,14,.68)');ctx.fillStyle=gd;ctx.fillRect(0,0,w,h)}
  else{var gv=ctx.createRadialGradient(w/2,h/2,Math.min(w,h)*0.35,w/2,h/2,Math.max(w,h)*0.75);gv.addColorStop(0,'rgba(3,7,14,0)');gv.addColorStop(1,'rgba(3,7,14,.55)');ctx.fillStyle=gv;ctx.fillRect(0,0,w,h)}
  ctx.save();ctx.globalCompositeOperation='lighter';
  /* le feu de camp se voit de loin */

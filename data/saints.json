@@ -2,7 +2,8 @@
  {
   "id": "charbel",
   "n": "Saint Charbel",
-  "q": "Arrêtez, et sachez que je suis Dieu.",
+  "q": "Si vous voulez être sauvés facilement, soyez dévots de la Vierge Marie : elle a le pouvoir de sauver ceux qui l’honorent.",
+  "qs": "Saint Charbel, aux habitants de Bqaa Kafra · l’une de ses 25 paroles reconnues (« Kalimat Charbel », monastère d’Annaya)",
   "ev": [
    [
     "jul3",
@@ -22,7 +23,8 @@
    ]
   ],
   "ar_n": "القديس شربل",
-  "ar_q": "كُفّوا واعلموا أنّي أنا الله.",
+  "ar_q": "إذا بدّكن تخلصوا بسهولة، تعبّدوا لمريم العدرا. هيّ قديرة تخلّص اللي بيتعبّدلها.",
+  "ar_qs": "القديس شربل لأهل بقاعكفرا · من أقواله الـ25 المعترف بها («كلمات شربل»، دير مار مارون عنايا)",
   "ar_ev": [
    "عيد القديس شربل",
    "ولادة القديس شربل (1828)",
@@ -33,7 +35,8 @@
  {
   "id": "rafqa",
   "n": "Sainte Rafqa",
-  "q": "Je complète en ma chair ce qui manque aux épreuves du Christ.",
+  "q": "En union avec la Passion du Christ.",
+  "qs": "Sainte Rafqa, quand on lui a enlevé l’œil sans anesthésie (témoignage du P. Estéphan)",
   "ev": [
    [
     "03-23",
@@ -49,7 +52,8 @@
    ]
   ],
   "ar_n": "القديسة رفقا",
-  "ar_q": "أُتمّ في جسدي ما نقص من شدائد المسيح.",
+  "ar_q": "مع آلام المسيح.",
+  "ar_qs": "القديسة رفقا عند اقتلاع عينها من دون تخدير (شهادة الأب اسطفان)",
   "ar_ev": [
    "عيد القديسة رفقا",
    "ولادة القديسة رفقا (1832)",
@@ -60,6 +64,7 @@
   "id": "hardini",
   "n": "Saint Nimatullah Al-Hardini",
   "q": "Le vrai malin, c’est celui qui sauve son âme.",
+  "qs": "Saint Nimatullah Al-Hardini",
   "ev": [
    [
     "12-14",
@@ -71,7 +76,8 @@
    ]
   ],
   "ar_n": "القديس نعمة الله الحرديني",
-  "ar_q": "الشاطر يخلّص نفسه.",
+  "ar_q": "الشاطر بيخلّص نفسه.",
+  "ar_qs": "القديس نعمة الله الحرديني",
   "ar_ev": [
    "عيد القديس نعمة الله الحرديني",
    "إعلان قداسة القديس الحرديني (2004)"
@@ -80,7 +86,8 @@
  {
   "id": "massabki",
   "n": "Saints frères Massabki",
-  "q": "Nous sommes chrétiens, et nous mourrons chrétiens.",
+  "q": "Le cheikh Abdallah peut prendre mon argent, il peut aussi prendre ma vie, mais ma foi, personne ne me la fera renier.",
+  "qs": "Saint François Massabki, à Damas, le 9 juillet 1860",
   "ev": [
    [
     "07-10",
@@ -92,7 +99,8 @@
    ]
   ],
   "ar_n": "القديسون الإخوة المسابكيون",
-  "ar_q": "نحن مسيحيون، وسنموت مسيحيين.",
+  "ar_q": "يستطيع الشيخ عبدالله أن يأخذ مالي، ويستطيع أيضاً أن يأخذ حياتي، أمّا إيماني فلا أحد يقدر أن يجعلني أنكره.",
+  "ar_qs": "القديس فرنسيس مسابكي، دمشق، 9 تموز 1860",
   "ar_ev": [
    "عيد القديسين الإخوة المسابكيين",
    "إعلان قداسة الإخوة المسابكيين (2024)"
@@ -101,7 +109,8 @@
  {
   "id": "yaacoub",
   "n": "Bienheureux Abouna Yaacoub",
-  "q": "Une prière sans confiance, c’est comme une lettre gardée dans la poche : elle n’arrive jamais.",
+  "q": "Mes enfants, regardez Marie avant de commencer votre travail : elle vous inspirera ce qui est bien.",
+  "qs": "Bienheureux Abouna Yaacoub",
   "ev": [
    [
     "06-26",
@@ -117,7 +126,8 @@
    ]
   ],
   "ar_n": "الطوباوي أبونا يعقوب",
-  "ar_q": "الصلاة من دون ثقة هي كرسالة محفوظة في الجيب: لا تصل أبداً.",
+  "ar_q": "انظروا أولادي إلى مريم قبل مباشرة أعمالكم، تلهمكم بما هو حسن.",
+  "ar_qs": "الطوباوي أبونا يعقوب",
   "ar_ev": [
    "عيد الطوباوي أبونا يعقوب",
    "ولادة أبونا يعقوب (1875)",
@@ -128,6 +138,7 @@
   "id": "douaihy",
   "n": "Bienheureux Patriarche Estephan Douaihy",
   "q": "Nous le redirons à la génération qui vient.",
+  "qs": "Psaume 78 · la mission du Patriarche Douaihy, historien des maronites",
   "ev": [
    [
     "05-03",
@@ -140,6 +151,7 @@
   ],
   "ar_n": "الطوباوي البطريرك اسطفان الدويهي",
   "ar_q": "نُخبر بها الجيل الآتي.",
+  "ar_qs": "المزمور 78 · رسالة البطريرك الدويهي، مؤرّخ الموارنة",
   "ar_ev": [
    "عيد الطوباوي البطريرك الدويهي",
    "تطويب البطريرك الدويهي (2024)"
@@ -149,6 +161,7 @@
   "id": "maron",
   "n": "Saint Maron",
   "q": "Le juste fleurira comme le palmier, il grandira comme un cèdre du Liban.",
+  "qs": "Psaume 92 · le cèdre, symbole de saint Maron et de son peuple",
   "ev": [
    [
     "02-09",
@@ -157,6 +170,7 @@
   ],
   "ar_n": "القديس مارون",
   "ar_q": "الصدّيق كالنخلة يزهو، كالأرز في لبنان ينمو.",
+  "ar_qs": "المزمور 92 · الأرز، رمز القديس مارون وشعبه",
   "ar_ev": [
    "عيد القديس مارون، شفيع الموارنة"
   ]
@@ -164,7 +178,8 @@
  {
   "id": "elie",
   "n": "Saint Élie (Mar Elias)",
-  "q": "Il est vivant, le Seigneur devant qui je me tiens !",
+  "q": "Il est vivant, le Seigneur, le Dieu d’Israël, devant qui je me tiens !",
+  "qs": "Le prophète Élie (1 Rois 17,1)",
   "ev": [
    [
     "07-20",
@@ -172,7 +187,8 @@
    ]
   ],
   "ar_n": "مار الياس",
-  "ar_q": "حيّ هو الربّ الذي أنا واقف أمامه!",
+  "ar_q": "حيّ هو الربّ إله إسرائيل الذي وقفت أمامه!",
+  "ar_qs": "النبي إيليا (الملوك الأول 17: 1)",
   "ar_ev": [
    "عيد مار الياس"
   ]
@@ -181,6 +197,7 @@
   "id": "antoine",
   "n": "Saint Antoine le Grand",
   "q": "Un temps viendra où les hommes deviendront fous ; s’ils voient quelqu’un qui ne l’est pas, ils lui diront « Tu es fou », parce qu’il ne leur ressemble pas.",
+  "qs": "Saint Antoine le Grand (Paroles des Pères du désert)",
   "ev": [
    [
     "01-17",
@@ -189,6 +206,7 @@
   ],
   "ar_n": "القديس أنطونيوس الكبير",
   "ar_q": "سيأتي زمن يجنّ فيه الناس، وإذا رأوا من ليس مجنوناً قالوا له: «أنت مجنون»، لأنّه لا يشبههم.",
+  "ar_qs": "القديس أنطونيوس الكبير (أقوال آباء البرية)",
   "ar_ev": [
    "عيد القديس أنطونيوس الكبير"
   ]
@@ -197,6 +215,7 @@
   "id": "georges",
   "n": "Saint Georges",
   "q": "Revêtez l’armure de Dieu, pour pouvoir tenir bon.",
+  "qs": "Saint Paul (Éphésiens 6,11) · l’armure du chevalier, comme saint Georges",
   "ev": [
    [
     "04-23",
@@ -205,6 +224,7 @@
   ],
   "ar_n": "مار جرجس",
   "ar_q": "البسوا سلاح الله الكامل لتستطيعوا أن تثبتوا.",
+  "ar_qs": "القديس بولس (أفسس 6: 11) · درع الفارس، مثل مار جرجس",
   "ar_ev": [
    "عيد مار جرجس، شفيع الكشافة"
   ]
@@ -213,6 +233,7 @@
   "id": "frassati",
   "n": "Saint Pier Giorgio Frassati",
   "q": "Vers le haut !",
+  "qs": "Saint Pier Giorgio Frassati (« Verso l’alto »)",
   "ev": [
    [
     "07-04",
@@ -225,6 +246,7 @@
   ],
   "ar_n": "القديس بيير جورجيو فراساتي",
   "ar_q": "إلى العُلى!",
+  "ar_qs": "القديس بيير جورجيو فراساتي («Verso l’alto»)",
   "ar_ev": [
    "عيد القديس بيير جورجيو فراساتي",
    "إعلان قداسة القديس فراساتي (2025)"
@@ -234,6 +256,7 @@
   "id": "acutis",
   "n": "Saint Carlo Acutis",
   "q": "Tous naissent comme des originaux, mais beaucoup meurent comme des photocopies.",
+  "qs": "Saint Carlo Acutis",
   "ev": [
    [
     "10-12",
@@ -250,6 +273,7 @@
   ],
   "ar_n": "القديس كارلو أكوتيس",
   "ar_q": "الجميع يولدون أصليين، لكنّ كثيرين يموتون نسخاً مصوّرة.",
+  "ar_qs": "القديس كارلو أكوتيس",
   "ar_ev": [
    "عيد القديس كارلو أكوتيس",
    "ولادة القديس كارلو أكوتيس (1991)",
@@ -260,6 +284,7 @@
   "id": "bosco",
   "n": "Saint Jean Bosco",
   "q": "Il suffit que vous soyez jeunes pour que je vous aime beaucoup.",
+  "qs": "Saint Jean Bosco",
   "ev": [
    [
     "01-31",
@@ -268,14 +293,49 @@
   ],
   "ar_n": "القديس يوحنا بوسكو",
   "ar_q": "يكفي أن تكونوا شباباً لكي أحبّكم كثيراً.",
+  "ar_qs": "القديس يوحنا بوسكو",
   "ar_ev": [
    "عيد القديس يوحنا بوسكو"
+  ]
+ },
+ {
+  "id": "savio",
+  "n": "Saint Dominique Savio",
+  "q": "La mort, mais pas le péché !",
+  "qs": "Saint Dominique Savio, résolution de sa première communion (1849), à 7 ans",
+  "ev": [
+   [
+    "05-06",
+    "Fête de saint Dominique Savio"
+   ],
+   [
+    "04-02",
+    "Naissance de saint Dominique Savio (1842)"
+   ],
+   [
+    "03-09",
+    "Saint Dominique Savio est parti au Ciel (1857)"
+   ],
+   [
+    "06-12",
+    "Canonisation de saint Dominique Savio (1954)"
+   ]
+  ],
+  "ar_n": "القديس دومينيك سافيو",
+  "ar_q": "الموت ولا الخطيئة!",
+  "ar_qs": "القديس دومينيك سافيو، من مقاصد مناولته الأولى (1849)، في السابعة من عمره",
+  "ar_ev": [
+   "عيد القديس دومينيك سافيو",
+   "ولادة القديس دومينيك سافيو (1842)",
+   "انتقال القديس دومينيك سافيو إلى السماء (1857)",
+   "إعلان قداسة القديس دومينيك سافيو (1954)"
   ]
  },
  {
   "id": "francois",
   "n": "Saint François d’Assise",
   "q": "Loué sois-tu, mon Seigneur, avec toutes tes créatures.",
+  "qs": "Saint François d’Assise (Cantique des créatures)",
   "ev": [
    [
     "10-04",
@@ -284,6 +344,7 @@
   ],
   "ar_n": "القديس فرنسيس الأسيزي",
   "ar_q": "كن مسبَّحاً يا ربّي مع جميع خلائقك.",
+  "ar_qs": "القديس فرنسيس الأسيزي (نشيد المخلوقات)",
   "ar_ev": [
    "عيد القديس فرنسيس الأسيزي"
   ]
@@ -292,6 +353,7 @@
   "id": "therese",
   "n": "Sainte Thérèse de Lisieux",
   "q": "Je veux passer mon Ciel à faire du bien sur la terre.",
+  "qs": "Sainte Thérèse de Lisieux",
   "ev": [
    [
     "10-01",
@@ -300,6 +362,7 @@
   ],
   "ar_n": "القديسة تريزيا الطفل يسوع",
   "ar_q": "أريد أن أقضي سمائي في صنع الخير على الأرض.",
+  "ar_qs": "القديسة تريزيا الطفل يسوع",
   "ar_ev": [
    "عيد القديسة تريزيا الطفل يسوع"
   ]
@@ -308,6 +371,7 @@
   "id": "joseph",
   "n": "Saint Joseph",
   "q": "Joseph fit ce que l’ange du Seigneur lui avait prescrit.",
+  "qs": "Évangile de Matthieu (1,24) · saint Joseph ne parle pas, il agit",
   "ev": [
    [
     "03-19",
@@ -316,6 +380,7 @@
   ],
   "ar_n": "القديس يوسف",
   "ar_q": "فعل يوسف كما أمره ملاك الربّ.",
+  "ar_qs": "إنجيل متّى (1: 24) · القديس يوسف لا يتكلّم، بل يعمل",
   "ar_ev": [
    "عيد القديس يوسف"
   ]
@@ -323,7 +388,8 @@
  {
   "id": "michel",
   "n": "Saint Michel Archange",
-  "q": "Qui est comme Dieu ?",
+  "q": "Que le Seigneur te réprime !",
+  "qs": "Saint Michel face au démon (lettre de saint Jude, verset 9)",
   "ev": [
    [
     "09-29",
@@ -331,7 +397,8 @@
    ]
   ],
   "ar_n": "رئيس الملائكة ميخائيل",
-  "ar_q": "من مثل الله؟",
+  "ar_q": "لينتهرك الربّ!",
+  "ar_qs": "رئيس الملائكة ميخائيل في وجه إبليس (رسالة يهوذا، الآية 9)",
   "ar_ev": [
    "عيد رئيس الملائكة ميخائيل"
   ]
@@ -339,7 +406,8 @@
  {
   "id": "jp2",
   "n": "Saint Jean-Paul II",
-  "q": "Le Liban est plus qu’un pays : c’est un message de liberté et un exemple de pluralisme, pour l’Orient comme pour l’Occident.",
+  "q": "Le Liban est plus qu’un pays : c’est un message de liberté et un exemple de pluralisme pour l’Orient comme pour l’Occident !",
+  "qs": "Saint Jean-Paul II, lettre apostolique du 7 septembre 1989",
   "ev": [
    [
     "10-22",
@@ -356,6 +424,7 @@
   ],
   "ar_n": "القديس يوحنا بولس الثاني",
   "ar_q": "لبنان أكثر من بلد: إنّه رسالة حرية ونموذج في التعدّدية للشرق كما للغرب.",
+  "ar_qs": "القديس يوحنا بولس الثاني، رسالة رسولية في 7 أيلول 1989",
   "ar_ev": [
    "عيد القديس يوحنا بولس الثاني",
    "ولادة القديس يوحنا بولس الثاني (1920)",

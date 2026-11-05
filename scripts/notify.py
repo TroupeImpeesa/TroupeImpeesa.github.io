@@ -213,15 +213,15 @@ def main():
                 for i, e in enumerate(s['ev']):
                     if (j3 if e[0] == 'jul3' else e[0]) == md and s not in [x[0] for x in hit]:
                         hit.append((s, i))
-            if not hit:
-                h = 0
-                for c in today:
-                    h = (h * 31 + ord(c)) & 0xFFFFFFFF
-                hit = [(L[h % len(L)], -1)]
-            for s, i in hit:
-                title = ('🎉 ' + s['ev'][i][1]) if i >= 0 else ('🙏 ' + s['n'])
-                body = f"« {s['q']} »\n« {s['ar_q']} »"
-                send(title, body, page='#priere/' + s['id'])
+            if hit:  # fête / date d'un saint : sa vraie phrase, en français + arabe
+                for s, i in hit:
+                    title = '🎉 ' + s['ev'][i][1]
+                    body = f"« {s['q']} »\n» {s['ar_q']} «\n— {s['qs']}"
+                    send(title, body, page='#priere/' + s['id'])
+            else:  # pas de fête : un verset de la Bible en arabe seulement (même choix que le site)
+                V = json.load(open(os.path.join(ROOT, 'data', 'versets.json'), encoding='utf-8'))
+                v = V[(n.date().toordinal() - 719163) % len(V)]
+                send('📖 آية اليوم', f"{v['t']}\n— {v['r']}", page='#home')
         except Exception as e:
             print('::warning::saint du jour', e)
         st['saint'] = today

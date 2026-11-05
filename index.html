@@ -1567,8 +1567,8 @@ function drawer(){if(!MENU)return visSheet()+presSheet();
  return '<div class="drw-bg" data-act="menuclose"></div><div class="bsheet" role="dialog" aria-label="Menu"><div class="bsh">'+(GAMER?'<button class="drwme" data-act="acct"><span class="drwi acav" style="background:#46178f">🎮</span><span><b>'+esc(GAMER.name)+'</b><span>Compte gaming · ZORO</span></span></button>':ACC?'<button class="drwme" data-act="acct">'+accAv('drwi')+'<span><b>'+esc(ACC.name)+'</b><span>Voir mon profil</span></span></button>':'<button class="drwme" data-menunav="login"><span class="drwi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span><b>Se connecter</b><span>Avec ton compte</span></span></button>')+'<button class="drwx" data-act="menuclose" aria-label="Fermer">×</button></div>'+
   '<div class="bgrid">'+L.map(function(x){return '<button class="bgi'+(tab===x[0]?' on':'')+'" data-menunav="'+x[0]+'"><span class="bgic">'+x[1]+'</span><span>'+esc(x[2])+'</span></button>'}).join('')+'</div>'+tabRow()+'</div>'}
 function navIco(id){var x=NAVL.filter(function(n){return n[0]===id})[0];return x?x[1]:''}
-function topNav(){var oid=isChef()?'orders':'order',L=[['progress','Troupe'],['inst','Installations'],['events','Calendrier'],[oid,'Commande'],['plus','Plus']];
- return '<nav class="tnav" aria-label="Navigation">'+L.map(function(x){var on=tab===x[0]||(x[0]==='progress'&&tab==='points')||(x[0]===oid&&(tab==='order'||tab==='orders'));return '<button class="'+(on?'on':'')+'" data-menunav="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</nav>'}
+function topNav(){var oid='order',L=[['progress','Troupe'],['inst','Installations'],['events','Calendrier'],[oid,'Commande'],['plus','Plus']];
+ return '<nav class="tnav" aria-label="Navigation">'+L.map(function(x){var on=tab===x[0]||(x[0]==='progress'&&tab==='points')||(x[0]===oid&&tab==='order');return '<button class="'+(on?'on':'')+'" data-menunav="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</nav>'}
 function tabBar(){return ''}
 function tabBarOld(){if(tab==='quiz'&&QZ.play)return '';return '<nav class="btab" aria-label="Navigation">'+tabRow()+'</nav>'}
 function tabRow(){var on=function(t){return tab===t||(t==='progress'&&tab==='points')};
@@ -1595,11 +1595,11 @@ function plusPage(){var oid=isChef()?'orders':'order';
  var L=[['quiz',navIco('quiz'),'Quiz Prêt','15 questions chaque semaine, nouveau quiz le lundi à 14h.','#4b2bb8'],
   ['game','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 16 0v6a2 2 0 0 1-4 0 2 2 0 0 1-4 0 2 2 0 0 1-4 0 2 2 0 0 1-4 0z"/><circle cx="9" cy="11" r="1.3"/><circle cx="15" cy="11" r="1.3"/></svg>','Zoro','Le jeu de la troupe, juste pour le fun.','#0b1424'],
   ['inst',IINST,'Installations','Les constructions de camp de chaque patrouille, en 3D.','#8a6a14'],
-  [oid,ICART,isChef()?'Commande troupe':'Commande Coop','Uniforme, badges, livres et matériel.','#1b3a6b'],
+  ['order',ICART,'Commande Coop','Passe ta commande : uniforme, badges, livres et matériel.','#1b3a6b'],
   ['history',navIco('history'),'Histoire','Toutes les maîtrises et HP, année par année.','#2c5d8a'],
   ['events',navIco('events'),'Calendrier','Réunions, camps et sorties.','#c8353c'],
   ['progress',navIco('progress'),'Troupe','Patrouilles, membres et points.','#0f2342']];
- if(isChef()&&ACC&&ACC.u!==QZ_ADMIN)L.splice(4,0,['order',ICART,'Ma commande','Ta commande à la Coop.','#1b3a6b']);
+ if(isChef())L.splice(4,0,['orders',IBOX,'Commande troupe','Toutes les commandes des membres.','#0f2342']);
  if(typeof UNI!=='undefined'&&today()<=UNI.hideAfter)L.push(['uni',navIco('quiz'),'Université Impeesa','La formation de la troupe.','#46178f']);
  L.push(ACC||GAMER?['me','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>','Mon profil','Ton compte, tes badges et tes présences.','#3d7d7a']:['login','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>','Se connecter','Avec ton compte de la troupe.','#3d7d7a']);
  return '<div class="plg">'+L.map(function(x){return '<button class="plc" data-menunav="'+x[0]+'" style="--pc:'+x[4]+'"><span class="pi">'+x[1]+'</span><span><b>'+esc(x[2])+'</b><span class="d">'+esc(x[3])+'</span></span><span class="ch" aria-hidden="true">›</span></button>'}).join('')+'</div>'+
@@ -1716,7 +1716,7 @@ function home(){
  var N=S.news.slice().reverse().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:0}).slice(0,editing?30:3);
  h+='<section class="hsec" style="margin-top:8px"><div class="hsh"><div><small>Classement</small><h2>Les patrouilles</h2></div><button data-menunav="progress">Tout voir →</button></div>'+homeRank()+'</section>';
  h+=knotSvg();
- var oid=isChef()?'orders':'order';
+ var oid='order';
  h+='<section class="hsec"><div class="hsh"><div><small>Pour ta patrouille</small><h2>Prépare le camp</h2></div></div><div class="hduo">'+
   '<button class="htl2 coop" data-menunav="'+oid+'"><svg class="bg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.4"><path d="M3 4h2l2.5 11h10L20 8H6.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg><span><small>Coop des Scouts du Liban</small><b>Commande Coop</b><p>Uniforme, badges, livres et matériel de camp.</p></span><span class="go">Commander →</span></button>'+
   '<button class="htl2 inst" data-menunav="inst"><svg class="bg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round"><path d="M4 21L12 3l8 18M7 14h10M12 3v18"/></svg><span><small>Rondins, brelages et mesures</small><b>Installations</b><p>Les constructions de camp de chaque patrouille, en 3D.</p></span><span class="go">Voir les plans →</span></button>'+
@@ -3027,7 +3027,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="e955aae1f2b7">
-<script>(function(){var B="e955aae1f2b7";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="eb7c2c79a9d9">
+<script>(function(){var B="eb7c2c79a9d9";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

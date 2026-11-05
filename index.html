@@ -294,6 +294,7 @@ input,select,textarea{font:16px var(--body);padding:9px 10px;border:1px solid va
 .tpod{display:flex;align-items:flex-end;gap:8px;background:var(--surface);border-radius:22px;box-shadow:var(--shadow);padding:16px 10px 0;overflow:hidden}
 .tpod button{flex:1;border:none;background:none;text-align:center;cursor:pointer;color:var(--fg);padding:0;font-family:var(--body)}.tpod em{font-style:normal;font-size:28px;display:block}.tpod b{display:block;font:800 13px var(--body);margin-top:2px}.tpod span{display:block;font:700 12px var(--body);color:var(--muted)}
 .tpod u{display:block;margin-top:8px;border-radius:12px 12px 0 0;color:#fff;font:900 22px var(--display);text-decoration:none;padding-top:8px;animation:tgrow .7s cubic-bezier(.3,.7,.2,1) both;transform-origin:bottom}@keyframes tgrow{from{transform:scaleY(0)}to{transform:none}}
+.tpod{justify-content:center;gap:6px}.tpod button{flex:1 1 0;min-width:0}.tpod b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tpod u{width:46px;margin-left:auto;margin-right:auto;font-size:18px}
 .tgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .tpc{position:relative;overflow:hidden;border:none;border-radius:22px;height:150px;padding:14px;color:#fff;text-align:left;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;box-shadow:var(--shadow);background:linear-gradient(135deg,color-mix(in srgb,var(--gc) 85%,#000),color-mix(in srgb,var(--gc) 70%,#fff));font-family:var(--body);transition:transform .15s}
 .tpc:active{transform:scale(.97)}.tpc .tpn b{display:block;font:900 20px var(--display)}.tpc .tpn small{font:600 12px var(--body);opacity:.9}
@@ -1969,8 +1970,8 @@ function progress(){
  if(S.staff&&S.staff.length)h+='<button class="tmai" data-group="staff"><span><b>Maîtrise</b><small>'+S.staff.map(function(m){return esc(m.name.split(' ')[0])}).join(', ')+'</small></span><span class="faces">'+S.staff.map(function(m){return m.photo?'<img src="'+m.photo+'" alt="">':''}).join('')+'</span><span class="mgo">›</span></button>';
  if(S.commissaires&&S.commissaires.length)h+='<button class="tmai" data-group="comm" style="margin-top:8px"><span><b>Commissaires</b><small>'+S.commissaires.map(function(m){return esc(m.name.split(' ')[0])}).join(', ')+'</small></span><span class="mgo">›</span></button>';
  h+='<div style="height:12px"></div>';
- var P3=L.slice(0,3);
- if(P3.length===3&&(TT[P3[0].id]||0)>0){var ord=[P3[1],P3[0],P3[2]],ht=[64,88,46];
+ var P3=L.slice(0,4);
+ if(P3.length>=3&&(TT[P3[0].id]||0)>0){var ord=[P3[1],P3[0],P3[2]].concat(P3[3]?[P3[3]]:[]),ht=[66,90,48,32];
   h+='<div class="tpod">'+ord.map(function(p,i){var r=rkOf(p);return '<button data-group="'+p.id+'"><em class="pbadge" style="background:'+col(p)+'">'+esc(p.name.charAt(0))+'</em><b>'+esc(p.name)+'</b><span>'+(ACC?'<span data-count="'+(TT[p.id]||0)+'" data-ck="pod'+p.id+'">'+fmtPts(TT[p.id]||0)+'</span>'+' pts':ptsL(0))+'</span><u style="height:'+ht[i]+'px;background:'+col(p)+'">'+r+'</u></button>'}).join('')+'</div>'}
  h+='<div class="tgrid">'+L.map(function(p){var M=S.scouts.filter(function(x){return x.patrol===p.id}),r=rkOf(p);
   return '<button class="tpc" data-group="'+p.id+'" style="--gc:'+col(p)+'"><span class="trk">'+(r===1?'1er':r+'e')+'</span><span class="pbadge tpb" style="background:'+col(p)+'">'+esc(p.name.charAt(0))+'</span><span class="tpn"><b>'+esc(p.name)+'</b><small>'+M.length+' membres · '+(ACC?fmtPts(TT[p.id]||0)+' pts':ptsL(0))+'</small></span><span class="tavs">'+M.slice(0,3).map(function(x){var f=S.faces[x.id];return '<i>'+(f?'<img src="'+f+'" alt="">':esc(initials(x.name)))+'</i>'}).join('')+(M.length>3?'<i>+'+(M.length-3)+'</i>':'')+'</span><span class="tem">'+patEmoji(p.name)+'</span></button>'}).join('')+'</div>';

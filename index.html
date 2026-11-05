@@ -823,6 +823,7 @@ h2{font-size:28px}
 .hhero .sdots{top:auto;bottom:70px;right:max(16px,env(safe-area-inset-right,0px))}
 /* section heads */
 .hsec{margin-top:44px}
+.plc.lk{opacity:.6}.plc.lk .pi{filter:grayscale(1)}.plc.lk .ch{font-size:15px}
 #boot{position:fixed;inset:0;z-index:9999;background:#fff;display:grid;place-items:center;transition:opacity .45s ease}#boot.out{opacity:0;pointer-events:none}
 .bootin{display:flex;flex-direction:column;align-items:center;gap:26px;opacity:0;transform:translateY(6px);transition:opacity .35s ease,transform .35s ease}.bootin.ok{opacity:1;transform:none}
 .bootin img{display:block;width:168px;height:168px;object-fit:contain;image-rendering:auto}
@@ -1702,7 +1703,8 @@ function plusPage(){var oid=isChef()?'orders':'order';
  if(isChef())L.splice(4,0,['orders',IBOX,'Commande troupe','Toutes les commandes des membres.','#0f2342']);
  if(typeof UNI!=='undefined'&&today()<=UNI.hideAfter)L.push(['uni',navIco('quiz'),'Université Impeesa','La formation de la troupe.','#46178f']);
  L.push(ACC||GAMER?['me','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>','Mon profil','Ton compte, tes badges et tes présences.','#3d7d7a']:['login','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>','Se connecter','Avec ton compte de la troupe.','#3d7d7a']);
- return '<div class="plg">'+L.map(function(x){return '<button class="plc" data-menunav="'+x[0]+'" style="--pc:'+x[4]+'"><span class="pi">'+x[1]+'</span><span><b>'+esc(x[2])+'</b><span class="d">'+esc(x[3])+'</span></span><span class="ch" aria-hidden="true">›</span></button>'}).join('')+'</div>'+
+ var LK=ACC?[]:GAMER?['quiz']:['quiz','game'];
+ return '<div class="plg">'+L.map(function(x){var lk=LK.indexOf(x[0])>=0;return '<button class="plc'+(lk?' lk':'')+'" data-menunav="'+(lk?'login':x[0])+'" style="--pc:'+x[4]+'"><span class="pi">'+x[1]+'</span><span><b>'+esc(x[2])+'</b><span class="d">'+(lk?'Connecte-toi pour y accéder.':esc(x[3]))+'</span></span><span class="ch" aria-hidden="true">'+(lk?'🔒':'›')+'</span></button>'}).join('')+'</div>'+
   '<div class="plfoot"><div><b>'+esc(S.troop)+'</b><span>troupeimpeesavpj@gmail.com</span></div></div>'}
 function pageBand(){if(tab==='quiz'&&QZ.play)return '';
  var n=(S.scouts||[]).length,B={progress:[esc(S.season)+(n?' · '+n+' scouts':''),'La troupe','Touche une patrouille pour voir ses points par réunion.'],

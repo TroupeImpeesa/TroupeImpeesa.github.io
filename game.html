@@ -128,17 +128,17 @@ var ZB=[
  {id:'mat',r:0,c:1,n:'Mât des couleurs',e:'🚩',w:480,h:320,ts:[['Monter le drapeau','hold','🚩'],['Hisser la bannière','drag','🎌','🚩'],['Code morse au mât','simon','📡']]},
  {id:'tr',r:0,c:2,n:'Tentes Requins & Castor',e:'⛺',w:500,h:340,ts:[['Ranger la tente','seq','⛺'],['Vérifier les cordes','tap','🪢'],['Trouver la boussole','find','🧭','🧭']]},
  {id:'tg',r:0,c:3,n:'Tour de guet',e:'🗼',w:460,h:330,ts:[['Signal lumineux','simon','🔦'],['Repérer l’aigle','drag','🔭','🦅'],['Monter à la tour','hold','🪜']]},
- {id:'nd',r:1,c:0,n:'Atelier nœuds',e:'🪢',w:480,h:330,ts:[['Dessine un nœud plat','knot','🪢','plat'],['Dessine un nœud de chaise','knot','➰','chaise'],['Démêler la corde','tap','🧶']]},
+ {id:'nd',r:1,c:0,n:'Atelier nœuds',e:'🪢',w:480,h:330,ts:[['Faire un nœud plat','knot','🪢','plat'],['Faire un nœud de chaise','knot','➰','chaise'],['Démêler la corde','tap','🧶']]},
  {id:'feu',r:1,c:1,n:'Feu de camp',e:'🔥',w:450,h:440,round:1,ts:[['Allumer le feu','tap','🔥'],['Ramasser des cailloux','find','🪨','🪨'],['Chant du soir','simon','🎵']]},
  {id:'int',r:1,c:2,n:'Intendance',e:'🍳',w:480,h:330,ts:[['Préparer le repas','hold','🍳'],['Laver la vaisselle','tap','🧽'],['Ranger les provisions','seq','🥫']]},
  {id:'lac',r:1,c:3,n:'Lac',e:'🌊',w:500,h:360,water:1,ts:[['Pagayer le canoë','tap','🛶'],['Pêcher un poisson','drag','🎣','🐟'],['Remplir les seaux','hold','🪣']]},
  {id:'for',r:2,c:0,n:'Forêt profonde',e:'🌲',w:520,h:360,ts:[['Ramasser du bois','tap','🪵'],['Trouver les champignons','find','🍄','🍄'],['Suivre les traces','simon','🐾']]},
- {id:'ins',r:2,c:1,n:'Installation',e:'🏕️',w:480,h:330,ts:[['Dessine un brêlage carré','knot','🔨','brel'],['Planter les piquets','drag','🔨','📍'],['Monter la table','hold','🪑']]},
+ {id:'ins',r:2,c:1,n:'Installation',e:'🏕️',w:480,h:330,ts:[['Faire un brêlage carré','knot','🔨','brel'],['Planter les piquets','drag','🔨','📍'],['Monter la table','hold','🪑']]},
  {id:'riv',r:2,c:2,n:'Rivière',e:'🏞️',w:520,h:360,water:1,ts:[['Remplir les gourdes','hold','💧'],['Filtrer l’eau','seq','🫗'],['Traverser à gué','drag','🥾','🪨']]},
  {id:'cl',r:2,c:3,n:'Clairière des lucioles',e:'✨',w:480,h:340,glow:1,ts:[['Attraper les lucioles','find','✨','✨'],['Lire les étoiles','simon','⭐'],['Allumer les lanternes','tap','🏮']]},
  {id:'gr',r:3,c:0,n:'Grotte',e:'🕳️',w:480,h:330,cave:1,ts:[['Trouver la sortie','simon','🦇'],['Allumer la torche','hold','🔥'],['Trouver le cristal','find','💎','💎']]},
  {id:'ru',r:3,c:1,n:'Ruines anciennes',e:'🏛️',w:500,h:340,ruin:1,ts:[['Déchiffrer le symbole','simon','🗿'],['Ouvrir le coffre','seq','🗝️'],['Dégager les pierres','tap','🪨']]},
- {id:'pt',r:3,c:2,n:'Pont de cordes',e:'🌉',w:480,h:330,ts:[['Dessine un nœud de cabestan','knot','🪵','cab'],['Traverser le pont','drag','🚶','🏁'],['Tendre la corde','hold','🪢']]},
+ {id:'pt',r:3,c:2,n:'Pont de cordes',e:'🌉',w:480,h:330,ts:[['Faire un nœud de cabestan','knot','🪵','cab'],['Traverser le pont','drag','🚶','🏁'],['Tendre la corde','hold','🪢']]},
  {id:'cg',r:3,c:3,n:'Cabane du garde',e:'🛖',w:480,h:330,ts:[['Trouver la clé','find','🗝️','🗝️'],['Message radio','simon','📻'],['Rallumer le poêle','tap','🪵']]}];
 /* ===== 4 cartes : Été (forêt de nuit), Pâques (forêt de printemps), Noël (dans le local), Aventure (jungle) ===== */
 function Z(id,r,c,n,e,fl,ts,w,h){var o={id:id,r:r,c:c,n:n,e:e,w:w||(id==='feu'?450:490),h:h||(id==='feu'?440:340),ts:ts};if(id==='feu')o.round=1;for(var k in (fl||{}))o[k]=fl[k];return o}
@@ -147,33 +147,33 @@ var ZPAQ=[
  Z('ch',0,1,'Chapelle de la forêt','⛪',0,[['Sonner la cloche','tap','🔔'],['Allumer le cierge pascal','hold','🕯️'],['Chant d’Alléluia','simon','🎵']]),
  Z('lp',0,2,'Prairie des lapins','🐇',0,[['Nourrir le lapin','drag','🥕','🐇'],['Trouver les poussins','find','🐣','🐣'],['Compter les lapins','seq','🐇']]),
  Z('vg',0,3,'Verger en fleurs','🌸',0,[['Cueillir les tulipes','find','🌷','🌷'],['Secouer le cerisier','tap','🌳'],['Remplir le panier','drag','🌸','🧺']]),
- Z('nd',1,0,'Atelier nœuds','🪢',0,[['Dessine un nœud en huit','knot','➰','huit'],['Dessine un nœud de cabestan','knot','🪵','cab'],['Enrouler la corde','hold','🧶']]),
+ Z('nd',1,0,'Atelier nœuds','🪢',0,[['Faire un nœud en huit','knot','➰','huit'],['Faire un nœud de cabestan','knot','🪵','cab'],['Enrouler la corde','hold','🧶']]),
  Z('feu',1,1,'Feu de Pâques','🔥',0,[['Allumer le feu nouveau','tap','🔥'],['Ramasser des brindilles','find','🪵','🪵'],['Veillée pascale','simon','🎵']]),
  Z('pe',1,2,'Atelier œufs peints','🎨',0,[['Peindre un œuf','hold','🎨'],['Décorer les œufs','seq','🥚'],['Laver les pinceaux','tap','🖌️']]),
  Z('et',1,3,'Étang','🦆',{water:1},[['Pagayer le canoë','tap','🛶'],['Remplir les seaux','hold','🪣'],['Sauver le caneton','drag','🛶','🦆']]),
  Z('jq',2,0,'Bois des jonquilles','🌼',0,[['Ramasser du bois','tap','🪵'],['Trouver les jonquilles','find','🌼','🌼'],['Suivre les traces','simon','🐾']]),
- Z('ins',2,1,'Installation','🏕️',0,[['Dessine un brêlage carré','knot','🔨','brel'],['Monter la table','hold','🪑'],['Planter les piquets','drag','🔨','📍']]),
+ Z('ins',2,1,'Installation','🏕️',0,[['Faire un brêlage carré','knot','🔨','brel'],['Monter la table','hold','🪑'],['Planter les piquets','drag','🔨','📍']]),
  Z('rs',2,2,'Ruisseau','🏞️',{water:1},[['Remplir les gourdes','hold','💧'],['Traverser à gué','drag','🥾','🪨'],['Filtrer l’eau','seq','🫗']]),
  Z('cr',2,3,'Colline des Rameaux','🌿',{glow:1},[['Tresser les rameaux','tap','🌿'],['Lire le ciel','simon','⭐'],['Planter la croix','hold','✝️']]),
  Z('tr',3,0,'Terrier','🕳️',{cave:1},[['Trouver la sortie','simon','🦔'],['Allumer la lampe','hold','🔦'],['Trouver les carottes','find','🥕','🥕']]),
  Z('ml',3,1,'Vieux moulin','🏚️',{ruin:1},[['Ouvrir le coffre','seq','🗝️'],['Tourner la roue','hold','⚙️'],['Dégager les pierres','tap','🪨']]),
- Z('pt',3,2,'Pont de cordes','🌉',0,[['Dessine un nœud plat','knot','🪢','plat'],['Tendre la corde','hold','🪢'],['Traverser le pont','drag','🚶','🏁']]),
+ Z('pt',3,2,'Pont de cordes','🌉',0,[['Faire un nœud plat','knot','🪢','plat'],['Tendre la corde','hold','🪢'],['Traverser le pont','drag','🚶','🏁']]),
  Z('cb',3,3,'Cabane du chef','🛖',0,[['Trouver le nid','find','🪺','🪺'],['Message radio','simon','📻'],['Rallumer le poêle','tap','🪵']])];
 var ZNOEL=[
  Z('pb',0,0,'Coin Poney & Boa','🛋️',0,[['Ranger les sacs','seq','🎒'],['Trouver les gants','find','🧤','🧤'],['Gonfler les matelas','tap','🛏️']]),
  Z('sc',0,1,'Salle des couleurs','🚩',0,[['Plier le drapeau','hold','🚩'],['Accrocher l’étoile','drag','⭐','🎄'],['Code morse','simon','📡']]),
  Z('rc',0,2,'Coin Requins & Castor','🛋️',0,[['Ranger la malle','seq','🧳'],['Emballer les cadeaux','tap','🎁'],['Trouver les chaussettes','find','🧦','🧦']]),
  Z('bd',0,3,'Salle des badges','🏅',0,[['Coudre un badge','hold','🪡'],['Trier les badges','seq','🏅'],['Décorer la porte','drag','🎀','🚪']]),
- Z('nd',1,0,'Atelier nœuds','🪢',0,[['Dessine un nœud de chaise','knot','➰','chaise'],['Dessine un nœud plat','knot','🪢','plat'],['Démêler la guirlande','tap','💡']]),
+ Z('nd',1,0,'Atelier nœuds','🪢',0,[['Faire un nœud de chaise','knot','➰','chaise'],['Faire un nœud plat','knot','🪢','plat'],['Démêler la guirlande','tap','💡']]),
  Z('feu',1,1,'Grande salle · cheminée','🔥',0,[['Allumer la cheminée','tap','🔥'],['Trouver les bûches','find','🪵','🪵'],['Chant de Noël','simon','🎵']]),
  Z('cu',1,2,'Cuisine','🍪',0,[['Cuire les biscuits','hold','🍪'],['Chocolat chaud','tap','☕'],['Ranger les provisions','seq','🥫']]),
  Z('cp',1,3,'Chapelle · crèche','⛪',{glow:1},[['Placer le mouton','drag','🐑','🛖'],['Allumer les bougies','hold','🕯️'],['Messe de minuit','simon','⭐']]),
  Z('jx',2,0,'Salle de jeux','🎲',0,[['Ranger les jeux','seq','🎲'],['Lancer le dé','tap','🎲'],['Trouver le ballon','find','⚽','⚽']]),
- Z('bt',2,1,'Atelier bricolage','🔨',0,[['Dessine un brêlage carré','knot','🔨','brel'],['Scier la planche','hold','🪚'],['Planter les clous','tap','🔨']]),
+ Z('bt',2,1,'Atelier bricolage','🔨',0,[['Faire un brêlage carré','knot','🔨','brel'],['Scier la planche','hold','🪚'],['Planter les clous','tap','🔨']]),
  Z('sp',2,2,'Salle du sapin','🎄',0,[['Décorer le sapin','drag','🔴','🎄'],['Trouver les boules','find','🔴','🔴'],['Allumer les lumières','hold','💡']]),
  Z('bi',2,3,'Bibliothèque','📚',0,[['Trouver le carnet de chants','find','📖','📖'],['Ranger les livres','seq','📚'],['Lire la carte','simon','🗺️']]),
  Z('gn',3,0,'Grenier','🕸️',{cave:1},[['Trouver la lampe','find','🔦','🔦'],['Monter l’échelle','hold','🪜'],['Chasser l’araignée','tap','🕷️']]),
- Z('rm',3,1,'Réserve matériel','📦',{ruin:1},[['Compter les tentes','seq','⛺'],['Dessine un nœud de cabestan','knot','🪵','cab'],['Porter les caisses','hold','📦']]),
+ Z('rm',3,1,'Réserve matériel','📦',{ruin:1},[['Compter les tentes','seq','⛺'],['Faire un nœud de cabestan','knot','🪵','cab'],['Porter les caisses','hold','📦']]),
  Z('pn',3,2,'Atelier du Père Noël','🎅',0,[['Écrire les étiquettes','seq','✏️'],['Emballer un cadeau','tap','🎁'],['Poser le cadeau','drag','🎁','🎄']]),
  Z('en',3,3,'Entrée enneigée','⛄',{snow:1},[['Déblayer la neige','tap','❄️'],['Faire un bonhomme de neige','hold','⛄'],['Trouver la clé','find','🗝️','🗝️']])];
 var ZAV=[
@@ -181,11 +181,11 @@ var ZAV=[
  Z('tp',0,1,'Temple perdu','🛕',{ruin:1},[['Déchiffrer les glyphes','simon','🗿'],['Ouvrir la porte secrète','seq','🗝️'],['Échanger l’idole','drag','💰','🗿']]),
  Z('cs',0,2,'Cascade','🌊',{water:1},[['Remplir les gourdes','hold','💧'],['Rejoindre l’île','drag','🛶','🏝️'],['Pêcher','tap','🎣']]),
  Z('vo',0,3,'Volcan','🌋',{lava:1},[['Mesurer la chaleur','hold','🌡️'],['Trouver l’obsidienne','find','🪨','🪨'],['Signal de fumée','simon','💨']]),
- Z('ps',1,0,'Pont suspendu','🌉',0,[['Dessine un nœud de cabestan','knot','🪵','cab'],['Réparer les planches','tap','🪵'],['Traverser le pont','drag','🚶','🏁']]),
+ Z('ps',1,0,'Pont suspendu','🌉',0,[['Faire un nœud de cabestan','knot','🪵','cab'],['Réparer les planches','tap','🪵'],['Traverser le pont','drag','🚶','🏁']]),
  Z('feu',1,1,'Feu du camp de base','🔥',0,[['Allumer le feu','tap','🔥'],['Trouver du silex','find','🪨','🪨'],['Chant de l’aventure','simon','🎵']]),
  Z('jg',1,2,'Jungle épaisse','🌴',0,[['Couper les lianes','tap','🌿'],['Trouver le perroquet','find','🦜','🦜'],['Suivre les traces','simon','🐾']]),
- Z('ma',1,3,'Marais','🐊',{water:1},[['Éviter le croco','drag','🥾','🪨'],['Dessine un brêlage (radeau)','knot','🛶','brel'],['Pousser la perche','hold','🪵']]),
- Z('ty',2,0,'Tyrolienne','🧗',0,[['Dessine un nœud en huit','knot','➰','huit'],['Dessine un nœud de chaise','knot','🪢','chaise'],['Glisser jusqu’en bas','hold','🧗']]),
+ Z('ma',1,3,'Marais','🐊',{water:1},[['Éviter le croco','drag','🥾','🪨'],['Faire un brêlage (radeau)','knot','🛶','brel'],['Pousser la perche','hold','🪵']]),
+ Z('ty',2,0,'Tyrolienne','🧗',0,[['Faire un nœud en huit','knot','➰','huit'],['Faire un nœud de chaise','knot','🪢','chaise'],['Glisser jusqu’en bas','hold','🧗']]),
  Z('ct',2,1,'Carte au trésor','🗺️',{glow:1},[['Assembler la carte','seq','🗺️'],['Lire les étoiles','simon','⭐'],['Marquer le trésor','drag','📍','❌']]),
  Z('cy',2,2,'Canyon','🏜️',{sand:1},[['Escalader la paroi','hold','🧗'],['Trouver le fossile','find','🦴','🦴'],['Lancer la corde','tap','🪢']]),
  Z('oa',2,3,'Oasis','🏝️',{water:1},[['Remplir les outres','hold','💧'],['Cueillir les noix de coco','find','🥥','🥥'],['Abreuver le chameau','drag','🪣','🐪']]),
@@ -210,36 +210,14 @@ var MK=['ete','paq','noel','av'],EXMAP='ete';
 function mk(){var m=G&&G.map;return MAPS[m]?m:'ete'}
 function zcol(q){var Z0=MAPS[mk()].th.z,k=q.water?'water':q.id==='feu'?'feu':q.cave?'cave':q.ruin?'ruin':q.glow?'glow':q.lava?'lava':q.snow?'snow':q.sand?'sand':'def';return Z0[k]||Z0.def}
 function mapPickH(sel,can,attr){return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">'+MK.map(function(k){var M=MAPS[k],on=k===sel;return '<button class="btn" '+(can?attr+'="'+k+'"':'disabled')+' style="margin:0;padding:12px 6px;font-size:15px;'+(on?'background:#f5c542;color:#10203a;opacity:1;':'')+'">'+M.e+' '+M.n+'<br><span style="font-size:11px;font-weight:700;color:'+(on?'#10203a':'#9fb0cc')+'">'+M.d+'</span></button>'}).join('')+'</div>'}
-/* ===== nœuds à dessiner ===== */
-function kL(a){return a}
-function kA(cx,cy,r,a0,a1){var o=[],n=Math.max(6,Math.ceil(Math.abs(a1-a0)*r/8));for(var i=0;i<=n;i++){var a=(a0+(a1-a0)*i/n)*Math.PI/180;o.push([cx+Math.cos(a)*r,cy+Math.sin(a)*r])}return o}
-function kCR(p){var o=[];for(var i=0;i<p.length-1;i++){var a=p[i-1]||p[i],b=p[i],c=p[i+1],d=p[i+2]||c;for(var t=0;t<1;t+=0.1){var t2=t*t,t3=t2*t;o.push([0.5*(2*b[0]+(-a[0]+c[0])*t+(2*a[0]-5*b[0]+4*c[0]-d[0])*t2+(-a[0]+3*b[0]-3*c[0]+d[0])*t3),0.5*(2*b[1]+(-a[1]+c[1])*t+(2*a[1]-5*b[1]+4*c[1]-d[1])*t2+(-a[1]+3*b[1]-3*c[1]+d[1])*t3)])}}o.push(p[p.length-1]);return o}
-function kRS(p,s){var o=[p[0]],acc=0;for(var i=1;i<p.length;i++){var a=p[i-1],b=p[i],d=Math.hypot(b[0]-a[0],b[1]-a[1]);while(acc+d>=s){var t=(s-acc)/d;a=[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];o.push(a);d=Math.hypot(b[0]-a[0],b[1]-a[1]);acc=0}acc+=d}var L=p[p.length-1],Z0=o[o.length-1];if(Math.hypot(L[0]-Z0[0],L[1]-Z0[1])>2)o.push(L);return o}
-function kCat(){var o=[];for(var i=0;i<arguments.length;i++)o=o.concat(arguments[i]);return o}
+/* ===== nœuds : remettre les étapes dans l'ordre ===== */
 var KNOTS={
- plat:{n:'nœud plat',tip:'Deux boucles qui s’emboîtent : trace la corde 1 puis la corde 2.',s:function(){return [kCat([[20,70],[200,70]],kA(200,110,40,-90,90),[[20,150]]),kCat([[280,92],[100,92]],kA(100,110,18,-90,-270),[[280,128]])]}},
- huit:{n:'nœud en huit',tip:'Fais un « 8 » avec la corde.',s:function(){var p=[[25,205],[110,196]];for(var i=0;i<=64;i++){var t=Math.PI+i/64*Math.PI*2;p.push([150+62*Math.sin(2*t),112-82*Math.cos(t)])}p.push([190,196],[275,205]);return [kCR(p)]}},
- chaise:{n:'nœud de chaise',tip:'Descends, fais la petite boucle, puis la grande, et reviens autour de la corde.',s:function(){return [kCat([[150,12],[150,62]],kA(150,84,22,-90,270),[[150,112]],kA(150,160,48,-90,270),kCR([[150,112],[176,100],[180,64],[150,44],[122,60],[128,92],[142,104]]))]}},
- cab:{n:'nœud de cabestan',tip:'Enroule deux fois la corde autour du bâton en croisant.',pole:1,s:function(){return [kCR([[15,62],[110,60],[162,66],[178,88],[160,104],[132,104],[124,122],[142,140],[172,150],[220,156],[285,160]])]}},
- brel:{n:'brêlage carré',tip:'Fais deux tours en losange autour des deux bâtons.',cross:1,s:function(){return [kCat([[40,30],[150,58]],[[204,110],[150,162],[96,110],[150,64],[208,110],[150,168],[90,110],[150,70]],[[250,32]])]}}};
-function knotPts(id){var K=KNOTS[id]||KNOTS.plat;return K.s().map(function(st){return kRS(st,7)})}
-function drawKnot(T){var c=$('kcv');if(!c)return;var x=c.getContext('2d'),K=KNOTS[T.kn]||KNOTS.plat,dpr=window.devicePixelRatio||1;if(c.width!==300*dpr||c.height!==220*dpr){c.width=300*dpr;c.height=220*dpr}x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,300,220);x.fillStyle='#152238';x.fillRect(0,0,300,220);
- x.lineCap='round';x.lineJoin='round';
- if(K.pole){x.fillStyle='#6b4423';x.fillRect(138,8,24,204);x.fillStyle='#8a5a30';x.fillRect(142,8,6,204)}
- if(K.cross){x.fillStyle='#6b4423';x.fillRect(138,10,24,200);x.fillRect(20,98,260,24);x.fillStyle='#8a5a30';x.fillRect(142,10,6,200);x.fillRect(20,102,260,6)}
- T.pts.forEach(function(st,si){x.strokeStyle='rgba(255,255,255,.16)';x.lineWidth=16;x.beginPath();st.forEach(function(p,i){i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1])});x.stroke();x.setLineDash([6,8]);x.strokeStyle='rgba(255,255,255,.55)';x.lineWidth=2;x.stroke();x.setLineDash([]);
-  if(T.pts.length>1){x.fillStyle='rgba(255,255,255,.7)';x.font='800 13px Inter,sans-serif';x.textAlign='center';x.fillText(String(si+1),st[0][0]+(st[0][0]<150?-10:10),st[0][1]-12)}});
- T.pts.forEach(function(st,si){var n=si<T.si?st.length:si===T.si?T.kk:0;if(n<2)return;[['#5a3b1a',13],['#d9a55a',9],['#f0c98a',3]].forEach(function(L){x.strokeStyle=L[0];x.lineWidth=L[1];x.beginPath();for(var i=0;i<n;i++)i?x.lineTo(st[i][0],st[i][1]):x.moveTo(st[i][0],st[i][1]);x.stroke()})});
- var st=T.pts[T.si];if(st){var q=st[Math.min(T.kk,st.length-1)],nx=st[Math.min(T.kk+4,st.length-1)],t=performance.now()/1000;x.beginPath();x.arc(q[0],q[1],11+3*Math.sin(t*6),0,7);x.fillStyle='rgba(74,222,128,.35)';x.fill();x.beginPath();x.arc(q[0],q[1],6,0,7);x.fillStyle='#4ade80';x.fill();
-  if(nx!==q){var an=Math.atan2(nx[1]-q[1],nx[0]-q[0]);x.save();x.translate(q[0]+Math.cos(an)*20,q[1]+Math.sin(an)*20);x.rotate(an);x.beginPath();x.moveTo(7,0);x.lineTo(-5,-6);x.lineTo(-5,6);x.closePath();x.fillStyle='#4ade80';x.fill();x.restore()}}
- var tot=0,dn=0;T.pts.forEach(function(s,i){tot+=s.length;dn+=i<T.si?s.length:i===T.si?T.kk:0});var pr=$('kp');if(pr)pr.style.width=Math.round(dn/tot*100)+'%'}
-function bindKnot(T){var c=$('kcv');if(!c)return;var down=false;
- function at(ev){var r=c.getBoundingClientRect();return [(ev.clientX-r.left)*300/r.width,(ev.clientY-r.top)*220/r.height]}
- function go(ev){if(!down||TASK!==T)return;var p=at(ev),st=T.pts[T.si];if(!st)return;var best=-1;for(var j=T.kk;j<Math.min(st.length,T.kk+12);j++){if(Math.hypot(st[j][0]-p[0],st[j][1]-p[1])<30)best=j}
-  if(best>=0){T.kk=best+1;if(T.kk>=st.length){T.si++;T.kk=0;if(T.si>=T.pts.length){down=false;drawKnot(T);finishTask();return}}}drawKnot(T)}
- c.addEventListener('pointerdown',function(ev){ev.preventDefault();down=true;try{c.setPointerCapture(ev.pointerId)}catch(e){}go(ev)});c.addEventListener('pointermove',go);
- ['pointerup','pointercancel'].forEach(function(n){c.addEventListener(n,function(){down=false})});
- (function an(){if(TASK!==T||!$('kcv'))return;drawKnot(T);T.raf=requestAnimationFrame(an)})()}
+ plat:{n:'nœud plat',st:['Croise la corde gauche sur la droite','Fais un tour','Croise la droite sur la gauche','Fais un tour et serre']},
+ chaise:{n:'nœud de chaise',st:['Fais une petite boucle : le terrier','Le lapin sort du terrier','Il fait le tour de l’arbre','Il rentre dans le terrier, on serre']},
+ huit:{n:'nœud en huit',st:['Fais une boucle','Passe le bout derrière la corde','Rentre le bout dans la boucle','Serre : ça fait un 8']},
+ cab:{n:'nœud de cabestan',st:['Fais un tour autour du bâton','Croise par-dessus','Fais un 2e tour','Passe le bout sous le croisement et serre']},
+ brel:{n:'brêlage carré',st:['Nœud de cabestan sur un bâton','3 tours en carré autour des 2 bâtons','2 tours d’étranglement entre les bâtons','Finis par un nœud de cabestan']}};
+function knotOrder(){var a=[0,1,2,3];for(var i=3;i>0;i--){var r=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[r];a[r]=t}return a}
 /* ===== glisser un objet sur la cible ===== */
 function dragPlace(T){T.ix=30+Math.random()*60;T.iy=150+Math.random()*40;T.tx=170+Math.random()*90;T.ty=30+Math.random()*90}
 function bindDrag(T){var a=$('dga'),it=$('dgi');if(!a||!it)return;var on=false,ox=0,oy=0;
@@ -511,7 +489,7 @@ function doEmer(){if(EXPLORE||!canEmer())return;db.ref('games/'+CODE+'/emer/'+ME
 /* ===== tâches ===== */
 var SYM=['🦉','🐺','🦇','🌙'];
 function openTask(){var z=NEAR.zone;if(!z)return;keys={};joyV={x:0,y:0};TASK={z:z,k:z.k,step:0,need:z.k==='tap'?8:z.k==='seq'?6:z.k==='drag'?3:100,order:null,hold:0};
- if(z.k==='knot'){TASK.kn=z.f;TASK.pts=knotPts(z.f);TASK.si=0;TASK.kk=0}
+ if(z.k==='knot'){TASK.kn=z.f;TASK.ord=knotOrder();TASK.need=4}
  if(z.k==='drag')dragPlace(TASK);
  if(z.k==='find'){var D=MAPS[mk()].dk.filter(function(x){return x!==z.f}),g=[],nt=4;for(var q=0;q<12;q++)g.push(q<nt?z.f:D[Math.floor(Math.random()*D.length)]);for(var q2=11;q2>0;q2--){var r2=Math.floor(Math.random()*(q2+1)),t2=g[q2];g[q2]=g[r2];g[r2]=t2}TASK.grid=g;TASK.got={};TASK.need=nt}
  if(z.k==='simon'){var sq=[];for(var si=0;si<4;si++)sq.push(Math.floor(Math.random()*4));TASK.seq=sq;TASK.ph='show';TASK.need=4}
@@ -522,14 +500,14 @@ function drawTask(){var e=$('tk');if(!e){e=document.createElement('div');e.id='t
  if(T.k==='tap')h+='<p>Touche vite '+T.need+' fois !</p><button class="hold" id="tap">'+T.z.e+'</button><div class="prog"><i style="width:'+(T.step/T.need*100)+'%"></i></div>';
  else if(T.k==='hold')h+='<p>Garde le doigt appuyé jusqu’au bout.</p><button class="hold" id="hold">'+T.z.e+'</button><div class="prog"><i id="hp" style="width:0%"></i></div>';
  else if(T.k==='find')h+='<p>Touche les '+T.need+' '+T.z.f+' cachés</p><div class="tgrid" style="grid-template-columns:repeat(4,1fr)">'+T.grid.map(function(x,i){return '<button data-g="'+i+'" class="'+(T.got[i]?'ok':'')+'">'+x+'</button>'}).join('')+'</div>';
- else if(T.k==='knot'){var KN=KNOTS[T.kn]||KNOTS.plat;h+='<p>Suis la corde avec ton doigt depuis le point vert.<br>'+esc(KN.tip)+'</p><canvas id="kcv" style="width:100%;max-width:300px;aspect-ratio:300/220;border-radius:14px;touch-action:none;display:block;margin:0 auto"></canvas><div class="prog"><i id="kp"></i></div>'}
+ else if(T.k==='knot'){var KN=KNOTS[T.kn]||KNOTS.plat;h+='<p>Touche les étapes du '+esc(KN.n)+' dans le bon ordre ('+T.step+' / 4)</p><div style="display:grid;gap:8px">'+T.ord.map(function(i){var ok=i<T.step;return '<button data-kn="'+i+'" style="text-align:left;padding:13px 14px;border-radius:14px;font:700 14px Inter,sans-serif;color:#fff;background:'+(ok?'#2f9e62':'var(--card2)')+'">'+(ok?'✅ '+(i+1)+'. ':'🪢 ')+esc(KN.st[i])+'</button>'}).join('')+'</div><div class="prog"><i style="width:'+(T.step/4*100)+'%"></i></div>'}
  else if(T.k==='drag')h+='<p>Glisse '+T.z.e+' sur '+T.z.f+' ('+T.step+' / '+T.need+')</p><div id="dga" style="position:relative;width:100%;max-width:300px;aspect-ratio:300/220;margin:0 auto;border-radius:14px;background:#152238;touch-action:none;overflow:hidden"><div id="dgt" style="position:absolute;left:'+(T.tx/3)+'%;top:'+(T.ty/2.2)+'%;width:76px;height:76px;margin:-38px 0 0 -38px;border:3px dashed rgba(255,255,255,.5);border-radius:50%;display:grid;place-items:center;font-size:34px">'+T.z.f+'</div><div id="dgi" style="position:absolute;left:'+(T.ix/3)+'%;top:'+(T.iy/2.2)+'%;width:66px;height:66px;margin:-33px 0 0 -33px;display:grid;place-items:center;font-size:42px;touch-action:none;cursor:grab">'+T.z.e+'</div></div><div class="prog"><i style="width:'+(T.step/T.need*100)+'%"></i></div>';
  else if(T.k==='simon')h+='<p>'+(T.ph==='show'?'👀 Regarde bien la séquence…':'Répète la séquence ('+T.step+' / 4)')+'</p><div class="tgrid simon">'+MAPS[mk()].sym.map(function(x,i){return '<button data-s="'+i+'" id="sy'+i+'">'+x+'</button>'}).join('')+'</div>';
  else h+='<p>Touche les chiffres dans l’ordre : 1 → 6</p><div class="tgrid">'+T.order.map(function(n){return '<button data-n="'+n+'" class="'+(n<=T.step?'ok':'')+'">'+n+'</button>'}).join('')+'</div>';
  h+='<button class="btn" id="tclose" style="margin-top:16px">Fermer</button></div>';e.innerHTML=h;
  $('tclose').onclick=function(){closeTask()};
  if(T.k==='find')[].forEach.call(e.querySelectorAll('[data-g]'),function(b){b.onclick=function(){var i=+b.dataset.g;if(T.grid[i]===T.z.f&&!T.got[i]){T.got[i]=1;T.step++;if(T.step>=T.need)finishTask();else drawTask()}else{b.style.background='#e5484d';setTimeout(function(){b.style.background=''},250)}}});
- if(T.k==='knot'){drawKnot(T);bindKnot(T)}
+ if(T.k==='knot')[].forEach.call(e.querySelectorAll('[data-kn]'),function(b){b.onclick=function(){var i=+b.dataset.kn;if(i<T.step)return;if(i===T.step){T.step++;if(T.step>=4)finishTask();else drawTask()}else{b.style.background='#e5484d';setTimeout(function(){T.step=0;drawTask()},350)}}})
  if(T.k==='drag')bindDrag(T);
  if(T.k==='simon'){if(T.ph==='show'){var si2=0;(function nx(){if(TASK!==T)return;if(si2>=T.seq.length){T.ph='in';drawTask();return}var bt=$('sy'+T.seq[si2]);setTimeout(function(){if(TASK!==T)return;if(bt)bt.classList.add('lit');setTimeout(function(){if(bt)bt.classList.remove('lit');si2++;nx()},480)},si2?180:600)})()}
   [].forEach.call(e.querySelectorAll('[data-s]'),function(b){b.onclick=function(){if(T.ph!=='in')return;var i=+b.dataset.s;if(i===T.seq[T.step]){T.step++;b.classList.add('lit');setTimeout(function(){b.classList.remove('lit')},200);if(T.step>=T.seq.length)finishTask();else{var pp=e.querySelector('.tk p');if(pp)pp.textContent='Répète la séquence ('+T.step+' / 4)'}}else{b.style.background='#e5484d';setTimeout(function(){T.step=0;T.ph='show';drawTask()},400)}}})}
@@ -610,7 +588,7 @@ function endH(){var e=G.end||{},R=e.roles||{},host=G.host===ME.uid,me=R[ME.uid]|
  var h='<div class="scr"><div class="big">'+(e.w==='imp'?'🦊':'⚜️')+'</div><div class="mh" style="margin-top:10px"><small>'+(won?'VICTOIRE !':'DÉFAITE')+'</small>'+(e.w==='imp'?'Les Zoros gagnent':'Les scouts gagnent')+'</div><div class="hint">'+esc(e.why||'')+'</div><div style="margin-top:14px">';
  plist().forEach(function(p){var r=R[p.uid]||{};h+='<div class="rl">'+avH(p.uid,1)+esc(p.name)+(p.alive===false?(p.ejected?' 🚪':' 🧊'):'')+'<em class="'+(r.imp?'i':'')+'">'+(r.imp?'Zoro':esc((CHARS[r.c]||{}).n||'Scout'))+'</em></div>'});
  return h+'</div>'+(host?'<button class="btn y" id="again">↻ Rejouer avec la même salle</button>':'<div class="hint">L’hôte peut relancer une partie.</div>')+'<button class="btn" id="leave">Quitter</button></div>'}
-function rulesH(){return '<div class="card rules"><b style="font-size:16px">📜 Les règles</b><p>👥 De <b>6 à 50 joueurs</b>. L’hôte crée la salle et partage le code. <b>1 Zoro pour 4 joueurs</b> (1 pour 5 au-delà de 20). Plus il y a de monde, plus la carte est grande (jusqu’à 16 lieux).</p><p>🗺️ L’hôte choisit la <b>carte</b> : ☀️ <b>Été</b> (la forêt de nuit), 🐣 <b>Pâques</b> (la forêt de printemps), 🎄 <b>Noël</b> (dans le local scout) ou 🧭 <b>Aventure</b> (l’expédition dans la jungle).</p><p>🌙 Tu vois seulement autour de ta lanterne. Le feu (la cheminée à Noël) brille de loin, et la flèche jaune te guide vers ta prochaine tâche. 🪢 Pour les nœuds, <b>dessine-les</b> avec ton doigt !</p><p>⚜️ Les <b>scouts</b> reçoivent un personnage secret : Baden-Powell, Saint Georges, le Père Jacques Sevin, Abouna Yaacoub, ou un animal de patrouille (Castor, Boa, Poney, Requin), avec 3 infos chiffrées. <b>Retiens-les !</b> Plusieurs scouts ont le même personnage.</p><p>🦊 Les <b>Zoros</b> n’ont pas de personnage. Ils figent les scouts en douce avec <b>« W2af Prêt ! »</b> : le scout figé ne bouge plus, il regarde seulement.</p><p>🏕️ Dans le camp, fais tes tâches (★ jaune). Tu trouves un scout figé 🧊 ? Touche <b>Signaler</b>. Chaque joueur a aussi <b>1 réunion d’urgence 🚨</b>, à appeler près du feu (ou de la cheminée).</p><p>🔥 À chaque <b>rassemblement</b> (signalement ou toutes les 2 min, 2 min 30 au-delà de 20 joueurs), tout le monde répond à une question sur son personnage. Les réponses s’affichent ensemble, puis on <b>vote</b> : 1 min 30 pour accuser et se défendre dans le 💬 chat (seuls les vivants parlent).</p><p>🏆 Les scouts gagnent s’ils éjectent tous les Zoros ou finissent toutes les tâches. Les Zoros gagnent s’ils sont aussi nombreux que les scouts.</p><p style="color:#9fb0cc">Juste pour le fun : ce jeu ne rapporte aucun point.</p></div>'}
+function rulesH(){return '<div class="card rules"><b style="font-size:16px">📜 Les règles</b><p>👥 De <b>6 à 50 joueurs</b>. L’hôte crée la salle et partage le code. <b>1 Zoro pour 4 joueurs</b> (1 pour 5 au-delà de 20). Plus il y a de monde, plus la carte est grande (jusqu’à 16 lieux).</p><p>🗺️ L’hôte choisit la <b>carte</b> : ☀️ <b>Été</b> (la forêt de nuit), 🐣 <b>Pâques</b> (la forêt de printemps), 🎄 <b>Noël</b> (dans le local scout) ou 🧭 <b>Aventure</b> (l’expédition dans la jungle).</p><p>🌙 Tu vois seulement autour de ta lanterne. Le feu (la cheminée à Noël) brille de loin, et la flèche jaune te guide vers ta prochaine tâche. 🪢 Pour les nœuds, remets les étapes dans le bon ordre !</p><p>⚜️ Les <b>scouts</b> reçoivent un personnage secret : Baden-Powell, Saint Georges, le Père Jacques Sevin, Abouna Yaacoub, ou un animal de patrouille (Castor, Boa, Poney, Requin), avec 3 infos chiffrées. <b>Retiens-les !</b> Plusieurs scouts ont le même personnage.</p><p>🦊 Les <b>Zoros</b> n’ont pas de personnage. Ils figent les scouts en douce avec <b>« W2af Prêt ! »</b> : le scout figé ne bouge plus, il regarde seulement.</p><p>🏕️ Dans le camp, fais tes tâches (★ jaune). Tu trouves un scout figé 🧊 ? Touche <b>Signaler</b>. Chaque joueur a aussi <b>1 réunion d’urgence 🚨</b>, à appeler près du feu (ou de la cheminée).</p><p>🔥 À chaque <b>rassemblement</b> (signalement ou toutes les 2 min, 2 min 30 au-delà de 20 joueurs), tout le monde répond à une question sur son personnage. Les réponses s’affichent ensemble, puis on <b>vote</b> : 1 min 30 pour accuser et se défendre dans le 💬 chat (seuls les vivants parlent).</p><p>🏆 Les scouts gagnent s’ils éjectent tous les Zoros ou finissent toutes les tâches. Les Zoros gagnent s’ils sont aussi nombreux que les scouts.</p><p style="color:#9fb0cc">Juste pour le fun : ce jeu ne rapporte aucun point.</p></div>'}
 function drawFlash(){var e=$('fl');if(FLASH){if(!e){e=document.createElement('div');e.id='fl';e.className='flash';document.body.appendChild(e);e.onclick=function(){FLASH=null;e.remove()}}e.innerHTML='<b>'+esc(FLASH.b)+'</b><span>'+esc(FLASH.s||'')+'</span><span style="font-size:12px;margin-top:20px">Touche pour continuer</span>'}else if(e)e.remove()}
 function bind(){var b;
  if(b=$('create'))b.onclick=createRoom;

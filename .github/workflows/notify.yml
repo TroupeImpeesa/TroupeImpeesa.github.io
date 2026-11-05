@@ -6,6 +6,10 @@ on:
     - cron: '7 17 * * *'
     - cron: '7 18 * * *'
     - cron: '21 18 * * *'
+    # 7h Beyrouth : phrase du saint du jour (hiver UTC+2 / été UTC+3)
+    - cron: '2 4 * * *'
+    - cron: '2 5 * * *'
+    - cron: '19 5 * * *'
   workflow_dispatch:
     inputs:
       verify:

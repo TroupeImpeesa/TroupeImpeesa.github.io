@@ -25,6 +25,7 @@ QF1 = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1]
 QFULL = 10
 AUTO_FROM, AUTO_MIN, AUTO_PTS = '2026-10-17', 10, 10
 DAILY_HOUR = 20
+SAINT_HOUR = 7
 DRY = os.environ.get('DRY') == '1'
 NAMES = {}  # sid -> nom affiché sur le site
 
@@ -105,9 +106,9 @@ def totals(S, U, A, today, cur):
     return t
 
 
-def send(title, body, uid=None):
+def send(title, body, uid=None, page=None):
     msg = {'app_id': APP_ID, 'target_channel': 'push', 'headings': {'en': title}, 'contents': {'en': body},
-           'url': SITE + os.environ.get('MSG_PAGE', ''), 'chrome_web_icon': ICON, 'firefox_icon': ICON}
+           'url': SITE + (page if page is not None else os.environ.get('MSG_PAGE', '')), 'chrome_web_icon': ICON, 'firefox_icon': ICON}
     if uid:
         msg['filters'] = [{'field': 'tag', 'key': 'uid', 'relation': '=', 'value': uid}]
     else:
@@ -197,6 +198,33 @@ def main():
         body = '  '.join(f'{medal[i]} {names[p]} {fmt(t[p])}' for i, p in enumerate(order))
         send('🏆 Classement des patrouilles', body)
         st['daily'] = today
+
+    # 4. Coin prière : la phrase du saint du jour à 7h (même choix que le site)
+    if SAINT_HOUR <= n.hour < 12 and st.get('saint') != today:
+        try:
+            L = json.load(open(os.path.join(ROOT, 'data', 'saints.json'), encoding='utf-8'))
+            md = n.strftime('%m-%d')
+            d = datetime(n.year, 7, 1)
+            while d.weekday() != 6:
+                d += timedelta(days=1)
+            j3 = (d + timedelta(days=14)).strftime('%m-%d')
+            hit = []
+            for s in L:
+                for i, e in enumerate(s['ev']):
+                    if (j3 if e[0] == 'jul3' else e[0]) == md and s not in [x[0] for x in hit]:
+                        hit.append((s, i))
+            if not hit:
+                h = 0
+                for c in today:
+                    h = (h * 31 + ord(c)) & 0xFFFFFFFF
+                hit = [(L[h % len(L)], -1)]
+            for s, i in hit:
+                title = ('🎉 ' + s['ev'][i][1]) if i >= 0 else ('🙏 ' + s['n'])
+                body = f"« {s['q']} »\n« {s['ar_q']} »"
+                send(title, body, page='#priere/' + s['id'])
+        except Exception as e:
+            print('::warning::saint du jour', e)
+        st['saint'] = today
 
     if json.dumps(st, sort_keys=True) != old:
         json.dump(st, open(STATE, 'w'), ensure_ascii=False, indent=1, sort_keys=True)

@@ -1,0 +1,365 @@
+[
+ {
+  "id": "charbel",
+  "n": "Saint Charbel",
+  "q": "Arrêtez, et sachez que je suis Dieu.",
+  "ev": [
+   [
+    "jul3",
+    "Fête de saint Charbel"
+   ],
+   [
+    "05-08",
+    "Naissance de saint Charbel (1828)"
+   ],
+   [
+    "12-24",
+    "Saint Charbel est parti au Ciel (1898)"
+   ],
+   [
+    "10-09",
+    "Canonisation de saint Charbel (1977)"
+   ]
+  ],
+  "ar_n": "القديس شربل",
+  "ar_q": "كُفّوا واعلموا أنّي أنا الله.",
+  "ar_ev": [
+   "عيد القديس شربل",
+   "ولادة القديس شربل (1828)",
+   "انتقال القديس شربل إلى السماء (1898)",
+   "إعلان قداسة القديس شربل (1977)"
+  ]
+ },
+ {
+  "id": "rafqa",
+  "n": "Sainte Rafqa",
+  "q": "Je complète en ma chair ce qui manque aux épreuves du Christ.",
+  "ev": [
+   [
+    "03-23",
+    "Fête de sainte Rafqa"
+   ],
+   [
+    "06-29",
+    "Naissance de sainte Rafqa (1832)"
+   ],
+   [
+    "06-10",
+    "Canonisation de sainte Rafqa (2001)"
+   ]
+  ],
+  "ar_n": "القديسة رفقا",
+  "ar_q": "أُتمّ في جسدي ما نقص من شدائد المسيح.",
+  "ar_ev": [
+   "عيد القديسة رفقا",
+   "ولادة القديسة رفقا (1832)",
+   "إعلان قداسة القديسة رفقا (2001)"
+  ]
+ },
+ {
+  "id": "hardini",
+  "n": "Saint Nimatullah Al-Hardini",
+  "q": "Le vrai malin, c’est celui qui sauve son âme.",
+  "ev": [
+   [
+    "12-14",
+    "Fête de saint Nimatullah Al-Hardini"
+   ],
+   [
+    "05-16",
+    "Canonisation de saint Hardini (2004)"
+   ]
+  ],
+  "ar_n": "القديس نعمة الله الحرديني",
+  "ar_q": "الشاطر يخلّص نفسه.",
+  "ar_ev": [
+   "عيد القديس نعمة الله الحرديني",
+   "إعلان قداسة القديس الحرديني (2004)"
+  ]
+ },
+ {
+  "id": "massabki",
+  "n": "Saints frères Massabki",
+  "q": "Nous sommes chrétiens, et nous mourrons chrétiens.",
+  "ev": [
+   [
+    "07-10",
+    "Fête des saints frères Massabki"
+   ],
+   [
+    "10-20",
+    "Canonisation des frères Massabki (2024)"
+   ]
+  ],
+  "ar_n": "القديسون الإخوة المسابكيون",
+  "ar_q": "نحن مسيحيون، وسنموت مسيحيين.",
+  "ar_ev": [
+   "عيد القديسين الإخوة المسابكيين",
+   "إعلان قداسة الإخوة المسابكيين (2024)"
+  ]
+ },
+ {
+  "id": "yaacoub",
+  "n": "Bienheureux Abouna Yaacoub",
+  "q": "Une prière sans confiance, c’est comme une lettre gardée dans la poche : elle n’arrive jamais.",
+  "ev": [
+   [
+    "06-26",
+    "Fête du bienheureux Abouna Yaacoub"
+   ],
+   [
+    "02-01",
+    "Naissance d’Abouna Yaacoub (1875)"
+   ],
+   [
+    "06-22",
+    "Béatification d’Abouna Yaacoub (2008)"
+   ]
+  ],
+  "ar_n": "الطوباوي أبونا يعقوب",
+  "ar_q": "الصلاة من دون ثقة هي كرسالة محفوظة في الجيب: لا تصل أبداً.",
+  "ar_ev": [
+   "عيد الطوباوي أبونا يعقوب",
+   "ولادة أبونا يعقوب (1875)",
+   "تطويب أبونا يعقوب (2008)"
+  ]
+ },
+ {
+  "id": "douaihy",
+  "n": "Bienheureux Patriarche Estephan Douaihy",
+  "q": "Nous le redirons à la génération qui vient.",
+  "ev": [
+   [
+    "05-03",
+    "Fête du bienheureux Patriarche Douaihy"
+   ],
+   [
+    "08-02",
+    "Béatification du Patriarche Douaihy (2024)"
+   ]
+  ],
+  "ar_n": "الطوباوي البطريرك اسطفان الدويهي",
+  "ar_q": "نُخبر بها الجيل الآتي.",
+  "ar_ev": [
+   "عيد الطوباوي البطريرك الدويهي",
+   "تطويب البطريرك الدويهي (2024)"
+  ]
+ },
+ {
+  "id": "maron",
+  "n": "Saint Maron",
+  "q": "Le juste fleurira comme le palmier, il grandira comme un cèdre du Liban.",
+  "ev": [
+   [
+    "02-09",
+    "Fête de saint Maron, patron des maronites"
+   ]
+  ],
+  "ar_n": "القديس مارون",
+  "ar_q": "الصدّيق كالنخلة يزهو، كالأرز في لبنان ينمو.",
+  "ar_ev": [
+   "عيد القديس مارون، شفيع الموارنة"
+  ]
+ },
+ {
+  "id": "elie",
+  "n": "Saint Élie (Mar Elias)",
+  "q": "Il est vivant, le Seigneur devant qui je me tiens !",
+  "ev": [
+   [
+    "07-20",
+    "Fête de saint Élie (Mar Elias)"
+   ]
+  ],
+  "ar_n": "مار الياس",
+  "ar_q": "حيّ هو الربّ الذي أنا واقف أمامه!",
+  "ar_ev": [
+   "عيد مار الياس"
+  ]
+ },
+ {
+  "id": "antoine",
+  "n": "Saint Antoine le Grand",
+  "q": "Un temps viendra où les hommes deviendront fous ; s’ils voient quelqu’un qui ne l’est pas, ils lui diront « Tu es fou », parce qu’il ne leur ressemble pas.",
+  "ev": [
+   [
+    "01-17",
+    "Fête de saint Antoine le Grand"
+   ]
+  ],
+  "ar_n": "القديس أنطونيوس الكبير",
+  "ar_q": "سيأتي زمن يجنّ فيه الناس، وإذا رأوا من ليس مجنوناً قالوا له: «أنت مجنون»، لأنّه لا يشبههم.",
+  "ar_ev": [
+   "عيد القديس أنطونيوس الكبير"
+  ]
+ },
+ {
+  "id": "georges",
+  "n": "Saint Georges",
+  "q": "Revêtez l’armure de Dieu, pour pouvoir tenir bon.",
+  "ev": [
+   [
+    "04-23",
+    "Fête de saint Georges, patron des scouts"
+   ]
+  ],
+  "ar_n": "مار جرجس",
+  "ar_q": "البسوا سلاح الله الكامل لتستطيعوا أن تثبتوا.",
+  "ar_ev": [
+   "عيد مار جرجس، شفيع الكشافة"
+  ]
+ },
+ {
+  "id": "frassati",
+  "n": "Saint Pier Giorgio Frassati",
+  "q": "Vers le haut !",
+  "ev": [
+   [
+    "07-04",
+    "Fête de saint Pier Giorgio Frassati"
+   ],
+   [
+    "09-07",
+    "Canonisation de saint Pier Giorgio Frassati (2025)"
+   ]
+  ],
+  "ar_n": "القديس بيير جورجيو فراساتي",
+  "ar_q": "إلى العُلى!",
+  "ar_ev": [
+   "عيد القديس بيير جورجيو فراساتي",
+   "إعلان قداسة القديس فراساتي (2025)"
+  ]
+ },
+ {
+  "id": "acutis",
+  "n": "Saint Carlo Acutis",
+  "q": "Tous naissent comme des originaux, mais beaucoup meurent comme des photocopies.",
+  "ev": [
+   [
+    "10-12",
+    "Fête de saint Carlo Acutis"
+   ],
+   [
+    "05-03",
+    "Naissance de saint Carlo Acutis (1991)"
+   ],
+   [
+    "09-07",
+    "Canonisation de saint Carlo Acutis (2025)"
+   ]
+  ],
+  "ar_n": "القديس كارلو أكوتيس",
+  "ar_q": "الجميع يولدون أصليين، لكنّ كثيرين يموتون نسخاً مصوّرة.",
+  "ar_ev": [
+   "عيد القديس كارلو أكوتيس",
+   "ولادة القديس كارلو أكوتيس (1991)",
+   "إعلان قداسة القديس كارلو أكوتيس (2025)"
+  ]
+ },
+ {
+  "id": "bosco",
+  "n": "Saint Jean Bosco",
+  "q": "Il suffit que vous soyez jeunes pour que je vous aime beaucoup.",
+  "ev": [
+   [
+    "01-31",
+    "Fête de saint Jean Bosco"
+   ]
+  ],
+  "ar_n": "القديس يوحنا بوسكو",
+  "ar_q": "يكفي أن تكونوا شباباً لكي أحبّكم كثيراً.",
+  "ar_ev": [
+   "عيد القديس يوحنا بوسكو"
+  ]
+ },
+ {
+  "id": "francois",
+  "n": "Saint François d’Assise",
+  "q": "Loué sois-tu, mon Seigneur, avec toutes tes créatures.",
+  "ev": [
+   [
+    "10-04",
+    "Fête de saint François d’Assise"
+   ]
+  ],
+  "ar_n": "القديس فرنسيس الأسيزي",
+  "ar_q": "كن مسبَّحاً يا ربّي مع جميع خلائقك.",
+  "ar_ev": [
+   "عيد القديس فرنسيس الأسيزي"
+  ]
+ },
+ {
+  "id": "therese",
+  "n": "Sainte Thérèse de Lisieux",
+  "q": "Je veux passer mon Ciel à faire du bien sur la terre.",
+  "ev": [
+   [
+    "10-01",
+    "Fête de sainte Thérèse de Lisieux"
+   ]
+  ],
+  "ar_n": "القديسة تريزيا الطفل يسوع",
+  "ar_q": "أريد أن أقضي سمائي في صنع الخير على الأرض.",
+  "ar_ev": [
+   "عيد القديسة تريزيا الطفل يسوع"
+  ]
+ },
+ {
+  "id": "joseph",
+  "n": "Saint Joseph",
+  "q": "Joseph fit ce que l’ange du Seigneur lui avait prescrit.",
+  "ev": [
+   [
+    "03-19",
+    "Fête de saint Joseph"
+   ]
+  ],
+  "ar_n": "القديس يوسف",
+  "ar_q": "فعل يوسف كما أمره ملاك الربّ.",
+  "ar_ev": [
+   "عيد القديس يوسف"
+  ]
+ },
+ {
+  "id": "michel",
+  "n": "Saint Michel Archange",
+  "q": "Qui est comme Dieu ?",
+  "ev": [
+   [
+    "09-29",
+    "Fête de saint Michel Archange"
+   ]
+  ],
+  "ar_n": "رئيس الملائكة ميخائيل",
+  "ar_q": "من مثل الله؟",
+  "ar_ev": [
+   "عيد رئيس الملائكة ميخائيل"
+  ]
+ },
+ {
+  "id": "jp2",
+  "n": "Saint Jean-Paul II",
+  "q": "Le Liban est plus qu’un pays : c’est un message de liberté et un exemple de pluralisme, pour l’Orient comme pour l’Occident.",
+  "ev": [
+   [
+    "10-22",
+    "Fête de saint Jean-Paul II"
+   ],
+   [
+    "05-18",
+    "Naissance de saint Jean-Paul II (1920)"
+   ],
+   [
+    "04-27",
+    "Canonisation de saint Jean-Paul II (2014)"
+   ]
+  ],
+  "ar_n": "القديس يوحنا بولس الثاني",
+  "ar_q": "لبنان أكثر من بلد: إنّه رسالة حرية ونموذج في التعدّدية للشرق كما للغرب.",
+  "ar_ev": [
+   "عيد القديس يوحنا بولس الثاني",
+   "ولادة القديس يوحنا بولس الثاني (1920)",
+   "إعلان قداسة القديس يوحنا بولس الثاني (2014)"
+  ]
+ }
+]

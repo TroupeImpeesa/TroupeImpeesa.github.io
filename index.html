@@ -3315,7 +3315,7 @@ function publish(){
   render()});
 }
 /* ===== Chargement propre : un écran de démarrage tant que les données arrivent, puis tout s'anime d'un coup ===== */
-var BOOT={on:true,t0:Date.now(),f:{}};
+var BOOT={on:true,t0:Date.now(),f:{}};try{window.__boot=BOOT;window.__hs=function(){return HS}}catch(e){}
 (function(){try{var d=document.createElement('div');d.id='boot';d.innerHTML='<div class="bootin"><img src="logo-192.png" alt=""><b>Troupe Impeesa</b><i></i></div>';document.body.appendChild(d)}catch(e){}})();
 function bootMark(k){BOOT.f[k]=1;bootCheck()}
 function bootCheck(){if(!BOOT.on)return;var f=BOOT.f,ok=(f.pts&&f.pat&&f.q&&HS.se&&(HS.gal||tab!=='home'))||Date.now()-BOOT.t0>3200;if(!ok)return;BOOT.on=false;

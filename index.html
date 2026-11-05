@@ -837,7 +837,7 @@ h2{font-size:28px}
 .hpc em{font-style:normal;font:800 15px var(--body);font-variant-numeric:tabular-nums}
 .hpc .lkp{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);background:var(--chip);border-radius:99px;padding:3px 10px}
 /* noeud plat */
-.knotdiv{display:block;width:100%;max-width:440px;height:56px;margin:34px auto 0;color:var(--muted)}
+.knotdiv{display:block;width:100%;max-width:440px;height:64px;margin:34px auto 0;color:var(--muted)}
 /* tuiles Coop / Installations */
 .hduo{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:12px}
 .htl2{position:relative;overflow:hidden;border:none;border-radius:24px;color:#fff;padding:20px;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;gap:14px;text-align:left;cursor:pointer;font-family:var(--body)}
@@ -1758,10 +1758,7 @@ function home(){
  h+=galSection();
  h+=homeHist();
  return h}
-function knotSvg(){var U='stroke="var(--bg)" stroke-width="11"';return '<svg class="knotdiv" viewBox="0 0 440 56" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-label="Nœud plat" role="img">'+
- '<path d="M0 10H250a12 12 0 0 1 0 24H0"/>'+
- '<path d="M440 22H190a12 12 0 0 0 0 24H440" '+U+'/><path d="M440 22H190a12 12 0 0 0 0 24H440"/>'+
- '<path d="M170 34H200" '+U+' stroke-linecap="butt"/><path d="M150 34H235"/></svg>'}
+function knotSvg(){return '<svg class="knotdiv" viewBox="0 0 440 86" role="img" aria-label="Nœud plat" fill="none" stroke-linejoin="round"><path d="M0 42H148C166 42 172 10 202 10H262C302 10 306 58 268 58H206C188 58 180 64 170 76" stroke="#2b2418" stroke-width="12" stroke-linecap="round"/><path d="M0 42H148C166 42 172 10 202 10H262C302 10 306 58 268 58H206C188 58 180 64 170 76" stroke="#f1dfb6" stroke-width="7.5" stroke-linecap="round"/><path d="M440 42H304C288 42 282 27 266 27H190C156 27 156 72 194 72H262C286 72 294 68 306 80" stroke="#2b2418" stroke-width="12" stroke-linecap="round"/><path d="M440 42H304C288 42 282 27 266 27H190C156 27 156 72 194 72H262C286 72 294 68 306 80" stroke="#f1dfb6" stroke-width="7.5" stroke-linecap="round"/><path d="M128 42H148C166 42 172 10 202 10H212" stroke="#2b2418" stroke-width="12" stroke-linecap="butt"/><path d="M128 42H148C166 42 172 10 202 10H212" stroke="#f1dfb6" stroke-width="7.5" stroke-linecap="butt"/></svg>'}
 function homeHist(){var L=(S.maitrises||[]).slice().sort(function(a,b){return a.year<b.year?1:-1});if(!L.length)return '';
  var fn=function(n){return String(n).split(' ')[0]};
  var h='<section class="hsec"><div class="hsh"><div><small>Notre histoire</small><h2>La troupe, année par année</h2></div><button data-menunav="history">Histoire →</button></div><div class="htlx">'+L.map(function(y,i){var ct=y.members.filter(function(m){return m.role==='CT'})[0],ac=y.members.filter(function(m){return m.role!=='CT'});
@@ -3054,7 +3051,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="d65fc0e694d6">
-<script>(function(){var B="d65fc0e694d6";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="337b66b9d0b1">
+<script>(function(){var B="337b66b9d0b1";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

@@ -2022,7 +2022,7 @@ function prTH(s0,s){prTLoad(s0.id);var L=PRT[s0.id],me=ACC||GAMER,ad=galIsAdmin(
  else h+='<div class="note" style="margin-top:0">'+esc(prU('login'))+'</div>';
  if(!L)h+='<p class="meta">…</p>';
  else if(!L.length)h+='<p class="meta">'+esc(prU('none'))+'</p>';
- else h+='<div class="prts">'+L.map(function(o){var d=o.at?new Date(o.at):null;return '<div class="prt"><p dir="auto">'+esc(o.t)+'</p><div class="prtm"><span>'+esc(prU('an'))+(d?' · '+d.getDate()+' '+prU('m')[d.getMonth()]+' '+d.getFullYear():'')+'</span>'+((ad||(PRTW.uid&&o.u===PRTW.uid))?'<button data-prtdel="'+s0.id+'/'+o.k+'">✕</button>':'')+'</div></div>'}).join('')+'</div>';
+ else h+='<div class="prts">'+L.map(function(o){var d=o.at?new Date(o.at):null;return '<div class="prt"><p dir="auto">'+esc(o.t)+'</p><div class="prtm"><span>'+esc(prU('an'))+(d?' · '+d.getDate()+' '+prU('m')[d.getMonth()]+' '+d.getFullYear():'')+'</span>'+((ad||isChef()||(PRTW.uid&&o.u===PRTW.uid))?'<button data-prtdel="'+s0.id+'/'+o.k+'">✕</button>':'')+'</div></div>'}).join('')+'</div>';
  return h}
 function prTClick(b){
  if(b.dataset.prpost){var id=b.dataset.prpost,ta=document.getElementById('prtx'),t=String(ta&&ta.value||'').trim().slice(0,1500);if(t.length<3){PRTW.msg='…';render();return true}
@@ -3171,9 +3171,11 @@ function render(){
  editing=keep;
  if(openScout) body+=profile();
  if(openEvent) body+=eventPage();
- app.innerHTML=body+
+ var _H=body+
   (canEdit&&!editing?'<button class="btn editbtn" data-act="edit">Modifier</button>':'')+
   (editing?'<div class="savebar"><span class="msg" role="status">'+esc(msg||(dirty?'Modifications non publiées':'Aucune modification'))+'</span><button class="btn ghost" data-act="done">'+(dirty?'Annuler':'Fermer')+'</button><button class="btn" data-act="publish"'+(dirty&&!saving?'':' disabled')+'>'+(saving?'Publication…':'Publier')+'</button></div>':'');
+ /* même page qu'avant : on ne redessine pas (les compteurs et animations continuent sans à-coup) */
+ if(tab!=='home'||editing||_H!==render.last||!app.firstChild){app.innerHTML=_H;render.last=_H}
  try{fxRun()}catch(e){}
  var ind=document.getElementById('tab-ind');if(ind){requestAnimationFrame(function(){requestAnimationFrame(function(){ind.style.setProperty('--i',TABS.indexOf(tab));prevTab=tab})})}
 }

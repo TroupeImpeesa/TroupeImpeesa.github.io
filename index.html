@@ -1748,7 +1748,6 @@ function home(){
   h+='<div class="editbox"><h4>Photo du haut de l’Accueil</h4><div class="hpick">'+HPICK.map(function(u,i){return '<button data-heropick="'+i+'" class="'+(S.heroPhoto===u?'on':'')+'" aria-label="Choisir cette photo"><img src="'+u+'" alt="" loading="lazy"></button>'}).join('')+'</div><span class="meta">Touche la photo que tu veux en haut, puis <b>Publier</b>.</span></div>'}
  var N=S.news.slice().reverse().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:0}).slice(0,editing?30:3);
  h+='<section class="hsec" style="margin-top:8px"><div class="hsh"><div><small>Classement</small><h2>Les patrouilles</h2></div><button data-menunav="progress">Tout voir →</button></div>'+homeRank()+'</section>';
- h+=knotSvg();
  var oid='order';
  h+='<section class="hsec"><div class="hsh"><div><small>Pour ta patrouille</small><h2>Prépare le camp</h2></div></div><div class="hduo">'+
   '<button class="htl2 coop" data-menunav="'+oid+'"><svg class="bg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.4"><path d="M3 4h2l2.5 11h10L20 8H6.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg><span><small>Coop des Scouts du Liban</small><b>Commande Coop</b><p>Uniforme, badges, livres et matériel de camp.</p></span><span class="go">Commander →</span></button>'+
@@ -3060,7 +3059,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="54ae03f9e5cd">
-<script>(function(){var B="54ae03f9e5cd";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="b63fc49dbd8c">
+<script>(function(){var B="b63fc49dbd8c";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

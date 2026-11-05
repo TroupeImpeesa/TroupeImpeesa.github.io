@@ -823,6 +823,21 @@ h2{font-size:28px}
 .hhero .sdots{top:auto;bottom:70px;right:max(16px,env(safe-area-inset-right,0px))}
 /* section heads */
 .hsec{margin-top:44px}
+.prlist{display:grid;gap:12px}
+.prc{position:relative;border-radius:24px;padding:20px;color:#fff;background:linear-gradient(135deg,#2a1f4a,#6b3a7a);box-shadow:var(--shadow)}
+.prtop{display:flex;align-items:center;gap:14px}.prtop small{display:block;font:700 11px var(--body);letter-spacing:.12em;text-transform:uppercase;opacity:.85}.prtop b{display:block;font:800 20px/1.15 var(--display);margin-top:3px}
+.prc blockquote{margin:16px 0 6px;font:italic 400 21px/1.35 var(--serif,Georgia,serif)}.prc cite{display:block;font:600 12.5px var(--body);opacity:.8;font-style:normal}
+.prgo{margin-top:14px;border:none;background:rgba(255,255,255,.16);color:#fff;font:700 13.5px var(--body);padding:10px 16px;border-radius:999px;cursor:pointer}
+.prav{display:inline-grid;place-items:center;border-radius:50%;overflow:hidden;color:#fff;flex:none;border:3px solid rgba(255,255,255,.85);box-sizing:border-box}.prav img{width:100%;height:100%;object-fit:cover}
+.prh{font:800 17px var(--body);margin:24px 2px 10px}
+.prgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.prs{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px 12px;border:none;border-radius:18px;background:var(--surface);color:var(--fg);cursor:pointer;font-family:var(--body);text-align:center;min-width:0}.prs .prav{border-color:var(--surface)}.prs b{font:700 12.5px/1.2 var(--body);overflow-wrap:anywhere}.prs small{font:600 11px var(--body);color:var(--muted)}
+.prhero{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;margin:8px 0 14px}.prhero h2{margin:8px 0 0}.prhero span{color:var(--muted);font-weight:600;font-size:14px}.prhero .prav{border-color:var(--surface);box-shadow:var(--shadow)}
+.prad{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-bottom:12px}
+.prtxt p{margin:0 0 12px;line-height:1.6}
+.prw{background:var(--surface);border-radius:18px;padding:12px}.prw textarea{border:none;background:var(--bg)}.prwb{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}
+.prts{display:grid;gap:8px;margin-top:12px}.prt{background:var(--surface);border-radius:18px;padding:14px 16px}.prt p{margin:0;white-space:pre-line;overflow-wrap:anywhere;line-height:1.55}.prtm{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font:600 12px var(--body);color:var(--muted)}.prtm button{border:none;background:none;color:var(--danger);font:700 12px var(--body);cursor:pointer}
+
 .hsh{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:0 2px 16px}
 .hsh small{display:block;font:700 11px var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
 .hsh h2{margin:0;font-size:clamp(26px,6vw,34px);line-height:1.05}
@@ -1101,9 +1116,9 @@ body:not(.kahoot) .psec{font-family:var(--serif)!important;font-weight:400!impor
 (function(){
 function load(){var x=JSON.parse(document.getElementById('state').textContent);x.meetings=x.meetings||[];x.photos=x.photos||[];x.news=x.news||[];x.faces=x.faces||{};return x}
 var S=load(),curM=null,slide=0,openScout=null,openEvent=null;
-var TABS=['home','progress','events','history','quiz','login','me','order','orders','inst','plus'];
+var TABS=['home','progress','events','history','quiz','login','me','order','orders','inst','plus','priere'],PRO=null;
 var tab='home',openGroup=null,openPts=null;
-function route(h){h=(h==null?(location.hash||'#home').slice(1):h).split('/');var t=h[0]==='points'?'progress':h[0];if(TABS.indexOf(t)<0)t='home';tab=t;if(typeof PRES!=='undefined'&&PRES)PRES.g=null;openGroup=null;openPts=null;openScout=null;openEvent=null;openCP=null;var x=h[1]||'';
+function route(h){h=(h==null?(location.hash||'#home').slice(1):h).split('/');var t=h[0]==='points'?'progress':h[0];if(TABS.indexOf(t)<0)t='home';tab=t;if(typeof PRES!=='undefined'&&PRES)PRES.g=null;openGroup=null;openPts=null;openScout=null;openEvent=null;openCP=null;var x=h[1]||'';PRO=(t==='priere'&&x)?x:null;
  if(t==='progress'){if(x==='mai')openGroup='mai';else if(x.indexOf('g-')===0)openGroup=x.slice(2);else if(x.indexOf('cp-')===0&&pat(x.slice(3))){openCP=x.slice(3);openGroup=openCP}else if(x.indexOf('pts-')===0)openPts=x.slice(4);else if(x.indexOf('s-')===0&&!ACC){var sc0=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc0)openGroup=sc0.patrol}else if(x.indexOf('s-')===0){var sc=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc){openScout=sc.id;openGroup=sc.patrol}}}
  if(x.indexOf('e-')===0&&S.events.some(function(e){return e.id===x.slice(2)}))openEvent=x.slice(2);
  if(!openCP)cpLock();if(!openPts)ptsLock();if(typeof ORD!=='undefined'&&ORD){if(t==='orders'&&!ORD.tbusy){ORD.all=null;ORD.tmsg=''}if(t==='order'&&!ORD.dirty)ORD.my=null}}
@@ -1657,6 +1672,7 @@ function homeTop(){var d='';try{d=new Intl.DateTimeFormat('fr-FR',{timeZone:'Asi
 function plusPage(){var oid=isChef()?'orders':'order';
  var L=[['quiz',navIco('quiz'),'Quiz Prêt','15 questions chaque semaine, nouveau quiz le lundi à 14h.','#4b2bb8'],
   ['game','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 16 0v6a2 2 0 0 1-4 0 2 2 0 0 1-4 0 2 2 0 0 1-4 0 2 2 0 0 1-4 0z"/><circle cx="9" cy="11" r="1.3"/><circle cx="15" cy="11" r="1.3"/></svg>','Zoro','Le jeu de la troupe, juste pour le fun.','#0b1424'],
+  ['priere','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M6 8h12"/></svg>','Coin prière','Un saint chaque jour, leurs histoires et vos témoignages.','#6b3a7a'],
   ['inst',IINST,'Installations','Les constructions de camp de chaque patrouille, en 3D.','#8a6a14'],
   ['order',ICART,'Commande Coop','Passe ta commande : uniforme, badges, livres et matériel.','#1b3a6b'],
   ['history',navIco('history'),'Histoire','Toutes les maîtrises et HP, année par année.','#2c5d8a'],
@@ -1673,7 +1689,7 @@ function pageBand(){if(tab==='quiz'&&QZ.play)return '';
   quiz:['Le quiz de la semaine sur ton carnet « Prêt »','Quiz <em>Prêt !</em>','15 questions chaque semaine, nouveau quiz le lundi à 14h.'],
   inst:['Rondins, brelages et mesures','Installations','Les installations de camp de chaque patrouille, en 3D.'],
   order:['Coop des Scouts du Liban','Commande Coop','Uniforme, badges, livres et matériel de camp.'],orders:['Coop des Scouts du Liban','Commande troupe','Toutes les commandes de la troupe.'],
-  login:['Ton compte de la troupe','Connexion','Connecte-toi pour voir les points, les badges et les présences.'],me:['Ton compte','Mon profil',''],plus:['Tout le reste','Plus','Le quiz, le jeu, les outils et ton compte.'],points:['Classement','Points',''],uni:['Formation','Université Impeesa','']}[tab]||[esc(S.season),esc(S.troop),''];
+  login:['Ton compte de la troupe','Connexion','Connecte-toi pour voir les points, les badges et les présences.'],me:['Ton compte','Mon profil',''],plus:['Tout le reste','Plus','Le quiz, le jeu, les outils et ton compte.'],points:['Classement','Points',''],priere:['Un saint chaque jour','Coin <em>prière</em>','La parole du jour, l’histoire des saints et vos témoignages.'],uni:['Formation','Université Impeesa','']}[tab]||[esc(S.season),esc(S.troop),''];
  return '<section class="pband'+(tab==='quiz'?' qz':'')+'"><div class="pin"><div class="pbar"><button class="pbrand" data-menunav="home" aria-label="Accueil"><i aria-hidden="true"></i><b>Impeesa</b></button>'+topNav()+(CP_ON?acctBtn():'')+'</div><small>'+B[0]+'</small><h1>'+B[1]+'</h1>'+(B[2]?'<p>'+B[2]+'</p>':'')+'</div><svg class="ridge" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 60V38l90-17 70 12 110-26 80 19 60-9 120 22 90-29 70 15 100-19 80 17 70-7 110 26 90-21 80 10 90-17 60 12 70-7v57z"/></svg></section>'}
 function header(){return (tab==='home'?homeTop():pageBand())+drawer()+tabBar()+
  '<div class="tabbar"></div>'+
@@ -1781,6 +1797,7 @@ function home(){
  var N=S.news.slice().reverse().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:0}).slice(0,editing?30:3);
  h+='<section class="hsec" style="margin-top:8px"><div class="hsh"><div><small>Classement</small><h2>Les patrouilles</h2></div><button data-menunav="progress">Tout voir →</button></div>'+homeRank()+'</section>';
  var oid='order';
+ h+=prHome();
  h+='<section class="hsec"><div class="hsh"><div><small>Pour ta patrouille</small><h2>Prépare le camp</h2></div></div><div class="hduo">'+
   '<button class="htl2 coop" data-menunav="'+oid+'"><svg class="bg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.4"><path d="M3 4h2l2.5 11h10L20 8H6.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg><span><small>Coop des Scouts du Liban</small><b>Commande Coop</b><p>Uniforme, badges, livres et matériel de camp.</p></span><span class="go">Commander →</span></button>'+
   '<button class="htl2 inst" data-menunav="inst"><svg class="bg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round"><path d="M4 21L12 3l8 18M7 14h10M12 3v18"/></svg><span><small>Rondins, brelages et mesures</small><b>Installations</b><p>Les constructions de camp de chaque patrouille, en 3D.</p></span><span class="go">Voir les plans →</span></button>'+
@@ -1804,6 +1821,147 @@ function homeHist(){var L=(S.maitrises||[]).slice().sort(function(a,b){return a.
  var photo={};(S.staff||[]).forEach(function(x){if(x.photo)photo[x.name.toLowerCase()]=x.photo});Object.keys(S.maitrisePhotos||{}).forEach(function(k){photo[k.toLowerCase()]=S.maitrisePhotos[k]});
  h+='<section class="hsec"><div class="hsh"><div><small>Maîtrise '+esc(L[0].year.replace('-','–'))+'</small><h2>Tes chefs</h2></div></div><div class="hstaff">'+L[0].members.map(function(m){var ph=photo[m.name.toLowerCase()];return '<div class="hst">'+(ph?'<span class="av"><img src="'+ph+'" alt=""></span>':'<span class="av">'+esc(initials(m.name))+'</span>')+'<span><b>'+esc(m.name)+'</b><small>'+(m.role==='CT'?'CHEF DE TROUPE':esc(m.role))+'</small></span></div>'}).join('')+'</div></section>';
  return h}
+/* ===== Coin prière : un saint chaque jour + leurs histoires ===== */
+var SAINTS=[
+ {id:'charbel',n:'Saint Charbel',c:'#7a4b2a',g:'Liban',ev:[['jul3','Fête de saint Charbel'],['05-08','Naissance de saint Charbel (1828)'],['12-24','Saint Charbel est parti au Ciel (1898)'],['10-09','Canonisation de saint Charbel (1977)']],
+  q:'Arrêtez, et sachez que je suis Dieu.',qs:'Psaume 46 · la Parole que saint Charbel a vécue dans le silence de son ermitage',
+  h:['Youssef Makhlouf naît le 8 mai 1828 à Bekaa Kafra, le plus haut village du Liban, près des cèdres. Son père meurt quand il a 3 ans. Petit berger, il emmène son troupeau près d’une grotte où il aime prier.',
+   'À 23 ans, il entre chez les moines de l’Ordre libanais maronite et prend le nom de Charbel. Il étudie au monastère de Kfifane, où son professeur est saint Nimatullah Al-Hardini. Devenu prêtre en 1859, il vit 16 ans au monastère d’Annaya, puis 23 ans dans l’ermitage Saints-Pierre-et-Paul, juste au-dessus : prière, travail des champs, jeûne et silence.',
+   'Il tombe malade en célébrant la messe et meurt la veille de Noël, le 24 décembre 1898. Une lumière est vue sur sa tombe, et des milliers de guérisons sont attribuées à sa prière. Il est canonisé le 9 octobre 1977. Il nous apprend qu’on peut faire de très grandes choses dans la discrétion.']},
+ {id:'rafqa',n:'Sainte Rafqa',c:'#8a3f5c',g:'Liban',ev:[['03-23','Fête de sainte Rafqa'],['06-29','Naissance de sainte Rafqa (1832)'],['06-10','Canonisation de sainte Rafqa (2001)']],
+  q:'Je complète en ma chair ce qui manque aux épreuves du Christ.',qs:'Saint Paul (Colossiens 1,24) · la Parole que sainte Rafqa a vécue dans sa maladie',
+  h:['Boutrossiya Choboq Ar-Rayès naît le 29 juin 1832 à Himlaya, dans le Metn. Sa maman meurt quand elle a 7 ans. Jeune fille, elle entre chez les sœurs Mariamettes et passe des années à enseigner aux filles dans plusieurs villages du Liban.',
+   'En 1871, elle rejoint les moniales de l’Ordre libanais maronite au monastère Saint-Simon d’Aïto et prend le nom de Rafqa, le nom de sa mère. En 1885, elle demande à Jésus de partager un peu de ses souffrances. Peu après, elle devient aveugle, puis paralysée.',
+   'Pendant 29 ans, elle souffre sans se plaindre, toujours souriante et en prière, au monastère Saint-Joseph de Jrabta. Elle meurt le 23 mars 1914. Canonisée le 10 juin 2001, elle est la patronne des malades et de tous ceux qui souffrent.']},
+ {id:'hardini',n:'Saint Nimatullah Al-Hardini',c:'#4a5a2a',g:'Liban',ev:[['12-14','Fête de saint Nimatullah Al-Hardini'],['05-16','Canonisation de saint Hardini (2004)']],
+  q:'Le vrai malin, c’est celui qui sauve son âme.',qs:'Saint Nimatullah Al-Hardini',
+  h:['Youssef Kassab naît en 1808 à Hardine, dans la région de Batroun. À 20 ans, il entre chez les moines de l’Ordre libanais maronite, au monastère de Qozhaya, et prend le nom de Nimatullah, « grâce de Dieu ».',
+   'Prêtre et grand professeur, il enseigne au monastère de Kfifane. Parmi ses élèves, il y a un jeune moine nommé Charbel ! On lui confie trois fois la charge d’assistant général de l’Ordre, mais il refuse d’en devenir le chef. Il reste humble, relie les livres de ses propres mains et prie beaucoup la Vierge Marie.',
+   'Il meurt à Kfifane le 14 décembre 1858, après avoir pris froid. Il est canonisé le 16 mai 2004. On l’appelle « le saint de Kfifane ».']},
+ {id:'massabki',n:'Saints frères Massabki',c:'#5c2a2a',g:'Liban',ev:[['07-10','Fête des saints frères Massabki'],['10-20','Canonisation des frères Massabki (2024)']],
+  q:'Nous sommes chrétiens, et nous mourrons chrétiens.',qs:'Les frères Massabki, selon le récit de leur martyre (1860)',
+  h:['Francis, Abdel-Mohti et Raphaël Massabki sont trois frères maronites de Damas. Francis est un marchand respecté, Abdel-Mohti est instituteur à l’école des Franciscains, et Raphaël, le plus jeune, aide humblement à l’église.',
+   'Dans la nuit du 9 au 10 juillet 1860, des émeutes éclatent contre les chrétiens de Damas. Les trois frères se réfugient au couvent franciscain avec huit frères franciscains. On leur promet la vie sauve s’ils renient leur foi : ils refusent, et sont tués.',
+   'Béatifiés en 1926, ils sont canonisés le 20 octobre 2024 avec les huit Franciscains : ce sont les « 11 martyrs de Damas ». Ils nous apprennent à rester fidèles, ensemble, même quand c’est difficile.']},
+ {id:'yaacoub',n:'Bienheureux Abouna Yaacoub',c:'#6b4a1f',g:'Liban',ev:[['06-26','Fête du bienheureux Abouna Yaacoub'],['02-01','Naissance d’Abouna Yaacoub (1875)'],['06-22','Béatification d’Abouna Yaacoub (2008)']],
+  q:'Une prière sans confiance, c’est comme une lettre gardée dans la poche : elle n’arrive jamais.',qs:'Bienheureux Abouna Yaacoub',
+  h:['Khalil Haddad naît le 1er février 1875 à Ghazir. Après ses études, il part travailler comme enseignant à Alexandrie, en Égypte. Mais il sent que Dieu l’appelle : il rentre au Liban et entre chez les Capucins, où il prend le nom de Yaacoub. Il est ordonné prêtre en 1901.',
+   'Il parcourt le Liban à pied pour prêcher, et il voit partout des gens que personne n’aide : orphelins, malades, personnes âgées, malades mentaux. En 1930, il fonde les Sœurs Franciscaines de la Croix du Liban, et il ouvre écoles, hôpitaux et maisons d’accueil, comme l’hôpital de la Croix à Jal el-Dib.',
+   'On l’appelle le « Vincent de Paul du Liban ». Il meurt le 26 juin 1954 à Beyrouth et il est béatifié le 22 juin 2008, place des Martyrs. Il nous apprend la confiance totale en Dieu et le service des plus pauvres.']},
+ {id:'douaihy',n:'Bienheureux Patriarche Estephan Douaihy',c:'#2a3f5c',g:'Liban',ev:[['05-03','Fête du bienheureux Patriarche Douaihy'],['08-02','Béatification du Patriarche Douaihy (2024)']],
+  q:'Nous le redirons à la génération qui vient.',qs:'Psaume 78 · la mission du Patriarche Douaihy, historien des maronites',
+  h:['Estephan Douaihy naît en 1630 à Ehden. Tout jeune, il part étudier au Collège maronite de Rome. Ses yeux deviennent très malades, et il prie la Vierge Marie : il guérit et décide de consacrer sa vie à Dieu.',
+   'Revenu au Liban, il devient prêtre, puis évêque, et en 1670 il est élu patriarche des maronites. Il le reste 34 ans, malgré des temps très durs où il doit parfois se cacher. Il réorganise la liturgie et écrit l’histoire des maronites : on l’appelle « le père de l’histoire maronite ».',
+   'Il meurt le 3 mai 1704. Il est béatifié le 2 août 2024 à Bkerké. Il nous montre qu’il faut connaître son histoire pour bien la transmettre.']},
+ {id:'maron',n:'Saint Maron',c:'#3a5a3a',g:'Liban',ev:[['02-09','Fête de saint Maron, patron des maronites']],
+  q:'Le juste fleurira comme le palmier, il grandira comme un cèdre du Liban.',qs:'Psaume 92 · le cèdre, symbole de saint Maron et de son peuple',
+  h:['Maron est un prêtre et moine qui vit à la fin du IVe siècle dans le nord de la Syrie, près de Cyr. Il choisit de prier en plein air, sur une montagne, par tous les temps.',
+   'Beaucoup de gens viennent le voir pour être guéris ou conseillés, et de nombreux disciples le suivent. Saint Jean Chrysostome lui écrit même une lettre pour lui demander de prier pour lui. Il meurt vers l’an 410.',
+   'Ses disciples fondent un grand monastère, et leur communauté, les maronites, s’installe plus tard dans les montagnes du Liban. Sa fête, le 9 février, est un jour férié au Liban.']},
+ {id:'elie',n:'Saint Élie (Mar Elias)',c:'#8a4a14',g:'Liban',ev:[['07-20','Fête de saint Élie (Mar Elias)']],
+  q:'Il est vivant, le Seigneur devant qui je me tiens !',qs:'Le prophète Élie (1 Rois 17,1)',
+  h:['Élie est un grand prophète de la Bible, environ 850 ans avant Jésus. Il ose dire la vérité au roi Achab, qui s’est éloigné de Dieu.',
+   'Au Liban, à Sarepta (Sarafand), il est accueilli par une veuve pauvre : sa farine et son huile ne s’épuisent plus, et il ramène son fils à la vie. Sur le mont Carmel, il défie les prophètes de Baal, et le feu tombe du ciel. Plus tard, épuisé, il découvre que Dieu n’est pas dans la tempête mais dans une brise légère.',
+   'À la fin de sa vie, il est enlevé au ciel dans un char de feu. Il y a des églises Mar Elias dans presque tous les villages du Liban.']},
+ {id:'antoine',n:'Saint Antoine le Grand',c:'#6b5a3a',g:'Liban',ev:[['01-17','Fête de saint Antoine le Grand']],
+  q:'Un temps viendra où les hommes deviendront fous ; s’ils voient quelqu’un qui ne l’est pas, ils lui diront « Tu es fou », parce qu’il ne leur ressemble pas.',qs:'Saint Antoine le Grand (Paroles des Pères du désert)',
+  h:['Antoine naît vers 251 en Égypte. Jeune, il entend à l’église la parole de Jésus : « Va, vends ce que tu possèdes, donne-le aux pauvres, puis viens et suis-moi. » Il le fait vraiment !',
+   'Il part vivre dans le désert pour prier. Il y affronte la solitude et les tentations, et beaucoup de disciples viennent vivre près de lui. On l’appelle « le père des moines ».',
+   'Il meurt vers 356, à plus de 100 ans. Les moines maronites suivent la règle de saint Antoine, et beaucoup de monastères libanais portent son nom, comme celui de Qozhaya.']},
+ {id:'georges',n:'Saint Georges',c:'#a33b2b',g:'Scouts',ev:[['04-23','Fête de saint Georges, patron des scouts']],
+  q:'Revêtez l’armure de Dieu, pour pouvoir tenir bon.',qs:'Saint Paul (Éphésiens 6,11) · l’armure du chevalier, comme saint Georges',
+  h:['Georges est un soldat romain originaire de Cappadoce. Vers 303, l’empereur Dioclétien ordonne de persécuter les chrétiens. Georges refuse de renier sa foi et meurt martyr à Lydda.',
+   'Une légende raconte qu’il a vaincu un dragon pour sauver une princesse et toute une ville. Au Liban, la tradition place ce combat à Beyrouth, dans la baie qui porte son nom : la baie Saint-Georges.',
+   'Baden-Powell l’a choisi comme patron des scouts, parce qu’il est courageux, loyal et au service des autres. Le 23 avril, c’est la fête de tous les scouts !']},
+ {id:'frassati',n:'Saint Pier Giorgio Frassati',c:'#2c5d8a',g:'Scouts',ev:[['07-04','Fête de saint Pier Giorgio Frassati'],['09-07','Canonisation de saint Pier Giorgio Frassati (2025)']],
+  q:'Vers le haut !',qs:'Saint Pier Giorgio Frassati (« Verso l’alto »)',
+  h:['Pier Giorgio naît en 1901 à Turin, en Italie, dans une famille riche. Il est drôle, plein d’énergie, adore la montagne et l’escalade, et fait des blagues à ses amis.',
+   'Il étudie pour devenir ingénieur des mines, pour pouvoir aider les mineurs. En secret, il donne son argent et son temps aux familles pauvres de Turin, souvent en se privant lui-même.',
+   'Il meurt à 24 ans, le 4 juillet 1925, d’une maladie sans doute attrapée chez les pauvres qu’il visitait. Une foule de pauvres vient à son enterrement, et sa famille découvre alors tout le bien qu’il faisait. Il est canonisé le 7 septembre 2025.']},
+ {id:'acutis',n:'Saint Carlo Acutis',c:'#1f6b5c',g:'Scouts',ev:[['10-12','Fête de saint Carlo Acutis'],['05-03','Naissance de saint Carlo Acutis (1991)'],['09-07','Canonisation de saint Carlo Acutis (2025)']],
+  q:'Tous naissent comme des originaux, mais beaucoup meurent comme des photocopies.',qs:'Saint Carlo Acutis',
+  h:['Carlo naît le 3 mai 1991 à Londres et grandit à Milan, en Italie. Il aime l’informatique, les jeux vidéo, le foot et son chien, comme beaucoup de jeunes.',
+   'Il va à la messe tous les jours et appelle l’Eucharistie « mon autoroute vers le Ciel ». Il utilise son talent en informatique pour créer un site sur les miracles eucharistiques, et il aide les sans-abri de son quartier.',
+   'Atteint d’une leucémie, il meurt le 12 octobre 2006, à 15 ans. Il est canonisé le 7 septembre 2025 : c’est le premier saint né à l’époque d’internet.']},
+ {id:'bosco',n:'Saint Jean Bosco',c:'#8a6a12',g:'Scouts',ev:[['01-31','Fête de saint Jean Bosco']],
+  q:'Il suffit que vous soyez jeunes pour que je vous aime beaucoup.',qs:'Saint Jean Bosco',
+  h:['Jean naît en 1815 près de Turin, dans une famille pauvre. Son père meurt quand il a 2 ans. À 9 ans, il fait un rêve où il comprend que sa mission sera d’aider les jeunes.',
+   'Devenu prêtre, il accueille les garçons des rues de Turin. Dans son « oratoire », on joue, on prie, on apprend un métier. Il fonde les Salésiens pour continuer cette mission partout dans le monde.',
+   'Sa méthode tient en trois mots : la raison, la religion et la bonté. Il meurt le 31 janvier 1888. C’est le patron des jeunes.']},
+ {id:'francois',n:'Saint François d’Assise',c:'#7a5a2a',g:'Scouts',ev:[['10-04','Fête de saint François d’Assise']],
+  q:'Loué sois-tu, mon Seigneur, avec toutes tes créatures.',qs:'Saint François d’Assise (Cantique des créatures)',
+  h:['François naît vers 1181 à Assise, en Italie. Fils d’un riche marchand, il aime faire la fête et rêve d’être chevalier.',
+   'Après une guerre et une maladie, il change de vie. Dans la petite église de Saint-Damien, il entend Jésus lui dire : « Va, répare ma maison. » Il laisse toute sa richesse et vit pauvre, joyeux, avec ses frères.',
+   'Il aime toute la création : le soleil, l’eau, les animaux, qu’il appelle ses frères et sœurs. C’est lui qui fait la première crèche, à Greccio, en 1223. Il meurt en 1226. C’est le patron de l’écologie : un vrai saint de camp !']},
+ {id:'therese',n:'Sainte Thérèse de Lisieux',c:'#8a4a6b',g:'Scouts',ev:[['10-01','Fête de sainte Thérèse de Lisieux']],
+  q:'Je veux passer mon Ciel à faire du bien sur la terre.',qs:'Sainte Thérèse de Lisieux',
+  h:['Thérèse Martin naît en 1873 en France. À 15 ans seulement, elle entre au Carmel de Lisieux pour prier toute sa vie.',
+   'Elle invente la « petite voie » : pas besoin de faire des choses extraordinaires, il suffit de faire les petites choses de chaque jour avec un grand amour.',
+   'Malade de la tuberculose, elle meurt en 1897, à 24 ans. Son livre, « Histoire d’une âme », a fait le tour du monde. Elle est patronne des missions, alors qu’elle n’a jamais quitté son couvent !']},
+ {id:'joseph',n:'Saint Joseph',c:'#5c4a2a',g:'Scouts',ev:[['03-19','Fête de saint Joseph']],
+  q:'Joseph fit ce que l’ange du Seigneur lui avait prescrit.',qs:'Évangile de Matthieu (1,24) · saint Joseph ne parle pas, il agit',
+  h:['Joseph est un charpentier de Nazareth, de la famille du roi David. Il est fiancé à Marie.',
+   'Quand l’ange lui explique que l’enfant de Marie vient de Dieu, il fait confiance et accueille Marie et Jésus. Il protège sa famille, l’emmène en Égypte pour fuir le roi Hérode, et apprend son métier à Jésus.',
+   'Dans l’Évangile, Joseph ne dit pas un seul mot, mais il agit toujours au bon moment. C’est le patron de l’Église et des travailleurs.']},
+ {id:'michel',n:'Saint Michel Archange',c:'#2a4a7a',g:'Scouts',ev:[['09-29','Fête de saint Michel Archange']],
+  q:'Qui est comme Dieu ?',qs:'C’est ce que veut dire le nom « Michel » (Mi-ka-El)',
+  h:['Michel est un archange : un des grands messagers de Dieu. Son nom est déjà une question qui veut dire que personne n’est plus grand que Dieu.',
+   'Dans la Bible, il est le chef des armées du Ciel. Le livre de l’Apocalypse raconte qu’il combat le dragon et remporte la victoire.',
+   'On le représente avec une épée ou une lance. On le prie pour être protégé et pour avoir du courage contre le mal. Sa fête, le 29 septembre, est aussi celle des archanges Gabriel et Raphaël.']},
+ {id:'jp2',n:'Saint Jean-Paul II',c:'#a33b2b',g:'Scouts',ev:[['10-22','Fête de saint Jean-Paul II'],['05-18','Naissance de saint Jean-Paul II (1920)'],['04-27','Canonisation de saint Jean-Paul II (2014)']],
+  q:'Le Liban est plus qu’un pays : c’est un message de liberté et un exemple de pluralisme, pour l’Orient comme pour l’Occident.',qs:'Saint Jean-Paul II (1989)',
+  h:['Karol Wojtyła naît le 18 mai 1920 en Pologne. Il est sportif, acteur de théâtre, et pendant la guerre il travaille dans une carrière tout en étudiant en cachette pour devenir prêtre.',
+   'Il aime la montagne, le kayak et le ski, et part camper avec les jeunes. En 1978, il devient pape. Il voyage dans le monde entier et crée les Journées mondiales de la jeunesse.',
+   'Il aime beaucoup le Liban : il vient nous rendre visite en mai 1997. Il meurt en 2005 et il est canonisé le 27 avril 2014.']}];
+var PRPH={},PRON=false,PRMSG='';
+function prMD(d){return String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function prJul3(y){var d=new Date(y,6,1);while(d.getDay())d.setDate(d.getDate()+1);d.setDate(d.getDate()+14);return d}
+function prToday(){var d=new Date(),md=prMD(d),j3=prMD(prJul3(d.getFullYear())),out=[];
+ SAINTS.forEach(function(s){s.ev.forEach(function(e){if((e[0]==='jul3'?j3:e[0])===md&&!out.some(function(o){return o.s===s}))out.push({s:s,t:e[1]})})});
+ if(!out.length){var k=today(),h=0;for(var i=0;i<k.length;i++)h=(h*31+k.charCodeAt(i))>>>0;out.push({s:SAINTS[h%SAINTS.length],t:''})}return out}
+function prGet(id){return SAINTS.filter(function(s){return s.id===id})[0]}
+function prStart(){if(PRON)return;PRON=true;fbLoad().then(function(){firebase.database().ref('gallery/saints').on('value',function(s){PRPH=s.val()||{};if(tab==='home'||tab==='priere')render()},function(){})}).catch(function(){PRON=false})}
+function prAv(s,sz){var p=PRPH[s.id];return '<span class="prav" style="width:'+sz+'px;height:'+sz+'px;background:'+s.c+';font-size:'+Math.round(sz*0.4)+'px">'+(p?'<img src="'+p+'" alt="">':'✝')+'</span>'}
+function prFeast(s){var e=s.ev[0][0];if(e==='jul3')return '3e dimanche de juillet';var p=e.split('-');return +p[1]+' '+['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'][+p[0]-1]}
+function prCard(o,big){var s=o.s;return '<div class="prc"><div class="prtop">'+prAv(s,big?72:60)+'<div><small>'+(o.t?'🎉 Aujourd’hui · '+esc(o.t):'✨ Le saint du jour')+'</small><b>'+esc(s.n)+'</b></div></div><blockquote>« '+esc(s.q)+' »</blockquote><cite>— '+esc(s.qs)+'</cite><button class="prgo" data-menunav="priere/'+s.id+'">Lire son histoire →</button></div>'}
+function prHome(){prStart();var L=prToday();return '<section class="hsec"><div class="hsh"><div><small>Chaque jour</small><h2>Coin prière</h2></div><button data-menunav="priere">Tous les saints →</button></div><div class="prlist">'+L.map(function(o){return prCard(o)}).join('')+'</div></section>'}
+function priere(){prStart();var h='';
+ if(PRO){var s=prGet(PRO);if(s){var ad=galIsAdmin();
+  h+='<button class="back" data-menunav="priere"><span class="bico">‹</span>Tous les saints</button><div class="prhero">'+prAv(s,120)+'<h2>'+esc(s.n)+'</h2><span>Fête : '+esc(prFeast(s))+'</span></div>'+
+   (ad?'<div class="prad"><label class="pdfbtn">📷 '+(PRPH[s.id]?'Changer la photo':'Ajouter une photo')+'<input type="file" accept="image/*" data-prup="'+s.id+'" hidden></label>'+(PRPH[s.id]?'<button class="pdfbtn" data-prdel="'+s.id+'">Retirer la photo</button>':'')+(PRMSG?'<span class="meta">'+esc(PRMSG)+'</span>':'')+'</div>':'')+
+   '<div class="prc"><blockquote>« '+esc(s.q)+' »</blockquote><cite>— '+esc(s.qs)+'</cite></div>'+
+   '<h3 class="prh">Son histoire</h3><div class="prtxt">'+s.h.map(function(p){return '<p>'+esc(p)+'</p>'}).join('')+'</div>'+
+   '<h3 class="prh">Ses dates</h3><ul class="evlist">'+s.ev.map(function(e){return '<li>'+(e[0]==='jul3'?'3e dimanche de juillet':prFeast({ev:[e]}))+' · '+esc(e[1])+'</li>'}).join('')+'</ul>'+prTH(s);
+  return h}}
+ h+='<div class="prlist" style="margin-top:14px">'+prToday().map(function(o){return prCard(o,1)}).join('')+'</div>';
+ [['Liban','🇱🇧 Les saints du Liban'],['Scouts','⚜️ Les saints des scouts et des jeunes']].forEach(function(G){
+  h+='<h3 class="prh">'+G[1]+'</h3><div class="prgrid">'+SAINTS.filter(function(s){return s.g===G[0]}).map(function(s){return '<button class="prs" data-menunav="priere/'+s.id+'">'+prAv(s,64)+'<b>'+esc(s.n)+'</b><small>'+esc(prFeast(s))+'</small></button>'}).join('')+'</div>'});
+ return h}
+function prClick(b){if(prTClick(b))return true;if(b.dataset.prdel){var id=b.dataset.prdel;PRMSG='…';render();fbAuth().then(function(){return firebase.database().ref('gallery/saints/'+id).remove()}).then(function(){PRMSG='Photo retirée ✓';render()}).catch(function(){PRMSG='Échec, réessaie.';render()});return true}return false}
+document.addEventListener('change',function(ev){var t=ev.target;if(!t||!t.dataset||t.dataset.prup==null||!t.files||!t.files[0])return;var id=t.dataset.prup,f=t.files[0],r=new FileReader();PRMSG='Envoi…';render();
+ r.onload=function(){var im=new Image();im.onload=function(){var m=480,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);var u=c.toDataURL('image/jpeg',0.82);
+  fbAuth().then(function(){return firebase.database().ref('gallery/saints/'+id).set(u)}).then(function(){PRMSG='Photo enregistrée ✓';PRPH[id]=u;render()}).catch(function(e){PRMSG=String(e&&e.message||e).indexOf('PERMISSION')>=0?'Firebase refuse : vérifie la règle « gallery ».':'Échec, réessaie.';render()})};im.src=r.result};r.readAsDataURL(f)});
+/* témoignages anonymes : tout compte connecté peut écrire, personne ne voit qui a écrit */
+var PRT={},PRTON={},PRTW={busy:false,msg:'',uid:null,draft:''};
+document.addEventListener('input',function(ev){if(ev.target&&ev.target.id==='prtx')PRTW.draft=ev.target.value});
+function prTLoad(id){if(PRTON[id])return;PRTON[id]=1;fbLoad().then(function(){firebase.database().ref('temoignages/'+id).on('value',function(s){var v=s.val()||{};PRT[id]=Object.keys(v).map(function(k){var o=v[k];o.k=k;return o}).filter(function(o){return o&&o.t}).sort(function(a,b){return (b.at||0)-(a.at||0)});if(tab==='priere'&&PRO===id)render()},function(){PRT[id]=PRT[id]||[]})}).catch(function(){PRTON[id]=0})}
+function prTH(s){prTLoad(s.id);var L=PRT[s.id],me=ACC||GAMER,ad=galIsAdmin();
+ if(me&&!PRTW.uid)fbAuth().then(function(){var u=firebase.auth().currentUser;if(u){PRTW.uid=u.uid;if(L&&L.length)render()}}).catch(function(){});
+ var h='<h3 class="prh">Témoignages</h3><p class="meta" style="margin:0 2px 10px">Ce que des membres ont vécu avec '+esc(s.n)+'. Tous les témoignages sont anonymes.</p>';
+ if(me)h+='<div class="prw"><textarea id="prtx" dir="auto" maxlength="1500" rows="4" placeholder="Raconte ce que tu as vécu avec ce saint, dans la langue que tu veux… Ton nom ne sera pas affiché.">'+esc(PRTW.draft||'')+'</textarea><div class="prwb"><span class="meta">'+esc(PRTW.msg||'Publié en anonyme')+'</span><button class="btn" data-prpost="'+s.id+'"'+(PRTW.busy?' disabled':'')+'>'+(PRTW.busy?'Envoi…':'Publier')+'</button></div></div>';
+ else h+='<div class="note" style="margin-top:0">Connecte-toi pour écrire un témoignage.</div>';
+ if(!L)h+='<p class="meta">Chargement…</p>';
+ else if(!L.length)h+='<p class="meta">Pas encore de témoignage. Sois le premier !</p>';
+ else h+='<div class="prts">'+L.map(function(o){var d=o.at?new Date(o.at):null;return '<div class="prt"><p dir="auto">'+esc(o.t)+'</p><div class="prtm"><span>Anonyme'+(d?' · '+d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear():'')+'</span>'+((ad||(PRTW.uid&&o.u===PRTW.uid))?'<button data-prtdel="'+s.id+'/'+o.k+'">Supprimer</button>':'')+'</div></div>'}).join('')+'</div>';
+ return h}
+function prTClick(b){
+ if(b.dataset.prpost){var id=b.dataset.prpost,ta=document.getElementById('prtx'),t=String(ta&&ta.value||'').trim().slice(0,1500);if(t.length<3){PRTW.msg='Écris un peu plus.';render();return true}
+  PRTW.busy=true;PRTW.msg='';var keep=t;render();
+  fbAuth().then(fbUserReady).then(function(u){PRTW.uid=u.uid;return firebase.database().ref('temoignages/'+id).push({t:keep,at:firebase.database.ServerValue.TIMESTAMP,u:u.uid})}).then(function(){PRTW.busy=false;PRTW.draft='';PRTW.msg='Publié ✓ Merci !';render()})
+  .catch(function(e){PRTW.busy=false;PRTW.msg=String(e&&e.message||e).indexOf('PERMISSION')>=0?'Firebase refuse : il manque la règle « temoignages ».':'Échec, reconnecte-toi et réessaie.';PRTW.draft=keep;render()});return true}
+ if(b.dataset.prtdel){if(!confirm('Supprimer ce témoignage ?'))return true;fbAuth().then(function(){return firebase.database().ref('temoignages/'+b.dataset.prtdel).remove()}).catch(function(){PRTW.msg='Suppression refusée.';render()});return true}
+ return false}
+
 /* ===== Galerie (Souvenirs) : modifiable par impeesa.admin, stockée dans Firebase « gallery » ===== */
 var GAL={list:null,on:false,edit:false,draft:null,busy:false,msg:''};
 function galIsAdmin(){return !!ACC&&ACC.u===QZ_ADMIN}
@@ -1827,7 +1985,7 @@ function galClick(b){var d=b.dataset;
  if(d.galhero!=null&&b.hasAttribute('data-galhero')){var hi=+d.galhero;GAL.draft.forEach(function(p,k){p.hero=k===hi?!p.hero:false});render();return true}
  if(d.galmv){var q=d.galmv.split('|'),i=+q[0],j=i+(+q[1]);if(j>=0&&j<GAL.draft.length){var x=GAL.draft[i];GAL.draft[i]=GAL.draft[j];GAL.draft[j]=x}render();return true}
  if(d.act==='galsave'){if(GAL.busy)return true;GAL.busy=true;GAL.msg='';render();var items={};GAL.draft.forEach(function(p,i){items['i'+String(i).padStart(3,'0')]={src:p.src,caption:String(p.caption||'').slice(0,40),hero:!!p.hero}});
-  fbAuth().then(function(){return firebase.database().ref('gallery').set({items:items,by:ACC?ACC.name:'',at:Date.now()})}).then(function(){GAL.busy=false;GAL.edit=false;GAL.list=GAL.draft;GAL.draft=null;GAL.msg='Enregistré ✓';render()})
+  fbAuth().then(function(){return firebase.database().ref('gallery').update({items:items,by:ACC?ACC.name:'',at:Date.now()})}).then(function(){GAL.busy=false;GAL.edit=false;GAL.list=GAL.draft;GAL.draft=null;GAL.msg='Enregistré ✓';render()})
   .catch(function(e){GAL.busy=false;GAL.msg=String(e&&e.message||e).indexOf('PERMISSION')>=0?'Ajoute la règle « gallery » dans Firebase.':'Échec, réessaie.';render()});return true}
  return false}
 document.addEventListener('input',function(ev){var t=ev.target;if(t&&t.dataset&&t.dataset.galcap!=null&&GAL.draft){var p=GAL.draft[+t.dataset.galcap];if(p)p.caption=t.value}});
@@ -2939,7 +3097,7 @@ function render(){
  if(ACC&&ACC.sid){var _n=scName(ACC.sid,ACC.name);if(_n!==ACC.name){ACC.name=_n;try{accSave()}catch(e){}}}
  var keep=editing;try{visTick();if(visCan()&&CP_ON)visListen()}catch(e){}
  try{document.body.classList.toggle('kahoot',tab==='quiz');document.body.classList.toggle('lgpage',tab==='login'&&!ACC)}catch(e){}
- var body=header()+''+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():tab==='quiz'?quiz():tab==='login'?loginPage():tab==='me'?mePage():tab==='inst'?instPage():tab==='order'?orderPage():tab==='orders'?troupeOrderPage():tab==='uni'?uniPage():tab==='plus'?plusPage():events())+(full?settings():'');
+ var body=header()+''+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():tab==='quiz'?quiz():tab==='login'?loginPage():tab==='me'?mePage():tab==='inst'?instPage():tab==='order'?orderPage():tab==='orders'?troupeOrderPage():tab==='uni'?uniPage():tab==='plus'?plusPage():tab==='priere'?priere():events())+(full?settings():'');
  editing=keep;
  if(openScout) body+=profile();
  if(openEvent) body+=eventPage();
@@ -2982,7 +3140,7 @@ document.addEventListener('click',function(ev){
  if(b&&b.dataset.menunav){if(b.dataset.menunav==='game'){location.href='game.html?v='+Date.now();return}MENU=false;go(b.dataset.menunav);window.scrollTo(0,0);return}
  if(!b&&ev.target.closest('.drw-bg')){MENU=false;render();return}
  if(b&&b.dataset.act==='acct')MENU=false;
- if(b&&galClick(b))return;
+ if(b&&prClick(b))return;if(b&&galClick(b))return;
  if(b&&notifClick(b))return;
  if(b&&evClick(b))return;
  if(b&&instClick(b))return;

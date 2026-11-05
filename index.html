@@ -824,6 +824,17 @@ h2{font-size:28px}
 /* section heads */
 .hsec{margin-top:44px}
 .prlist{display:grid;gap:12px}
+.prrows{display:grid;gap:8px}
+.prrow{display:flex;align-items:center;gap:14px;width:100%;padding:12px 16px;border:none;border-radius:18px;background:var(--surface);color:var(--fg);text-align:left;cursor:pointer;font-family:var(--body)}
+.prrow .prav{border-color:var(--surface)}.prrow>span:not(.prav){flex:1;min-width:0}.prrow b{display:block;font:400 21px/1.15 var(--serif)}.prrow small{display:block;font:600 12.5px var(--body);color:var(--muted);margin-top:3px}.prrow i{font-style:normal;font-size:22px;color:var(--muted)}
+.hsh.prsh{margin:36px 2px 14px}
+.pra .prah{display:flex;align-items:center;gap:16px;margin:10px 0 18px}.pra .prah .prav{border-color:var(--line)}.pra .prah small{display:block;font:700 11px var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}.pra .prah h2{margin:0;font:400 clamp(28px,7vw,38px)/1.05 var(--serif)}
+.praq{margin:8px 0 0;padding:4px 0 4px 18px;border-left:3px solid #6b3a7a;font:italic 400 22px/1.4 var(--serif)}.praq cite{display:block;margin-top:10px;font:600 12.5px var(--body);font-style:normal;color:var(--muted)}
+.pra .prtxt p{font-size:16.5px;line-height:1.75;margin:0 0 14px}
+.prdates div{display:flex;gap:14px;align-items:baseline;padding:11px 2px;border-top:1px solid var(--line)}.prdates div:last-child{border-bottom:1px solid var(--line)}.prdates b{font:400 18px var(--serif);min-width:120px}.prdates span{color:var(--muted);font-size:14.5px}
+.pra .prw{background:none;padding:0}.pra .prw textarea{border:1px solid var(--line);background:var(--bg);border-radius:12px}
+.pra .prt{background:none;border-radius:0;padding:14px 2px 14px 16px;border-left:3px solid var(--line)}.pra .prt p{font:400 17px/1.5 var(--serif)}
+
 .prc{position:relative;border-radius:24px;padding:20px;color:#fff;background:linear-gradient(135deg,#2a1f4a,#6b3a7a);box-shadow:var(--shadow)}
 .prtop{display:flex;align-items:center;gap:14px}.prtop small{display:block;font:700 11px var(--body);letter-spacing:.12em;text-transform:uppercase;opacity:.85}.prtop b{display:block;font:800 20px/1.15 var(--display);margin-top:3px}
 .prc blockquote{margin:16px 0 6px;font:italic 400 21px/1.35 var(--serif,Georgia,serif)}.prc cite{display:block;font:600 12.5px var(--body);opacity:.8;font-style:normal}
@@ -1927,15 +1938,15 @@ function prCard(o,big){var s=o.s;return '<div class="prc"><div class="prtop">'+p
 function prHome(){prStart();var L=prToday();return '<section class="hsec"><div class="hsh"><div><small>Chaque jour</small><h2>Coin prière</h2></div><button data-menunav="priere">Tous les saints →</button></div><div class="prlist">'+L.map(function(o){return prCard(o)}).join('')+'</div></section>'}
 function priere(){prStart();var h='';
  if(PRO){var s=prGet(PRO);if(s){var ad=galIsAdmin();
-  h+='<button class="back" data-menunav="priere"><span class="bico">‹</span>Tous les saints</button><div class="prhero">'+prAv(s,120)+'<h2>'+esc(s.n)+'</h2><span>Fête : '+esc(prFeast(s))+'</span></div>'+
+  h+='<button class="back" data-menunav="priere"><span class="bico">‹</span>Tous les saints</button><div class="pra">'+
+   '<div class="prah">'+prAv(s,104)+'<div><small>Fête · '+esc(prFeast(s))+'</small><h2>'+esc(s.n)+'</h2></div></div>'+
    (ad?'<div class="prad"><label class="pdfbtn">📷 '+(PRPH[s.id]?'Changer la photo':'Ajouter une photo')+'<input type="file" accept="image/*" data-prup="'+s.id+'" hidden></label>'+(PRPH[s.id]?'<button class="pdfbtn" data-prdel="'+s.id+'">Retirer la photo</button>':'')+(PRMSG?'<span class="meta">'+esc(PRMSG)+'</span>':'')+'</div>':'')+
-   '<div class="prc"><blockquote>« '+esc(s.q)+' »</blockquote><cite>— '+esc(s.qs)+'</cite></div>'+
-   '<h3 class="prh">Son histoire</h3><div class="prtxt">'+s.h.map(function(p){return '<p>'+esc(p)+'</p>'}).join('')+'</div>'+
-   '<h3 class="prh">Ses dates</h3><ul class="evlist">'+s.ev.map(function(e){return '<li>'+(e[0]==='jul3'?'3e dimanche de juillet':prFeast({ev:[e]}))+' · '+esc(e[1])+'</li>'}).join('')+'</ul>'+prTH(s);
+   '<blockquote class="praq">« '+esc(s.q)+' »<cite>'+esc(s.qs)+'</cite></blockquote>'+
+   '<div class="hsh prsh"><div><small>Sa vie</small><h2>Son histoire</h2></div></div><div class="prtxt">'+s.h.map(function(p){return '<p>'+esc(p)+'</p>'}).join('')+'</div>'+
+   '<div class="hsh prsh"><div><small>À retenir</small><h2>Ses dates</h2></div></div><div class="prdates">'+s.ev.map(function(e){return '<div><b>'+(e[0]==='jul3'?'3e dimanche de juillet':prFeast({ev:[e]}))+'</b><span>'+esc(e[1])+'</span></div>'}).join('')+'</div>'+prTH(s)+'</div>';
   return h}}
  h+='<div class="prlist" style="margin-top:14px">'+prToday().map(function(o){return prCard(o,1)}).join('')+'</div>';
- [['Liban','🇱🇧 Les saints du Liban'],['Scouts','⚜️ Les saints des scouts et des jeunes']].forEach(function(G){
-  h+='<h3 class="prh">'+G[1]+'</h3><div class="prgrid">'+SAINTS.filter(function(s){return s.g===G[0]}).map(function(s){return '<button class="prs" data-menunav="priere/'+s.id+'">'+prAv(s,64)+'<b>'+esc(s.n)+'</b><small>'+esc(prFeast(s))+'</small></button>'}).join('')+'</div>'});
+ h+='<div class="hsh prsh"><div><small>'+SAINTS.length+' saints</small><h2>Tous les saints</h2></div></div><div class="prrows">'+SAINTS.map(function(s){return '<button class="prrow" data-menunav="priere/'+s.id+'">'+prAv(s,52)+'<span><b>'+esc(s.n)+'</b><small>Fête · '+esc(prFeast(s))+'</small></span><i>›</i></button>'}).join('')+'</div>';
  return h}
 function prClick(b){if(prTClick(b))return true;if(b.dataset.prdel){var id=b.dataset.prdel;PRMSG='…';render();fbAuth().then(function(){return firebase.database().ref('gallery/saints/'+id).remove()}).then(function(){PRMSG='Photo retirée ✓';render()}).catch(function(){PRMSG='Échec, réessaie.';render()});return true}return false}
 document.addEventListener('change',function(ev){var t=ev.target;if(!t||!t.dataset||t.dataset.prup==null||!t.files||!t.files[0])return;var id=t.dataset.prup,f=t.files[0],r=new FileReader();PRMSG='Envoi…';render();
@@ -1947,7 +1958,7 @@ document.addEventListener('input',function(ev){if(ev.target&&ev.target.id==='prt
 function prTLoad(id){if(PRTON[id])return;PRTON[id]=1;fbLoad().then(function(){firebase.database().ref('temoignages/'+id).on('value',function(s){var v=s.val()||{};PRT[id]=Object.keys(v).map(function(k){var o=v[k];o.k=k;return o}).filter(function(o){return o&&o.t}).sort(function(a,b){return (b.at||0)-(a.at||0)});if(tab==='priere'&&PRO===id)render()},function(){PRT[id]=PRT[id]||[]})}).catch(function(){PRTON[id]=0})}
 function prTH(s){prTLoad(s.id);var L=PRT[s.id],me=ACC||GAMER,ad=galIsAdmin();
  if(me&&!PRTW.uid)fbAuth().then(function(){var u=firebase.auth().currentUser;if(u){PRTW.uid=u.uid;if(L&&L.length)render()}}).catch(function(){});
- var h='<h3 class="prh">Témoignages</h3><p class="meta" style="margin:0 2px 10px">Ce que des membres ont vécu avec '+esc(s.n)+'. Tous les témoignages sont anonymes.</p>';
+ var h='<div class="hsh prsh"><div><small>Anonymes</small><h2>Témoignages</h2></div></div><p class="meta" style="margin:-6px 2px 12px">Ce que des membres ont vécu avec '+esc(s.n)+'. Tous les témoignages sont anonymes.</p>';
  if(me)h+='<div class="prw"><textarea id="prtx" dir="auto" maxlength="1500" rows="4" placeholder="Raconte ce que tu as vécu avec ce saint, dans la langue que tu veux… Ton nom ne sera pas affiché.">'+esc(PRTW.draft||'')+'</textarea><div class="prwb"><span class="meta">'+esc(PRTW.msg||'Publié en anonyme')+'</span><button class="btn" data-prpost="'+s.id+'"'+(PRTW.busy?' disabled':'')+'>'+(PRTW.busy?'Envoi…':'Publier')+'</button></div></div>';
  else h+='<div class="note" style="margin-top:0">Connecte-toi pour écrire un témoignage.</div>';
  if(!L)h+='<p class="meta">Chargement…</p>';

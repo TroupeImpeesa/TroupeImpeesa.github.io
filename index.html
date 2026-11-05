@@ -1983,8 +1983,8 @@ function prToday(){var d=new Date(),md=prMD(d),j3=prMD(prJul3(d.getFullYear())),
  SAINTS.forEach(function(s){s.ev.forEach(function(e,i){if((e[0]==='jul3'?j3:e[0])===md&&!out.some(function(o){return o.s===s}))out.push({s:s,i:i})})});
  if(!out.length){var k=today(),h=0;for(var i=0;i<k.length;i++)h=(h*31+k.charCodeAt(i))>>>0;out.push({s:SAINTS[h%SAINTS.length],i:-1})}return out}
 function prGet(id){return SAINTS.filter(function(s){return s.id===id})[0]}
-function prStart(){if(PRON)return;PRON=true;fbLoad().then(function(){firebase.database().ref('gallery/saints').on('value',function(s){PRPH=s.val()||{};if(tab==='home'||tab==='priere')render()},function(){})}).catch(function(){PRON=false})}
-function prAv(s,sz){var p=PRPH[s.id];return '<span class="prav" style="width:'+sz+'px;height:'+sz+'px;background:'+s.c+';font-size:'+Math.round(sz*0.4)+'px">'+(p?'<img src="'+p+'" alt="">':'✝')+'</span>'}
+function prStart(){if(PRON)return;PRON=true;fbLoad().then(function(){firebase.database().ref('gallery/saints').on('value',function(s){var v=s.val()||{},old=PRPH;PRPH=v;Object.keys(v).concat(Object.keys(old)).forEach(function(id){if(v[id]===old[id])return;[].forEach.call(document.querySelectorAll('.prav[data-pr="'+id+'"]'),function(e){e.innerHTML=v[id]?'<img src="'+v[id]+'" alt="">':'✝'})})},function(){})}).catch(function(){PRON=false})}
+function prAv(s,sz){var p=PRPH[s.id];return '<span class="prav" data-pr="'+s.id+'" style="width:'+sz+'px;height:'+sz+'px;background:'+s.c+';font-size:'+Math.round(sz*0.4)+'px">'+(p?'<img src="'+p+'" alt="">':'✝')+'</span>'}
 function prDate(code){if(code==='jul3')return prU('j3');var p=code.split('-');return +p[1]+' '+prU('m')[+p[0]-1]}
 function prFeast(s){return prDate(s.ev[0][0])}
 /* carte du jour : la phrase en français ET en arabe, même taille de carte */

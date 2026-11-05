@@ -28,7 +28,26 @@ def apply_patrol(st, d):
     st["meetings"] = sorted([m for m in st["meetings"] if m["patrols"]], key=lambda m: m["date"])
 
 
+SITE_KEYS = ["news", "photos", "cover", "troop", "season", "maitrises", "staff", "commissaires", "maitrisePhotos", "faces", "patrols", "stages", "example"]
+
+
+def apply_site_edits(state, root):
+    """Edits made on the website by impeesa.admin (data/site-edits.json, copied from Firebase by the GitHub Action)."""
+    f = os.path.join(root, "data", "site-edits.json")
+    if not os.path.exists(f):
+        return
+    d = json.load(open(f, encoding="utf-8"))
+    at = d.get("at") or 0
+    if at <= (state.get("siteEditsAt") or 0) or not isinstance(d.get("state"), dict):
+        return
+    for k in SITE_KEYS:
+        if k in d["state"]:
+            state[k] = d["state"][k]
+    state["siteEditsAt"] = at
+
+
 def apply_all(state, root):
+    apply_site_edits(state, root)
     ef = os.path.join(root, "data", "events.json")
     if os.path.exists(ef):
         d = json.load(open(ef, encoding="utf-8"))

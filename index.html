@@ -837,6 +837,17 @@ h2{font-size:28px}
 
 .prrow{display:flex;align-items:center;gap:14px;width:100%;padding:12px 16px;border:none;border-radius:18px;background:var(--surface);color:var(--fg);text-align:left;cursor:pointer;font-family:var(--body)}
 .prrow .prav{border-color:var(--surface)}.prrow>span:not(.prav){flex:1;min-width:0}.prrow b{display:block;font:400 21px/1.15 var(--serif)}.prrow small{display:block;font:600 12.5px var(--body);color:var(--muted);margin-top:3px}.prrow i{font-style:normal;font-size:22px;color:var(--muted)}
+/* liste des saints en grille : 4 par ligne (téléphone), 6 sur écran large */
+.prrows{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 8px}
+@media(min-width:600px){.prrows{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.prrows .prrow{flex-direction:column;align-items:center;justify-content:flex-start;gap:7px;padding:10px 6px 12px;border-radius:16px;text-align:center}
+.prrows .prrow .prav{width:100%!important;height:auto!important;aspect-ratio:1/1;font-size:26px!important;border-width:2px}
+.prrows .prrow>span:not(.prav){width:100%}
+.prrows .prrow b{font:700 11.5px/1.2 var(--body);letter-spacing:-.02em;overflow-wrap:break-word;hyphens:none}
+@media(min-width:600px){.prrows .prrow b{font-size:13px;letter-spacing:0}}
+[dir=rtl] .prrows .prrow b{font-family:Tahoma,"Noto Naskh Arabic",sans-serif}
+.prrows .prrow small{font-size:10.5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prrows .prrow i{display:none}
 .hsh.prsh{margin:36px 2px 14px}
 .pra .prah{display:flex;align-items:center;gap:16px;margin:10px 0 18px}.pra .prah .prav{border-color:var(--line)}.pra .prah small{display:block;font:700 11px var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}.pra .prah h2{margin:0;font:400 clamp(28px,7vw,38px)/1.05 var(--serif)}
 .praq{margin:8px 0 0;padding:4px 0 4px 18px;border-left:3px solid #6b3a7a;font:italic 400 22px/1.4 var(--serif)}.praq cite{display:block;margin-top:10px;font:600 12.5px var(--body);font-style:normal;color:var(--muted)}

@@ -846,6 +846,20 @@ h2{font-size:28px}
 .prrows .prrow em{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font:400 13.5px/1.35 var(--body);color:var(--fg);opacity:.8;margin-top:3px}
 [dir=rtl] .prrows .prrow em{font-family:Tahoma,"Noto Naskh Arabic",sans-serif}
 .prrows .prrow small{font-size:11.5px;margin-top:4px}
+/* bouton liste / grille */
+.prview{display:flex;gap:2px;background:var(--surface);border-radius:12px;padding:3px;flex:none}
+.prview button{display:grid;place-items:center;width:38px;height:32px;border:none;border-radius:9px;background:none;color:var(--muted);cursor:pointer;padding:0}
+.prview button.on{background:#0f2342;color:#fff}
+/* vue grille : 4 par ligne (téléphone), 6 sur iPad / ordinateur */
+.prrows.grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 8px}
+@media(min-width:600px){.prrows.grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.prrows.grid .prrow{flex-direction:column;justify-content:flex-start;gap:7px;padding:10px 6px 12px;border-radius:16px;text-align:center}
+.prrows.grid .prrow .prav{width:100%!important;height:auto!important;aspect-ratio:1/1;border-width:2px}
+.prrows.grid .prrow>span:not(.prav){width:100%}
+.prrows.grid .prrow b{font-size:11.5px;letter-spacing:-.02em;overflow-wrap:break-word;hyphens:none}
+@media(min-width:600px){.prrows.grid .prrow b{font-size:13px;letter-spacing:0}}
+.prrows.grid .prrow em,.prrows.grid .prrow i{display:none}
+.prrows.grid .prrow small{font-size:10.5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* photos des saints : toujours bien remplies dans le cercle, visage en haut */
 .prav{position:relative}
 .prav img{position:absolute;inset:0;width:100%!important;height:100%!important;max-width:none;object-fit:cover;object-position:center 22%;display:block}
@@ -2034,9 +2048,13 @@ function priere(){prStart();var h='';
    '<div class="hsh prsh"><div><small>'+esc(prU('keep'))+'</small><h2>'+esc(prU('dates'))+'</h2></div></div><div class="prdates">'+s.ev.map(function(e){return '<div><b>'+esc(prDate(e[0]))+'</b><span>'+esc(e[1])+'</span></div>'}).join('')+'</div>'+prTH(s0,s)+'</div>';
   return h}}
  h+='<div class="prlist" style="margin-top:14px">'+prDay()+'</div>'+prLangBar();
- h+='<div'+prDir()+'><div class="hsh prsh"><div><small>'+SAINTS.length+' '+esc(prU('n'))+'</small><h2>'+esc(prU('all'))+'</h2></div></div><div class="prrows">'+SAINTS.map(function(s0){var s=prX(s0);return '<button class="prrow" data-menunav="priere/'+s0.id+'">'+prAv(s0,52)+'<span><b>'+esc(s.n)+'</b><em>'+esc(((PROV[PRLG]||PROV.fr)[s0.id])||'')+'</em><small>'+esc(prU('feast'))+' · '+esc(prFeast(s0))+'</small></span><i>'+(PRLG==='ar'?'‹':'›')+'</i></button>'}).join('')+'</div></div>';
+ h+='<div'+prDir()+'><div class="hsh prsh"><div><small>'+SAINTS.length+' '+esc(prU('n'))+'</small><h2>'+esc(prU('all'))+'</h2></div>'+prViewBar()+'</div><div class="prrows'+(PRVIEW==='grid'?' grid':'')+'">'+SAINTS.map(function(s0){var s=prX(s0);return '<button class="prrow" data-menunav="priere/'+s0.id+'">'+prAv(s0,52)+'<span><b>'+esc(s.n)+'</b><em>'+esc(((PROV[PRLG]||PROV.fr)[s0.id])||'')+'</em><small>'+esc(prU('feast'))+' · '+esc(prFeast(s0))+'</small></span><i>'+(PRLG==='ar'?'‹':'›')+'</i></button>'}).join('')+'</div></div>';
  return h}
-function prClick(b){if(b.dataset.prlang){PRLG=b.dataset.prlang;try{localStorage.setItem('pr-lang',PRLG)}catch(e){}render();return true}
+var PRVIEW='list';try{if(localStorage.getItem('pr-view')==='grid')PRVIEW='grid'}catch(e){}
+var PRICO={list:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="4.5" cy="6" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.3" fill="currentColor" stroke="none"/><path d="M9 6h11M9 12h11M9 18h11"/></svg>',grid:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg>'};
+function prViewBar(){return '<div class="prview">'+['list','grid'].map(function(v){return '<button data-prview="'+v+'" class="'+(PRVIEW===v?'on':'')+'" aria-label="'+(v==='list'?'Liste':'Grille')+'">'+PRICO[v]+'</button>'}).join('')+'</div>'}
+function prClick(b){if(b.dataset.prview){PRVIEW=b.dataset.prview;try{localStorage.setItem('pr-view',PRVIEW)}catch(e){}render();return true}
+ if(b.dataset.prlang){PRLG=b.dataset.prlang;try{localStorage.setItem('pr-lang',PRLG)}catch(e){}render();return true}
  if(prTClick(b))return true;
  if(b.dataset.prdel){var id=b.dataset.prdel;PRMSG='…';render();fbAuth().then(function(){return firebase.database().ref('gallery/saints/'+id).remove()}).then(function(){PRMSG='Photo retirée ✓';render()}).catch(function(){PRMSG='Échec, réessaie.';render()});return true}return false}
 document.addEventListener('change',function(ev){var t=ev.target;if(!t||!t.dataset||t.dataset.prup==null||!t.files||!t.files[0])return;var id=t.dataset.prup,f=t.files[0],r=new FileReader();PRMSG='Envoi…';render();

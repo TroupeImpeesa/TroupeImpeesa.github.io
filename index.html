@@ -1863,7 +1863,7 @@ function points(){
   h+='<div class="editbox"><h4>Attribuer des points</h4><div class="fields"><select id="ap-patrol">'+S.patrols.map(function(p){return '<option value="'+p.id+'">'+esc(p.name)+'</option>'}).join('')+'</select><select id="ap-cat" aria-label="Catégorie">'+CATS.map(function(c){return '<option value="'+c[0]+'">'+c[1]+'</option>'}).join('')+'</select><input id="ap-pts" type="number" placeholder="Points (ex. 10 ou -5)"><input id="ap-date" type="date" value="'+today()+'"></div><div class="fields"><input id="ap-reason" placeholder="Raison (ex. relais de nœuds)"><button class="btn" data-act="award">Ajouter</button></div></div>';
  }
  var log=allLog().sort(function(a,b){return a.date<b.date?1:-1});
- h+='<h2>Historique des points</h2>'+(log.length?'<ul class="log'+lkB()+'">'+(ACC?log:log.slice(0,4)).map(function(l){var p=pat(l.patrol),n=Number(l.pts)||0;return '<li><span class="delta '+(n<0?'neg':'pos')+'">'+(n>0?'+':'')+n+'</span><span style="min-width:0">'+esc(l.reason||catName(l.cat)||'Points')+'<br><span class="meta">'+(p?esc(p.name):'Patrouille supprimée')+(l.cat&&l.reason?' · '+catName(l.cat):'')+'</span></span><span class="meta">'+fmtDate(l.date)+(editing&&!l.auto?' <button class="x" data-dellog="'+l.id+'" aria-label="Retirer">×</button>':'')+'</span></li>'}).join('')+'</ul>':'<p class="empty">Aucun point attribué pour l’instant.</p>');
+ h+='<h2>Historique des points</h2>'+(log.length?'<ul class="log'+lkB()+'">'+(ACC?(editing?log:log.slice(0,20)):log.slice(0,4)).map(function(l){var p=pat(l.patrol),n=Number(l.pts)||0;return '<li><span class="delta '+(n<0?'neg':'pos')+'">'+(n>0?'+':'')+n+'</span><span style="min-width:0">'+esc(l.reason||catName(l.cat)||'Points')+'<br><span class="meta">'+(p?esc(p.name):'Patrouille supprimée')+(l.cat&&l.reason?' · '+catName(l.cat):'')+'</span></span><span class="meta">'+fmtDate(l.date)+(editing&&!l.auto?' <button class="x" data-dellog="'+l.id+'" aria-label="Retirer">×</button>':'')+'</span></li>'}).join('')+'</ul>':'<p class="empty">Aucun point attribué pour l’instant.</p>');
  return h}
 
 function initials(n){return n.replace(/\./g,'').split(' ').filter(Boolean).slice(0,2).map(function(w){return w[0]}).join('').toUpperCase()}
@@ -3095,7 +3095,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="019d3fc33502">
-<script>(function(){var B="019d3fc33502";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="eafb502ae21a">
+<script>(function(){var B="eafb502ae21a";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

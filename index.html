@@ -2280,7 +2280,7 @@ function accApply(){if(typeof cp==='undefined'||!cp||!ACCK)return;cp.token=ACCK.
 function accPic(){if(!ACC)return '';var f=(S.faces||{})[ACC.sid];if(f)return f;var st=(S.staff||[]).filter(function(m){return m.name===ACC.name&&m.photo})[0];return st?st.photo:''}
 function accAv(cls){var ph=accPic();return '<span class="'+cls+' acav">'+(ph?'<img src="'+ph+'" alt="">':esc(accIni(ACC.name)))+'</span>'}
 function accIni(n){return String(n||'?').split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w.charAt(0)}).join('').toUpperCase()}
-function acctBtn(){var b=acctBtn0();return b&&(ACC||GAMER)?'<span class="acwrap">'+b+'<button class="acref" type="button" aria-label="Actualiser le site" onclick="this.classList.add(\'spin\');setTimeout(function(){location.reload()},150)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg><span>Actualiser</span></button></span>':b}
+function acctBtn(){var b=acctBtn0();return b?'<span class="acwrap">'+b+'<button class="acref" type="button" aria-label="Actualiser le site" onclick="this.classList.add(\'spin\');setTimeout(function(){location.reload()},150)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg><span>Actualiser</span></button></span>':b}
 function acctBtn0(){
  if(!CP_ON)return '';
  if(GAMER)return '<button class="acct me" data-act="acct" aria-label="Compte gaming"><span class="acav">🎮</span><span class="acnm">'+esc(GAMER.name)+'</span><span class="acsp"></span></button>';

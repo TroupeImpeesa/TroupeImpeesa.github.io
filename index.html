@@ -1026,6 +1026,16 @@ body{padding-top:0!important}
 .plfoot{margin-top:26px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;border-radius:20px;background:#0f2342;color:#fff}
 .plfoot b{font:400 20px var(--serif)}.plfoot span{display:block;font-size:13px;opacity:.75;user-select:all;overflow-wrap:anywhere}
 @media(max-width:560px){.tnav button[data-menunav="inst"],.tnav button[data-menunav="order"],.tnav button[data-menunav="orders"]{display:none}}
+
+/* ===== Histoire : Maîtrise et HP au même format, bien lisibles ===== */
+.htv .hhp{margin-top:8px;gap:8px;font-size:14px;color:var(--fg);background:var(--surface);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow)}
+.htv .hhp .lab{color:var(--muted);font:800 11px var(--body);letter-spacing:.14em;margin-bottom:0}
+.htv .hhp div{display:grid;grid-template-columns:28px minmax(70px,max-content) minmax(0,1fr);align-items:center;gap:10px;min-width:0}
+.htv .hhp i{width:28px;height:28px;font-size:11px;line-height:28px;flex:none}
+.htv .hhp i.hav{background:#0f2342 center/cover no-repeat;color:#fff}
+.htv .hhp b{color:var(--fg);font-weight:700;min-width:64px}
+.htv .hhp span{color:var(--fg);font-weight:500;line-height:1.45;min-width:0;overflow-wrap:anywhere}
+.htv .hhp span em{font-style:normal;font:800 10.5px var(--body);letter-spacing:.06em;color:var(--muted);margin-right:2px}
 </style>
 </head>
 <body>
@@ -2836,8 +2846,8 @@ function histTimeline(){
  var L=(S.maitrises||[]).slice().sort(function(a,b){return a.year<b.year?1:-1}),photo={};(S.staff||[]).forEach(function(x){if(x.photo)photo[x.name.toLowerCase()]=x.photo});Object.keys(S.maitrisePhotos||{}).forEach(function(k){photo[k.toLowerCase()]=S.maitrisePhotos[k]});
  if(!L.length)return '<h2>Histoire</h2><div class="soonbox"><b>Coming Soon</b></div>';
  return '<ol class="htlv">'+L.map(function(y,i){
-  var mem='<div class="hppl">'+y.members.map(function(m){var ph=photo[m.name.toLowerCase()];return '<span class="hpp2'+(m.role==='CT'?' ct':'')+'">'+(ph?'<span class="av"><img src="'+ph+'" alt=""></span>':'<span class="av">'+esc(initials(m.name))+'</span>')+esc(m.name)+' <em>'+esc(m.role)+'</em></span>'}).join('')+'</div>';
-  var hp=y.hp&&y.hp.patrols&&y.hp.patrols.length?'<div class="hhp"><div class="lab">Haute Patrouille</div>'+y.hp.patrols.map(function(x){var p=S.patrols.filter(function(q){return q.name.toLowerCase()===x.name.toLowerCase()})[0];return '<div><i style="background:'+(p?col(p):'var(--navy)')+'">'+esc(x.name.charAt(0))+'</i><b>'+esc(x.name)+'</b><span>CP '+esc(x.cp)+' · SP '+esc(x.sp)+'</span></div>'}).join('')+'</div>':'';
+  var mem='<div class="hhp"><div class="lab">Maîtrise</div>'+y.members.map(function(m){var ph=photo[m.name.toLowerCase()];return '<div><i class="hav"'+(ph?' style="background-image:url('+ph+')"':'')+'>'+(ph?'':esc(initials(m.name)))+'</i><b>'+esc(m.name)+'</b><span><em>'+(m.role==='CT'?'CHEF DE TROUPE':esc(m.role))+'</em></span></div>'}).join('')+'</div>';
+  var hp=y.hp&&y.hp.patrols&&y.hp.patrols.length?'<div class="hhp"><div class="lab">Haute Patrouille</div>'+y.hp.patrols.map(function(x){var p=S.patrols.filter(function(q){return q.name.toLowerCase()===x.name.toLowerCase()})[0];return '<div><i style="background:'+(p?col(p):'var(--navy)')+'">'+esc(x.name.charAt(0))+'</i><b>'+esc(x.name)+'</b><span><em>CP</em> '+esc(x.cp)+'<br><em>SP</em> '+esc(x.sp)+'</span></div>'}).join('')+'</div>':'';
   var th=[];if(y.hp&&y.hp.photo)th.push(['HP',y.hp.photo]);if(y.troupe&&y.troupe.photo)th.push(['La Troupe',y.troupe.photo]);
   var tb=th.length?'<div class="hthumbs">'+th.map(function(x){return '<span><a href="'+x[1]+'" target="_blank" rel="noopener"><img src="'+x[1]+'" alt="'+esc(x[0])+' '+esc(y.year)+'" loading="lazy"></a><span>'+esc(x[0])+'</span></span>'}).join('')+'</div>':'';
   return '<li class="htv'+(i===0?' cur':'')+'"><h3>'+esc(y.year.replace('-','–'))+(i===0?' <span class="hnow">Actuelle</span>':'')+'</h3>'+mem+hp+tb+'</li>'}).join('')+'</ol>'}
@@ -3017,7 +3027,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="c2432db6e821">
-<script>(function(){var B="c2432db6e821";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="e955aae1f2b7">
+<script>(function(){var B="e955aae1f2b7";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

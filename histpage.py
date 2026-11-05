@@ -12,21 +12,22 @@ def write(state, here):
     PCOL = {"poney": "#111111", "boa": "#c62828", "requins": "#2c5d8a", "castor": "#8a6a12"}
     years, used = [], {}
     for i, y in enumerate(L):
-        chips = []
+        rows = []
         for m in y["members"]:
             ph = photo.get(m["name"].lower())
             if ph:
                 cls = used.setdefault(ph, "p%d" % len(used))
-                av = f'<span class="av {cls}" role="img" aria-label="{e(m["name"])}"></span>'
+                av = f'<i class="av {cls}" role="img" aria-label="{e(m["name"])}"></i>'
             else:
-                av = f'<span class="av ini">{e(initials(m["name"]))}</span>'
-            chips.append(f'<span class="chip{" ct" if m["role"]=="CT" else ""}">{av}{e(m["name"])} <em>{e(m["role"])}</em></span>')
+                av = f'<i class="av ini">{e(initials(m["name"]))}</i>'
+            rows.append(f'<div>{av}<b>{e(m["name"])}</b><span><em>{"CHEF DE TROUPE" if m["role"] == "CT" else e(m["role"])}</em></span></div>')
+        chips = [f'<div class="hp"><div class="lab">Maîtrise</div>{"".join(rows)}</div>']
         now = ' <span class="now">Actuelle</span>' if i == 0 else ""
         hp = y.get("hp") or {}
         hpb = ""
         if hp.get("patrols"):
-            rows = "".join(f'<div><i style="background:{PCOL.get(x["name"].lower(), "#0f2342")}">{e(x["name"][:1])}</i><b>{e(x["name"])}</b><span>CP {e(x["cp"])} · SP {e(x["sp"])}</span></div>' for x in hp["patrols"])
-            hpb = f'<div class="hp"><div class="lab">Haute Patrouille</div>{rows}</div>'
+            prow = "".join(f'<div><i style="background:{PCOL.get(x["name"].lower(), "#0f2342")}">{e(x["name"][:1])}</i><b>{e(x["name"])}</b><span><em>CP</em> {e(x["cp"])}<br><em>SP</em> {e(x["sp"])}</span></div>' for x in hp["patrols"])
+            hpb = f'<div class="hp"><div class="lab">Haute Patrouille</div>{prow}</div>'
         th = []
         if hp.get("photo"):
             th.append(("HP", hp["photo"]))
@@ -34,7 +35,7 @@ def write(state, here):
         if tr.get("photo"):
             th.append(("La Troupe", tr["photo"]))
         tb = ('<div class="th">' + "".join(f'<span><a href="{e(u)}" target="_blank" rel="noopener"><img src="{e(u)}" alt="{e(l)} {e(y["year"])}" loading="lazy"></a><small>{e(l)}</small></span>' for l, u in th) + '</div>') if th else ""
-        years.append(f'<li class="{"cur" if i == 0 else ""}"><h2>{e(y["year"].replace("-", "–"))}{now}</h2><div class="chips">{"".join(chips)}</div>{hpb}{tb}</li>')
+        years.append(f'<li class="{"cur" if i == 0 else ""}"><h2>{e(y["year"].replace("-", "–"))}{now}</h2>{"".join(chips)}{hpb}{tb}</li>')
     troop = e(state.get("troop", "Troupe Impeesa VPJ"))
     page = f'''<!doctype html>
 <html lang="fr">
@@ -69,14 +70,14 @@ h2{{display:flex;align-items:center;gap:8px;font:400 22px/1.1 "DM Serif Display"
 .chips{{display:flex;flex-wrap:wrap;gap:6px}}
 .chip{{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border-radius:99px;padding:3px 10px 3px 3px;font-weight:600;font-size:13px}}
 .chip em{{font-style:normal;font-weight:800;font-size:10px;color:var(--muted);letter-spacing:.06em}}.chip.ct em{{color:var(--fg)}}
-.av{{width:26px;height:26px;border-radius:50%;flex:none;display:inline-flex;align-items:center;justify-content:center;background:center/cover no-repeat}}
-{"".join(".%s{background-image:url(%s)}" % (c, u) for u, c in used.items())}
-.ini{{background:var(--navy);color:#fff;font-weight:700;font-size:10px}}
-.hp{{margin-top:10px;display:grid;gap:4px;font-size:13px;color:var(--muted)}}
-.hp .lab{{font-weight:700;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase}}
-.hp div{{display:flex;align-items:center;gap:8px}}
-.hp i{{flex:none;width:18px;height:18px;border-radius:50%;color:#fff;font:800 10px/18px Inter,sans-serif;text-align:center;font-style:normal}}
-.hp b{{color:var(--fg);min-width:58px}}
+.hp{{margin-top:8px;display:grid;gap:8px;font-size:14px;color:var(--fg);background:var(--surface);border-radius:16px;padding:12px 14px;box-shadow:0 1px 2px rgba(15,35,66,.06),0 10px 28px -14px rgba(15,35,66,.28)}}
+.hp .lab{{font-weight:800;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}}
+.hp div{{display:grid;grid-template-columns:28px minmax(70px,max-content) minmax(0,1fr);align-items:center;gap:10px}}
+.hp span{{line-height:1.45;overflow-wrap:anywhere}}
+.hp i{{flex:none;width:28px;height:28px;border-radius:50%;color:#fff;font:800 11px/28px Inter,sans-serif;text-align:center;font-style:normal;background:#0f2342 center/cover no-repeat}}
+.hp b{{color:var(--fg);min-width:64px}}
+{"".join(".hp i.%s{background-image:url(%s)}" % (c, u) for u, c in used.items())}
+.hp span em{{font-style:normal;font-weight:800;font-size:10.5px;letter-spacing:.06em;color:var(--muted);margin-right:2px}}
 .th{{display:flex;gap:8px;margin-top:10px}}
 .th a{{display:block;width:92px;height:68px;border-radius:10px;overflow:hidden;background:var(--surface)}}
 .th img{{width:100%;height:100%;object-fit:cover;display:block}}

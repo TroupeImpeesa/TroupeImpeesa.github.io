@@ -1036,6 +1036,30 @@ body{padding-top:0!important}
 .htv .hhp b{color:var(--fg);font-weight:700;min-width:64px}
 .htv .hhp span{color:var(--fg);font-weight:500;line-height:1.45;min-width:0;overflow-wrap:anywhere}
 .htv .hhp span em{font-style:normal;font:800 10.5px var(--body);letter-spacing:.06em;color:var(--muted);margin-right:2px}
+
+/* ===== Pages intérieures assorties à l'Accueil (pas Quiz / Zoro / Installations) ===== */
+body:not(.kahoot) .gname,body:not(.kahoot) .ghero .gname,body:not(.kahoot) .phero2 b,body:not(.kahoot) .pname2,body:not(.kahoot) .tsub2,body:not(.kahoot) .calsel b{font-family:var(--serif)!important;font-weight:400!important;letter-spacing:.2px!important}
+body:not(.kahoot) .ghero .gname{font-size:30px!important}
+body:not(.kahoot) .phero2 b{font-size:38px!important}
+body:not(.kahoot) .tsub2{font-size:24px!important;margin:26px 2px 10px!important}
+body:not(.kahoot) .pname2{font-size:clamp(26px,7vw,34px)!important}
+.pstats b,.stat b,.stat b.big,.lpn b{font-family:var(--serif)!important;font-weight:400!important;letter-spacing:0!important}
+.pstats b{font-size:26px!important}
+.ghero{background:var(--surface)!important;box-shadow:var(--shadow)!important;border-radius:22px!important}
+.ghero .tcirc{border-radius:50%!important;width:60px!important;height:60px!important;font:800 26px/1 var(--body)!important}
+.phero2{border-radius:24px!important}
+.phero2 small{color:var(--zy);opacity:1!important}
+.mcard,.tlist,.tmai,.pstats div,.stat,.calnone,.evinfo div,.plist li,.ladder li{box-shadow:var(--shadow)}
+.mcard{background:var(--surface)!important;border-radius:18px!important}
+.mname{font-weight:700!important}
+.tseg{background:var(--chip)!important;border-radius:99px!important}
+.tseg button{border-radius:99px!important}
+.ptwrap{box-shadow:var(--shadow)!important;border-radius:20px!important}
+
+.cpbtn.cpon{background:radial-gradient(120% 120% at 100% 0%,#1b3a6b 0%,#0f2342 70%)!important;color:#fff!important}
+.cpbtn.cpon .cpic{background:rgba(242,178,58,.18)!important;color:var(--zy)!important}
+.cptx b{font:400 20px var(--serif)!important}
+body:not(.kahoot) .psec{font-family:var(--serif)!important;font-weight:400!important;font-size:24px!important;letter-spacing:.2px!important}
 </style>
 </head>
 <body>
@@ -3027,7 +3051,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="eb7c2c79a9d9">
-<script>(function(){var B="eb7c2c79a9d9";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="d1196468889b">
+<script>(function(){var B="d1196468889b";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

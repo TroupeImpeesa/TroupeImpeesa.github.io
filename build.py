@@ -48,8 +48,15 @@ for ph in state.get("photos", []):
     if ph.get("src", "").startswith("photos/"):
         used.add(ph["src"][len("photos/"):])
 state["cover"] = ""
+try:
+    for it in json.load(open(os.path.join(here, "data", "gallery.json"), encoding="utf-8")).get("items", []):
+        for k in ("src", "th"):
+            if str(it.get(k, "")).startswith("photos/"):
+                used.add(it[k][len("photos/"):])
+except Exception:
+    pass
 for f in os.listdir(os.path.join(here, "photos")):
-    if f not in used and not f.startswith("hp-"):
+    if f not in used and not f.startswith(("hp-", "g-", "t-")):
         os.remove(os.path.join(here, "photos", f))
 
 js = json.dumps(state, ensure_ascii=False).replace("<", "\\u003c")

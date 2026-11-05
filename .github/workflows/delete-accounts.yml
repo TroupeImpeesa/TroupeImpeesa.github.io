@@ -19,14 +19,15 @@ jobs:
           FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
         run: |
           if [ -z "$FIREBASE_SA" ]; then echo "Secret FIREBASE_SA absent"; exit 0; fi
-          pip install -q firebase-admin
+          pip install -q firebase-admin pillow
           python3 scripts/delete_accounts.py
           python3 scripts/site_edits.py
+          python3 scripts/gallery_sync.py || echo 'gallery sync failed'
       - name: Enregistrer les modifications de l'admin
         run: |
-          git add data/site-edits.json 2>/dev/null || true
+          git add data/site-edits.json data/gallery.json photos 2>/dev/null || true
           if git diff --cached --quiet; then exit 0; fi
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
-          git commit -m "Modifications admin du site [skip ci]"
+          git commit -m "Modifications admin du site / galerie"
           git pull --rebase -q && git push

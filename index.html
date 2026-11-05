@@ -2089,21 +2089,24 @@ function prTClick(b){
 /* ===== Galerie (Souvenirs) : modifiable par impeesa.admin, stockée dans Firebase « gallery » ===== */
 var GAL={list:null,on:false,edit:false,draft:null,busy:false,msg:''};
 function galIsAdmin(){return !!ACC&&ACC.u===QZ_ADMIN}
-function galStart(){if(GAL.on)return;GAL.on=true;fbLoad().then(function(){firebase.database().ref('gallery').on('value',function(s){var v=s.val();GAL.list=v&&v.items?Object.keys(v.items).map(function(k){return v.items[k]}).filter(function(x){return x&&x.src}):null;HS.gal=true;if(tab==='home'&&!GAL.edit)render()},function(){HS.gal=true})}).catch(function(){GAL.on=false;HS.gal=true})}
+function galFb(){if(GAL.fb)return;GAL.fb=true;fbLoad().then(function(){firebase.database().ref('gallery').on('value',function(s){var v=s.val();GAL.list=v&&v.items?Object.keys(v.items).sort().map(function(k){return v.items[k]}).filter(function(x){return x&&x.src}):null;HS.gal=true;if(tab==='home'&&!GAL.edit)render()},function(){HS.gal=true})}).catch(function(){GAL.fb=false;HS.gal=true})}
+/* les visiteurs lisent data/gallery.json (photos en fichiers + miniatures, copiées toutes les 10 min) ; seul impeesa.admin écoute Firebase en direct */
+function galStart(){if(GAL.on)return;GAL.on=true;if(window.claude){galFb();return}
+ fetch('data/gallery.json',{cache:'no-cache'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(v){if(!v||!v.items||!v.items.length)throw 0;if(!GAL.fb){GAL.list=v.items.filter(function(x){return x&&x.src});HS.gal=true;if(tab==='home'&&!GAL.edit)render()}if(galIsAdmin())galFb()}).catch(galFb)}
 function galItems(){return GAL.list||S.photos.map(function(p){return {src:p.src,caption:p.caption||''}})}
 function galSection(){galStart();
  var L=GAL.edit?GAL.draft:galItems(),ad=galIsAdmin();
  if(!L.length&&!ad)return '';
  var h='<section class="hsec"><div class="hsh"><div><small>Galerie</small><h2>Souvenirs</h2></div></div><div class="pboard">';
  if(GAL.edit){h+=L.map(function(p,i){return '<figure class="pol ed"><button class="pdel" data-galdel="'+i+'" aria-label="Retirer la photo">×</button><img src="'+p.src+'" alt=""><input data-galcap="'+i+'" value="'+esc(p.caption||'')+'" placeholder="Légende" maxlength="40" aria-label="Légende"><div class="pmv"><button data-galmv="'+i+'|-1" aria-label="Avant">‹</button><button data-galmv="'+i+'|1" aria-label="Après">›</button></div><button class="phtop'+(p.hero?' on':'')+'" data-galhero="'+i+'">'+(p.hero?'★ Photo du haut':'☆ Mettre en haut')+'</button></figure>'}).join('')+'<label class="gadd" for="gal-file">+ Ajouter des photos</label>'}
- else h+=L.map(function(p){return '<figure class="pol"><img src="'+p.src+'" alt="'+esc(p.caption||'Photo de la troupe')+'" loading="lazy">'+(p.caption?'<figcaption>'+esc(p.caption)+'</figcaption>':'')+'</figure>'}).join('');
+ else h+=L.map(function(p,i){return '<figure class="pol"><img src="'+(p.th||p.src)+'" alt="'+esc(p.caption||'Photo de la troupe')+'"'+(i<4?'':' loading="lazy"')+' decoding="async">'+(p.caption?'<figcaption>'+esc(p.caption)+'</figcaption>':'')+'</figure>'}).join('');
  h+='</div>';
  if(ad)h+='<div class="galbar">'+(GAL.edit?'<input id="gal-file" type="file" accept="image/*" multiple hidden><button class="gbtn p" data-act="galsave"'+(GAL.busy?' disabled':'')+'>'+(GAL.busy?'Enregistrement…':'Enregistrer')+'</button><button class="gbtn" data-act="galcancel">Annuler</button>':'<button class="gbtn" data-act="galedit">Modifier les photos</button>')+(GAL.msg?'<span class="gmsg">'+esc(GAL.msg)+'</span>':'')+'</div>';
  return h+'</section>'}
 var HPICK=[];
 function galClick(b){var d=b.dataset;
  if(d.heropick!=null&&b.hasAttribute('data-heropick')){var u=HPICK[+d.heropick];if(u){S.heroPhoto=u;touch()}return true}
- if(d.act==='galedit'){GAL.edit=true;GAL.msg='';GAL.draft=galItems().map(function(p){return {src:p.src,caption:p.caption||'',hero:!!p.hero}});render();return true}
+ if(d.act==='galedit'){galFb();GAL.edit=true;GAL.msg='';GAL.draft=galItems().map(function(p){return {src:p.src,th:p.th||'',caption:p.caption||'',hero:!!p.hero}});render();return true}
  if(d.act==='galcancel'){GAL.edit=false;GAL.draft=null;GAL.msg='';render();return true}
  if(d.galdel!=null&&b.hasAttribute('data-galdel')){GAL.draft.splice(+d.galdel,1);render();return true}
  if(d.galhero!=null&&b.hasAttribute('data-galhero')){var hi=+d.galhero;GAL.draft.forEach(function(p,k){p.hero=k===hi?!p.hero:false});render();return true}

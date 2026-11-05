@@ -297,7 +297,7 @@ input,select,textarea{font:16px var(--body);padding:9px 10px;border:1px solid va
 .tpod{justify-content:center;gap:3px;padding:16px 14px 0}.tpod button{flex:1 1 0;min-width:0}.tpod b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tpod u{width:100%;margin:8px 0 0;border-radius:0;font-size:18px}
 .tgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .tpc{position:relative;overflow:hidden;border:none;border-radius:22px;height:150px;padding:14px;color:#fff;text-align:left;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;box-shadow:var(--shadow);background:linear-gradient(135deg,color-mix(in srgb,var(--gc) 85%,#000),color-mix(in srgb,var(--gc) 70%,#fff));font-family:var(--body);transition:transform .15s}
-.tpc:active{transform:scale(.97)}.tpc .tpn b{display:block;font:900 20px var(--display)}.tpc .tpn small{font:600 12px var(--body);opacity:.9}
+.tpc:active{transform:scale(.97)}.tpcv{cursor:default}.tpcv:active{transform:none}.tpc .tpn b{display:block;font:900 20px var(--display)}.tpc .tpn small{font:600 12px var(--body);opacity:.9}
 .trk{position:absolute;top:12px;right:12px;font:800 11px var(--body);background:rgba(255,255,255,.22);padding:4px 8px;border-radius:99px}
 .tem{position:absolute;right:-6px;bottom:-16px;font-size:78px;opacity:.3;pointer-events:none}
 .tavs{display:flex;position:relative;z-index:1}.tavs i{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.9);margin-left:-8px;background:rgba(255,255,255,.28);font:800 9px var(--body);display:grid;place-items:center;font-style:normal;overflow:hidden}.tavs i:first-child{margin-left:0}.tavs img{width:100%;height:100%;object-fit:cover}
@@ -1229,7 +1229,7 @@ function heroTop(){
   '</header>'}
 /* ===== Commandes Coop ===== */
 var COOP=null,ORD={my:null,done:{},dirty:false,busy:false,msg:'',open:{},size:{},all:null,alldone:null,exp:{},tbusy:false,tmsg:''};
-function isViewer(){return !!ACC&&ACC.role==='Viewer'}
+function isViewer(){return !!ACC&&(ACC.role==='Viewer'||ACC.role==='Ancien')}
 function isChef(){return !!ACC&&(ACC.role==='Maîtrise'||ACC.u===QZ_ADMIN)}
 function coopLoad(){if(COOP)return Promise.resolve(COOP);return fetch('data/coop.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){COOP=j;return j})}
 function coopItem(id){var f=null;(COOP?COOP.cats:[]).forEach(function(c){c.items.forEach(function(i){if(i.id===id)f=i})});return f}
@@ -1731,7 +1731,7 @@ function plusPage(){var oid=isChef()?'orders':'order';
  return '<div class="plg">'+L.map(function(x){return '<button class="plc" data-menunav="'+x[0]+'" style="--pc:'+x[4]+'"><span class="pi">'+x[1]+'</span><span><b>'+esc(x[2])+'</b><span class="d">'+esc(x[3])+'</span></span><span class="ch" aria-hidden="true">›</span></button>'}).join('')+'</div>'+
   '<div class="plfoot"><div><b>'+esc(S.troop)+'</b><span>troupeimpeesavpj@gmail.com</span></div></div>'}
 function pageBand(){if(tab==='quiz'&&QZ.play)return '';
- var n=(S.scouts||[]).length,B={progress:[esc(S.season)+(n?' · '+n+' scouts':''),'La troupe','Touche une patrouille pour voir ses points par réunion.'],
+ var n=(S.scouts||[]).length,B={progress:[esc(S.season)+(n?' · '+n+' scouts':''),'La troupe',isViewer()?'Les patrouilles et la maîtrise de la troupe.':'Touche une patrouille pour voir ses points par réunion.'],
   events:[esc(S.season),'Calendrier','Réunions, camps et sorties de la troupe.'],history:['Depuis 2020','Histoire','La troupe, année par année.'],
   quiz:['Le quiz de la semaine sur ton carnet « Prêt »','Quiz <em>Prêt !</em>','15 questions chaque semaine, nouveau quiz le lundi à 14h.'],
   inst:['Rondins, brelages et mesures','Installations','Les installations de camp de chaque patrouille, en 3D.'],
@@ -1842,7 +1842,7 @@ function home(){
  if(editing){var seen={};HPICK=[];galItems().concat(S.photos).forEach(function(p){if(p&&p.src&&!seen[p.src]){seen[p.src]=1;HPICK.push(p.src)}});(S.maitrises||[]).forEach(function(y){[y.troupe&&y.troupe.photo,y.hp&&y.hp.photo].forEach(function(u){if(u&&!seen[u]){seen[u]=1;HPICK.push(u)}})});
   h+='<div class="editbox"><h4>Photo du haut de l’Accueil</h4><div class="hpick">'+HPICK.map(function(u,i){return '<button data-heropick="'+i+'" class="'+(S.heroPhoto===u?'on':'')+'" aria-label="Choisir cette photo"><img src="'+u+'" alt="" loading="lazy"></button>'}).join('')+'</div><span class="meta">Touche la photo que tu veux en haut, puis <b>Publier</b>.</span></div>'}
  var N=S.news.slice().reverse().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:0}).slice(0,editing?30:3);
- h+='<section class="hsec" style="margin-top:8px"><div class="hsh"><div><small>Classement</small><h2>Les patrouilles</h2></div><button data-menunav="progress">Tout voir →</button></div>'+homeRank()+'</section>';
+ if(!isViewer())h+='<section class="hsec" style="margin-top:8px"><div class="hsh"><div><small>Classement</small><h2>Les patrouilles</h2></div><button data-menunav="progress">Tout voir →</button></div>'+homeRank()+'</section>';
  var oid='order';
  h+=prHome();
  h+='<section class="hsec"><div class="hsh"><div><small>Pour ta patrouille</small><h2>Prépare le camp</h2></div></div><div class="hduo">'+
@@ -2220,6 +2220,7 @@ document.addEventListener('input',function(ev){if(ev.target&&ev.target.id==='mai
 document.addEventListener('change',function(ev){if(ev.target&&ev.target.hasAttribute&&ev.target.hasAttribute('data-maisort')){MAI.sort=ev.target.value;render()}});
 
 function progress(){
+ if(isViewer()){if(openGroup&&openGroup!=='staff'&&openGroup!=='comm')openGroup=null;openPts=null;if(typeof openScout!=='undefined')openScout=null}
  if(openGroup==='mai')return maiPage();
  if(openCP&&pat(openCP)) return cpPage();
  if(openPts&&pat(openPts)) return ptsPage();
@@ -2248,11 +2249,13 @@ function progress(){
  if(S.commissaires&&S.commissaires.length)h+='<button class="tmai" data-group="comm" style="margin-top:8px"><span><b>Commissaires</b><small>'+S.commissaires.map(function(m){return esc(m.name.split(' ')[0])}).join(', ')+'</small></span><span class="mgo">›</span></button>';
  h+='<div style="height:12px"></div>';
  var P3=L.slice(0,4);
- if(P3.length>=3&&(TT[P3[0].id]||0)>0){var ord=[P3[1],P3[0],P3[2]].concat(P3[3]?[P3[3]]:[]),ht=[66,90,48,32];
+ if(!isViewer()&&P3.length>=3&&(TT[P3[0].id]||0)>0){var ord=[P3[1],P3[0],P3[2]].concat(P3[3]?[P3[3]]:[]),ht=[66,90,48,32];
   h+='<div class="tpod">'+ord.map(function(p,i){var r=rkOf(p);return '<button data-group="'+p.id+'"><em class="pbadge" style="background:'+col(p)+'">'+esc(p.name.charAt(0))+'</em><b>'+esc(p.name)+'</b><span>'+(ACC?'<span data-count="'+(TT[p.id]||0)+'" data-ck="pod'+p.id+'">'+fmtPts(TT[p.id]||0)+'</span>'+' pts':ptsL(0))+'</span><u style="height:'+ht[i]+'px;background:'+col(p)+'">'+r+'</u></button>'}).join('')+'</div>'}
- h+='<div class="tgrid">'+L.map(function(p){var M=S.scouts.filter(function(x){return x.patrol===p.id}),r=rkOf(p);
-  return '<button class="tpc" data-group="'+p.id+'" style="--gc:'+col(p)+'"><span class="trk">'+(r===1?'1er':r+'e')+'</span><span class="pbadge tpb" style="background:'+col(p)+'">'+esc(p.name.charAt(0))+'</span><span class="tpn"><b>'+esc(p.name)+'</b><small>'+M.length+' membres · '+(ACC?fmtPts(TT[p.id]||0)+' pts':ptsL(0))+'</small></span><span class="tavs">'+M.slice(0,3).map(function(x){var f=S.faces[x.id];return '<i>'+(f?'<img src="'+f+'" alt="">':esc(initials(x.name)))+'</i>'}).join('')+(M.length>3?'<i>+'+(M.length-3)+'</i>':'')+'</span><span class="tem">'+patEmoji(p.name)+'</span></button>'}).join('')+'</div>';
- h+='<div class="trank">'+points()+'</div>';
+ var VW=isViewer(),LV=VW?S.patrols.slice():L;
+ h+='<div class="tgrid">'+LV.map(function(p){var M=S.scouts.filter(function(x){return x.patrol===p.id}),r=rkOf(p);
+  return (VW?'<div class="tpc tpcv"':'<button class="tpc" data-group="'+p.id+'"')+' style="--gc:'+col(p)+'">'+(VW?'':'<span class="trk">'+(r===1?'1er':r+'e')+'</span>')+'<span class="pbadge tpb" style="background:'+col(p)+'">'+esc(p.name.charAt(0))+'</span><span class="tpn"><b>'+esc(p.name)+'</b><small>'+M.length+' membres'+(VW?'':' · '+(ACC?fmtPts(TT[p.id]||0)+' pts':ptsL(0)))+'</small></span><span class="tavs">'+M.slice(0,3).map(function(x){var f=S.faces[x.id];return '<i>'+(f?'<img src="'+f+'" alt="">':esc(initials(x.name)))+'</i>'}).join('')+(M.length>3?'<i>+'+(M.length-3)+'</i>':'')+'</span><span class="tem">'+patEmoji(p.name)+'</span>'+(VW?'</div>':'</button>')}).join('')+'</div>';
+ if(VW)h+='<p class="meta" style="text-align:center;margin:16px 0">👀 Compte '+(ACC.role==='Ancien'?'ancien':'viewer')+' : les points, le classement et les pages des patrouilles ne sont pas visibles.</p>';
+ else h+='<div class="trank">'+points()+'</div>';
  return h}
 var TRV='pat';
 function patEmoji(n){var nm=String(n).toLowerCase(),em='🐾';ANIMALS.forEach(function(a){if(nm.indexOf(a[0])>=0)em=a[1]});return em}
@@ -2307,14 +2310,14 @@ function acnUser(n){return String(n||'').normalize('NFD').replace(/[̀-ͯ]/g,'')
 function acnBox(){
  if(!ACN.pw)ACN.pw=acnPw();
  var HAS={};Object.keys(QZ.users||{}).forEach(function(k){if(QZ.users[k].sid)HAS[QZ.users[k].sid]=1});
- var opts='<option value="">Choisis…</option>'+S.patrols.map(function(p){var L=S.scouts.filter(function(s){return s.patrol===p.id&&!HAS[s.id]});return L.length?'<optgroup label="'+esc(p.name)+' (sans compte)">'+L.map(function(s){return '<option value="'+s.id+'"'+(ACN.sid===s.id?' selected':'')+'>'+esc(s.name)+(s.role?' ('+s.role+')':'')+'</option>'}).join('')+'</optgroup>':''}).join('')+'<option value="new"'+(ACN.sid==='new'?' selected':'')+'>➕ Nouveau membre (pas encore dans une patrouille)</option><option value="staff"'+(ACN.sid==='staff'?' selected':'')+'>Maîtrise / autre</option><option value="viewer"'+(ACN.sid==='viewer'?' selected':'')+'>👀 Viewer (regarde seulement)</option><option value="gaming"'+(ACN.sid==='gaming'?' selected':'')+'>🎮 Gaming (jeu ZORO seulement)</option>';
+ var opts='<option value="">Choisis…</option>'+S.patrols.map(function(p){var L=S.scouts.filter(function(s){return s.patrol===p.id&&!HAS[s.id]});return L.length?'<optgroup label="'+esc(p.name)+' (sans compte)">'+L.map(function(s){return '<option value="'+s.id+'"'+(ACN.sid===s.id?' selected':'')+'>'+esc(s.name)+(s.role?' ('+s.role+')':'')+'</option>'}).join('')+'</optgroup>':''}).join('')+'<option value="new"'+(ACN.sid==='new'?' selected':'')+'>➕ Nouveau membre (pas encore dans une patrouille)</option><option value="staff"'+(ACN.sid==='staff'?' selected':'')+'>Maîtrise / autre</option><option value="viewer"'+(ACN.sid==='viewer'?' selected':'')+'>👀 Viewer (regarde seulement)</option><option value="ancien"'+(ACN.sid==='ancien'?' selected':'')+'>🎖️ Ancien (comme Viewer)</option><option value="gaming"'+(ACN.sid==='gaming'?' selected':'')+'>🎮 Gaming (jeu ZORO seulement)</option>';
  var h='<div class="kcard kadm"><b>➕ Créer un compte</b><span class="kwarn">Seulement pour les nouveaux membres et ceux qui n’ont pas encore de compte.</span>'+
   '<label class="lbl">Pour qui ?<select id="acn-s" data-acn="s">'+opts+'</select></label>'+
-  (ACN.sid==='staff'||ACN.sid==='new'||ACN.sid==='viewer'||ACN.sid==='gaming'?'<label class="lbl">'+(ACN.sid==='viewer'||ACN.sid==='gaming'?'Nom du compte':'Prénom et nom')+'<input id="acn-n" data-acn="n" value="'+esc(ACN.name)+'" maxlength="20"></label>':'')+
+  (ACN.sid==='staff'||ACN.sid==='new'||ACN.sid==='viewer'||ACN.sid==='ancien'||ACN.sid==='gaming'?'<label class="lbl">'+(ACN.sid==='viewer'||ACN.sid==='gaming'?'Nom du compte':'Prénom et nom')+'<input id="acn-n" data-acn="n" value="'+esc(ACN.name)+'" maxlength="20"></label>':'')+
   (ACN.sid==='new'?'<label class="lbl">Patrouille<select id="acn-pt" data-acn="pt"><option value="">Choisis…</option>'+S.patrols.map(function(p){return '<option value="'+p.id+'"'+(ACN.patrol===p.id?' selected':'')+'>'+esc(p.name)+'</option>'}).join('')+'</select></label><label class="lbl">Rôle<select id="acn-r" data-acn="r">'+[['','Scout'],['CP','CP'],['SP','SP']].map(function(x){return '<option value="'+x[0]+'"'+(ACN.role===x[0]?' selected':'')+'>'+x[1]+'</option>'}).join('')+'</select></label>':'')+
   (ACN.sid?'<label class="lbl">Nom d’utilisateur<input id="acn-u" value="'+esc(ACN.u)+'" autocapitalize="none" autocorrect="off" spellcheck="false"></label>'+
    '<label class="lbl">Mot de passe<input id="acn-p" value="'+esc(ACN.pw)+'" autocapitalize="none" autocorrect="off" spellcheck="false"></label>'+
-   '<span class="kwarn">'+(ACN.role==='Viewer'?'Viewer : voit tout le site comme un membre et peut jouer à ZORO, mais ne peut pas jouer au quiz, commander, s’inscrire ni modifier quoi que ce soit. Pas d’accès à l’Espace CP/SP.':ACN.role==='Gaming'?'Gaming : peut seulement jouer à ZORO 🦊. Tout le reste du site est caché / flou, comme pour un visiteur non connecté.':ACN.role==='Maîtrise'?'Maîtrise : accès à tout l’Espace CP/SP et aux points.':ACN.role==='CP'||ACN.role==='SP'?ACN.role+' : accès à l’Espace CP/SP de sa patrouille.':'Scout : peut jouer au quiz et voir son profil.')+'</span>'+
+   '<span class="kwarn">'+(ACN.role==='Ancien'?'Ancien : mêmes droits qu’un Viewer. Voit le site et peut jouer à ZORO, mais pas les points, le classement ni les pages des patrouilles ; ne peut pas jouer au quiz, commander ni modifier quoi que ce soit.':ACN.role==='Viewer'?'Viewer : voit tout le site comme un membre et peut jouer à ZORO, mais ne peut pas jouer au quiz, commander, s’inscrire ni modifier quoi que ce soit. Pas d’accès à l’Espace CP/SP.':ACN.role==='Gaming'?'Gaming : peut seulement jouer à ZORO 🦊. Tout le reste du site est caché / flou, comme pour un visiteur non connecté.':ACN.role==='Maîtrise'?'Maîtrise : accès à tout l’Espace CP/SP et aux points.':ACN.role==='CP'||ACN.role==='SP'?ACN.role+' : accès à l’Espace CP/SP de sa patrouille.':'Scout : peut jouer au quiz et voir son profil.')+'</span>'+
    '<button class="kbtn kgo" data-act="acncreate"'+(ACN.busy?' disabled':'')+'>'+(ACN.busy?'Création…':'Créer le compte')+'</button>':'')+
   (ACN.msg?'<p class="kerr">'+esc(ACN.msg)+'</p>':'');
  if(ACN.done)h+='<div class="acdone"><b>✓ Compte créé pour '+esc(ACN.done.name)+'</b><span>Nom d’utilisateur : <code>'+esc(ACN.done.u)+'</code></span><span>Mot de passe : <code>'+esc(ACN.done.pw)+'</code></span><a class="kbtn" style="background:#25d366;text-align:center;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent('Ton compte pour le site de la troupe 👉 https://troupeimpeesa.github.io\nNom d’utilisateur : '+ACN.done.u+'\nMot de passe : '+ACN.done.pw)+'">Envoyer sur WhatsApp</a></div>';
@@ -2325,6 +2328,7 @@ function acnChange(t){
  if(t.dataset.acn==='s'){var v=t.value;ACN.sid=v;ACN.done=null;ACN.msg='';ACN.pw=acnPw();
   if(v==='staff'){ACN.name='';ACN.u='';ACN.role='Maîtrise';ACN.patrol=''}
    else if(v==='viewer'){ACN.name='';ACN.u='';ACN.role='Viewer';ACN.patrol=''}
+   else if(v==='ancien'){ACN.name='';ACN.u='';ACN.role='Ancien';ACN.patrol=''}
    else if(v==='gaming'){ACN.name='';ACN.u='';ACN.role='Gaming';ACN.patrol=''}
   else if(v==='new'){ACN.name='';ACN.u='';ACN.role='';ACN.patrol=''}
   else{var s=S.scouts.filter(function(x){return x.id===v})[0];if(s){ACN.name=s.name;ACN.u=acnUser(s.name);ACN.role=s.role||'';ACN.patrol=s.patrol}}
@@ -2353,7 +2357,7 @@ function acnKeys(u,pw,role,patrol){
   return fetch(url,{method:'PUT',headers:hdr(),body:JSON.stringify({message:'Compte '+u+' : accès Espace CP/SP',content:b64e(JSON.stringify(K,null,1)),sha:r[0].sha,branch:'main'})}).then(function(x){if(!x.ok)throw x.status})});
 }
 function acnMember(name){
- if(ACN.sid!=='new')return Promise.resolve(ACN.sid==='staff'?'staff:'+name:ACN.sid==='viewer'?'viewer:'+name:ACN.sid==='gaming'?'gaming:'+name:ACN.sid);
+ if(ACN.sid!=='new')return Promise.resolve(ACN.sid==='staff'?'staff:'+name:ACN.sid==='viewer'?'viewer:'+name:ACN.sid==='ancien'?'ancien:'+name:ACN.sid==='gaming'?'gaming:'+name:ACN.sid);
  if(!ACCK||ACCK.scope!=='chef'||!ACCK.token)return Promise.reject('nokey');
  var pid=ACN.patrol,url='https://api.github.com/repos/'+REPO+'/contents/data/'+pid+'.json';
  function hdr(){return {'Accept':'application/vnd.github+json','Authorization':'Bearer '+ACCK.token,'Content-Type':'application/json'}}
@@ -2363,7 +2367,7 @@ function acnMember(name){
   return fetch(url,{method:'PUT',headers:hdr(),body:JSON.stringify({message:'Nouveau membre : '+name,content:b64e(JSON.stringify(d,null,1)),sha:j.sha,branch:'main'})}).then(function(x){if(!x.ok)throw x.status;applyPatrol(d);return id})});
 }
 function acnCreate(){
- var u=acnUser(val('acn-u')),pw=val('acn-p'),name=ACN.sid==='staff'||ACN.sid==='new'||ACN.sid==='viewer'||ACN.sid==='gaming'?val('acn-n'):ACN.name;
+ var u=acnUser(val('acn-u')),pw=val('acn-p'),name=ACN.sid==='staff'||ACN.sid==='new'||ACN.sid==='viewer'||ACN.sid==='ancien'||ACN.sid==='gaming'?val('acn-n'):ACN.name;
  if(ACN.sid==='new'&&!ACN.patrol){ACN.msg='Choisis la patrouille.';render();return}
  if(!name){ACN.msg='Écris le prénom et le nom.';render();return}
  if(u.length<3){ACN.msg='Nom d’utilisateur trop court.';render();return}
@@ -2701,10 +2705,10 @@ function quiz(){
   else if(QZ.mine)h+='<div class="kcard kc kres"><span>Déjà joué cette semaine</span><b>'+QZ.mine.s+'</b><span>'+QZ.mine.n+' bonnes réponses sur '+set.qs.length+' · prochain quiz lundi à 14h !</span>'+(ACC&&(ACC.role==='Maîtrise'||!pat(ACC.patrol))?'<span class="kwarn">👀 Maîtrise : ton score n’est visible que par toi. Il ne compte pas et n’apparaît pas dans le classement.</span>':'')+'</div>';
   else if(QZ.started&&QZ.resume)h+='<div class="kcard kc"><b>Ton quiz a été interrompu.</b><span>Tu étais à la question '+Math.min(QZ.resume.i+1,set.qs.length)+' / '+set.qs.length+' avec '+QZ.resume.s+' pts.</span><button class="kbtn kgo" data-act="qresume">Reprendre le quiz</button></div>';
    else if(QZ.started)h+='<div class="kcard kc"><b>Tu as déjà commencé le quiz de cette semaine.</b><span>Un seul essai par semaine. Prochain quiz lundi à 14h !</span></div>';
-  else if(isViewer())h+='<div class="kcard kc"><b>👀 Compte viewer</b><span>Tu peux suivre le quiz et le classement, mais pas jouer.</span></div>';
+  else if(isViewer())h+='<div class="kcard kc"><b>👀 Compte viewer</b><span>Tu peux voir le quiz, mais pas jouer ni voir le classement.</span></div>';
   else h+='<div class="kcard kc"><span class="kwk">Semaine du '+esc(longDate(qWeek()))+'</span><b class="kth">'+esc(set.title)+'</b><div class="kinfo"><span><b>'+set.qs.length+'</b>questions</span><span><b>'+QZ_T+' s</b>par question</span><span><b>⚡</b>vite = + de points</span></div><span class="kwarn">Une fois commencé, tu ne peux pas recommencer. Ne quitte pas la page !</span><button class="kbtn kgo" data-act="qstart"'+(QZ.busy?' disabled':'')+'>Jouer</button>'+(QZ.msg?'<p class="kerr">'+esc(QZ.msg)+'</p>':'')+'</div>';
  }
- h+='<div class="ktitle">Classement de la semaine</div>'+qPatGrid()+qBoardRows()+(qWeek()<QB_FROM?'<div class="ksub" style="text-align:center;margin-top:10px">🧪 Semaine d’essai : pas de points pour les patrouilles cette semaine. Les +5 commencent lundi 26 octobre à 14h !</div>':'<div class="ksub" style="text-align:center;margin-top:10px">Points pour la patrouille, comme en F1 : 25 · 18 · 15 · 12 · 10 · 8 · 6 · 4 · 2 · 1 pour les 10 premiers, en direct.<br>+10 si toute la patrouille a joué.</div>');
+ if(!isViewer())h+='<div class="ktitle">Classement de la semaine</div>'+qPatGrid()+qBoardRows()+(qWeek()<QB_FROM?'<div class="ksub" style="text-align:center;margin-top:10px">🧪 Semaine d’essai : pas de points pour les patrouilles cette semaine. Les +5 commencent lundi 26 octobre à 14h !</div>':'<div class="ksub" style="text-align:center;margin-top:10px">Points pour la patrouille, comme en F1 : 25 · 18 · 15 · 12 · 10 · 8 · 6 · 4 · 2 · 1 pour les 10 premiers, en direct.<br>+10 si toute la patrouille a joué.</div>');
  return h;
 }
 var KSH=['<svg viewBox="0 0 32 32"><path d="M16 4 30 28H2z" fill="#fff"/></svg>','<svg viewBox="0 0 32 32"><path d="M16 2 30 16 16 30 2 16z" fill="#fff"/></svg>','<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="#fff"/></svg>','<svg viewBox="0 0 32 32"><rect x="4" y="4" width="24" height="24" rx="2" fill="#fff"/></svg>'];
@@ -2734,7 +2738,7 @@ function qFinish(){
 function alertQ(t){QZ.msg=t;render()}
 function qAdmin(){
  var U={};Object.keys(QZ.users||{}).forEach(function(k){if(k!==QZ.user.uid)U[k]=QZ.users[k]});var P=Object.keys(U).filter(function(k){return U[k].ok!==true}),A=Object.keys(U).filter(function(k){return U[k].ok===true});
- function row(k,pend){var u=U[k],p=pat(u.patrol);return '<div class="kadr"><span class="knm">'+esc(u.name||'?')+'<i class="kpat" style="background:'+(p?pdfCol(p):u.role==='Viewer'?'#5f6368':u.role==='Gaming'?'#b9502a':'#46178f')+'">'+(p?esc(p.name):u.role==='Viewer'?'Viewer':u.role==='Gaming'?'Gaming':'Maîtrise')+'</i></span>'+(pend?'<button class="kab ok" data-act="qok" data-u="'+k+'">Approuver</button>':'')+'<button class="kab no" data-act="qno" data-u="'+k+'">'+(QZ.delArm===k?'Supprimer le compte ?':(pend?'Refuser':'Supprimer'))+'</button></div>'}
+ function row(k,pend){var u=U[k],p=pat(u.patrol);return '<div class="kadr"><span class="knm">'+esc(u.name||'?')+'<i class="kpat" style="background:'+(p?pdfCol(p):u.role==='Viewer'?'#5f6368':u.role==='Ancien'?'#7a5c1e':u.role==='Gaming'?'#b9502a':'#46178f')+'">'+(p?esc(p.name):u.role==='Viewer'?'Viewer':u.role==='Ancien'?'Ancien':u.role==='Gaming'?'Gaming':'Maîtrise')+'</i></span>'+(pend?'<button class="kab ok" data-act="qok" data-u="'+k+'">Approuver</button>':'')+'<button class="kab no" data-act="qno" data-u="'+k+'">'+(QZ.delArm===k?'Supprimer le compte ?':(pend?'Refuser':'Supprimer'))+'</button></div>'}
  A.sort(function(x,y){return (U[x].patrol||'z').localeCompare(U[y].patrol||'z')||String(U[x].name).localeCompare(U[y].name)});
  if(!QZ.users&&!QZ.rsLoad){QZ.rsLoad=1;setTimeout(qBoards,0)}
  var dn=function(k){var u=QZ.users[k]||{};return String(scName(u.sid,u.name||'?'))},all=Object.keys(QZ.users||{}).sort(function(x,y){return dn(x).localeCompare(dn(y),'fr')}),wk=QZ.week||{};
@@ -3268,13 +3272,13 @@ document.addEventListener('click',function(ev){
  if(b&&ordClick(b))return;
  if(b&&accClick(b))return;
  if(b&&b.dataset.act==='trv'){TRV=b.dataset.v;render();return}
- if(b&&b.dataset.ptab){go('progress/pts-'+b.dataset.ptab);window.scrollTo(0,0);return}
+ if(b&&b.dataset.ptab&&isViewer())return;if(b&&b.dataset.ptab){go('progress/pts-'+b.dataset.ptab);window.scrollTo(0,0);return}
  if(b&&uClick(b))return;
  if(b&&qClick(b))return;
- if(!b){var pt=ev.target.closest('[data-ptab]');if(pt&&!ev.target.closest('input,select,textarea')){go('progress/pts-'+pt.dataset.ptab);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return}
+ if(!b){var pt=ev.target.closest('[data-ptab]');if(pt&&isViewer())return;if(pt&&!ev.target.closest('input,select,textarea')){go('progress/pts-'+pt.dataset.ptab);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return}
   var evl=ev.target.closest('[data-event]');if(evl){go(tab+'/e-'+evl.dataset.event);var pr=document.querySelector('.profile');if(pr)pr.scrollTop=0}return}
  if(b.dataset.nav){if(b.dataset.nav==='game'){location.href='game.html?v='+Date.now();return}go(b.dataset.nav);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);if(tab==='progress')leaderRun();return}
- if(b.dataset.group){go('progress/g-'+b.dataset.group);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return}
+ if(b.dataset.group&&isViewer()&&b.dataset.group!=='staff'&&b.dataset.group!=='comm')return;if(b.dataset.group){go('progress/g-'+b.dataset.group);window.scrollTo(0,document.querySelector('.tabbar').offsetTop);return}
  if(b.dataset.tab){prevTab=tab;try{history.replaceState(null,'','#'+b.dataset.tab)}catch(e){}route(b.dataset.tab);render();if(tab==='progress')leaderRun();return}
  msg='';
  if(b.dataset.delpatrol){S.patrols=S.patrols.filter(function(p){return p.id!==b.dataset.delpatrol});S.scouts=S.scouts.filter(function(s){return s.patrol!==b.dataset.delpatrol});return touch()}

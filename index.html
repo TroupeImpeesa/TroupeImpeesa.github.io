@@ -1090,6 +1090,7 @@ body:not(.kahoot) .psec{font-family:var(--serif)!important;font-weight:400!impor
 .hpn2{display:block;font:400 clamp(40px,11vw,52px)/1.05 var(--serif);font-variant-numeric:tabular-nums;color:var(--fg);margin-top:6px}
 .hpn2.lk{font-size:30px;line-height:1.6}
 .hpl2{display:block;font:700 10.5px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
 </style>
 </head>
 <body>
@@ -1628,9 +1629,16 @@ function tabBarOld(){if(tab==='quiz'&&QZ.play)return '';return '<nav class="btab
 function tabRow(){var on=function(t){return tab===t||(t==='progress'&&tab==='points')};
  var T=[['home','Accueil'],['progress','Troupe'],['quiz','Quiz'],['events','Calendrier']];
  return '<div class="brow">'+T.map(function(t){return '<button class="'+(on(t[0])?'on':'')+'" data-menunav="'+t[0]+'">'+navIco(t[0])+'<span>'+t[1]+'</span></button>'}).join('')+'<button class="'+(MENU?'on':'')+'" data-act="'+(MENU?'menuclose':'menu')+'"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg><span>Plus</span></button></div>'}
-function heroPic(){if(S.heroPhoto)return '<img src="'+S.heroPhoto+'" alt="La troupe" class="on" fetchpriority="high">';var G=GAL.list&&GAL.list.filter(function(p){return p.hero})[0];if(G)return '<img src="'+G.src+'" alt="La troupe" class="on" fetchpriority="high">';var L=(S.maitrises||[]).slice().sort(function(a,b){return a.year<b.year?1:-1}),u='';
+var HS={se:false,gal:false,to:false};setTimeout(function(){HS.to=true;if(tab==='home')render()},1800);
+function heroPic(){var G=GAL.list&&GAL.list.filter(function(p){return p.hero})[0],u=S.heroPhoto||(G&&G.src)||heroFallback(),c=null;
+ try{c=localStorage.getItem('ti-hero')}catch(e){}
+ if(!((HS.se&&HS.gal)||HS.to)){if(c)u=c;else return ''}
+ else{try{localStorage.setItem('ti-hero',u)}catch(e){}}
+ return u?'<img src="'+u+'" alt="La troupe" class="on" fetchpriority="high">':''}
+function heroFallback(){var L=(S.maitrises||[]).slice().sort(function(a,b){return a.year<b.year?1:-1}),u='';
  L.forEach(function(y){if(!u&&y.troupe&&y.troupe.photo)u=y.troupe.photo});L.forEach(function(y){if(!u&&y.hp&&y.hp.photo)u=y.hp.photo});
- if(!u&&S.photos[0])u=S.photos[0].src;return u?'<img src="'+u+'" alt="La troupe" class="on" fetchpriority="high">':''}
+ if(!u&&S.photos[0])u=S.photos[0].src;return u}
+
 function homeTop(){var d='';try{d=new Intl.DateTimeFormat('fr-FR',{timeZone:'Asia/Beirut',weekday:'long',day:'numeric',month:'long'}).format(new Date());d=d.charAt(0).toUpperCase()+d.slice(1)}catch(e){}
  var nm=ACC?String(ACC.name).split(' ')[0]:'',P=S.photos;
  if(P.length){if(firstPick){slide=Math.floor(Math.random()*P.length);firstPick=false}if(slide>=P.length)slide=0;LOADED[slide]=true}
@@ -1798,7 +1806,7 @@ function homeHist(){var L=(S.maitrises||[]).slice().sort(function(a,b){return a.
 /* ===== Galerie (Souvenirs) : modifiable par impeesa.admin, stockée dans Firebase « gallery » ===== */
 var GAL={list:null,on:false,edit:false,draft:null,busy:false,msg:''};
 function galIsAdmin(){return !!ACC&&ACC.u===QZ_ADMIN}
-function galStart(){if(GAL.on)return;GAL.on=true;fbLoad().then(function(){firebase.database().ref('gallery').on('value',function(s){var v=s.val();GAL.list=v&&v.items?Object.keys(v.items).map(function(k){return v.items[k]}).filter(function(x){return x&&x.src}):null;if(tab==='home'&&!GAL.edit)render()},function(){})}).catch(function(){GAL.on=false})}
+function galStart(){if(GAL.on)return;GAL.on=true;fbLoad().then(function(){firebase.database().ref('gallery').on('value',function(s){var v=s.val();GAL.list=v&&v.items?Object.keys(v.items).map(function(k){return v.items[k]}).filter(function(x){return x&&x.src}):null;HS.gal=true;if(tab==='home'&&!GAL.edit)render()},function(){HS.gal=true})}).catch(function(){GAL.on=false;HS.gal=true})}
 function galItems(){return GAL.list||S.photos.map(function(p){return {src:p.src,caption:p.caption||''}})}
 function galSection(){galStart();
  var L=GAL.edit?GAL.draft:galItems(),ad=galIsAdmin();
@@ -3057,7 +3065,7 @@ function publishSite(){saving=true;msg='';render();var o={};SITE_KEYS.forEach(fu
  fbAuth().then(function(){var db=firebase.database();return db.ref('site/edits').set({state:JSON.stringify(o),at:at,by:ACC?ACC.name:''}).then(function(){return db.ref('site/at').set(at)})})
  .then(function(){S.siteEditsAt=at;saving=false;dirty=false;try{dropDraft()}catch(e){}msg='Publié ✓ Visible tout de suite sur le site.';render()})
  .catch(function(e){saving=false;msg=String(e&&e.message||e).indexOf('PERMISSION')>=0?'Ajoute la règle « site » dans Firebase.':'Publication impossible. Réessaie.';render()})}
-function siteEditsLoad(){if(!CP_ON||window.claude)return;fbLoad().then(function(){var db=firebase.database();return db.ref('site/at').once('value').then(function(s){var at=s.val()||0;if(at<=(S.siteEditsAt||0))return;return db.ref('site/edits').once('value').then(function(x){var v=x.val();if(!v||!v.state||editing)return;try{var o=JSON.parse(v.state);SITE_KEYS.forEach(function(k){if(k in o)S[k]=o[k]});S.siteEditsAt=v.at||at;render()}catch(e){}})})}).catch(function(){})}
+function siteEditsLoad(){var done=function(){if(!HS.se){HS.se=true;if(tab==='home')render()}};if(!CP_ON||window.claude){HS.se=true;HS.gal=true;return}fbLoad().then(function(){var db=firebase.database();return db.ref('site/at').once('value').then(function(s){var at=s.val()||0;if(at<=(S.siteEditsAt||0))return;return db.ref('site/edits').once('value').then(function(x){var v=x.val();if(!v||!v.state||editing)return;try{var o=JSON.parse(v.state);SITE_KEYS.forEach(function(k){if(k in o)S[k]=o[k]});S.siteEditsAt=v.at||at;render()}catch(e){}})})}).then(done,done)}
 function publish(){
  if(!artifactNs){if(galIsAdmin())return publishSite();msg='La sauvegarde n’est pas disponible ici.';return render()}
  saving=true;msg='';render();
@@ -3095,7 +3103,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="eafb502ae21a">
-<script>(function(){var B="eafb502ae21a";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="f86096dbfde1">
+<script>(function(){var B="f86096dbfde1";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

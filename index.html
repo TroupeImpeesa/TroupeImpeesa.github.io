@@ -986,6 +986,24 @@ body.lgpage .lgcard{background:var(--surface);border-radius:22px;box-shadow:var(
 /* menu Plus */
 .bgi{background:var(--bg)!important;box-shadow:var(--shadow)}
 .bgic{background:var(--chip)!important;color:var(--accent)!important}
+
+/* ===== DESIGN C4 : liens dans l'en-tête, pas de barre ===== */
+body{padding-top:0!important}
+.btab{display:none!important}
+.hin{padding-top:16px!important}
+.pin{padding-top:16px!important}
+.hbrand{flex:none!important}
+.pbrand{flex:none!important}
+.tnav{display:flex;align-items:center;gap:16px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 2px}
+.tnav::-webkit-scrollbar{display:none}
+.tnav>:first-child{margin-left:auto}
+.tnav button{flex:none;border:none;background:none;color:#fff;opacity:.82;font:600 13.5px var(--body);white-space:nowrap;padding:6px 0;cursor:pointer;border-radius:0}
+.tnav button:hover{opacity:1}
+.tnav button.on{opacity:1;box-shadow:inset 0 -2px 0 var(--zy)}
+.hbar2 .acct:not(.me),.pbar .acct:not(.me){padding:7px 12px!important;font-size:12.5px!important}
+.hin,.pin,.hbody{grid-template-columns:minmax(0,1fr)}.hin>*,.pin>*,.hbody>*{min-width:0}
+@media(max-width:560px){.hbrand>span,.pbrand b{display:none}.tnav{gap:12px}.tnav button{font-size:13px}.tnav button[data-menunav="game"],.tnav button[data-menunav="quiz"]{display:none}}
+.bsheet{top:calc(66px + env(safe-area-inset-top,0px))!important}
 </style>
 </head>
 <body>
@@ -1517,10 +1535,16 @@ function drawer(){if(!MENU)return visSheet()+presSheet();
  return '<div class="drw-bg" data-act="menuclose"></div><div class="bsheet" role="dialog" aria-label="Menu"><div class="bsh">'+(GAMER?'<button class="drwme" data-act="acct"><span class="drwi acav" style="background:#46178f">🎮</span><span><b>'+esc(GAMER.name)+'</b><span>Compte gaming · ZORO</span></span></button>':ACC?'<button class="drwme" data-act="acct">'+accAv('drwi')+'<span><b>'+esc(ACC.name)+'</b><span>Voir mon profil</span></span></button>':'<button class="drwme" data-menunav="login"><span class="drwi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span><b>Se connecter</b><span>Avec ton compte</span></span></button>')+'<button class="drwx" data-act="menuclose" aria-label="Fermer">×</button></div>'+
   '<div class="bgrid">'+L.map(function(x){return '<button class="bgi'+(tab===x[0]?' on':'')+'" data-menunav="'+x[0]+'"><span class="bgic">'+x[1]+'</span><span>'+esc(x[2])+'</span></button>'}).join('')+'</div>'+tabRow()+'</div>'}
 function navIco(id){var x=NAVL.filter(function(n){return n[0]===id})[0];return x?x[1]:''}
-function tabBar(){if(tab==='quiz'&&QZ.play)return '';return '<nav class="btab" aria-label="Navigation">'+tabRow()+'</nav>'}
+function topNav(){var L=[['progress','Troupe'],['quiz','Quiz'],['events','Calendrier'],['game','Zoro']];
+ return '<nav class="tnav" aria-label="Navigation">'+L.map(function(x){var on=tab===x[0]||(x[0]==='progress'&&tab==='points');return '<button class="'+(on?'on':'')+'" data-menunav="'+x[0]+'">'+x[1]+'</button>'}).join('')+'<button class="'+(MENU?'on':'')+'" data-act="'+(MENU?'menuclose':'menu')+'">Plus</button></nav>'}
+function tabBar(){return ''}
+function tabBarOld(){if(tab==='quiz'&&QZ.play)return '';return '<nav class="btab" aria-label="Navigation">'+tabRow()+'</nav>'}
 function tabRow(){var on=function(t){return tab===t||(t==='progress'&&tab==='points')};
  var T=[['home','Accueil'],['progress','Troupe'],['quiz','Quiz'],['events','Calendrier']];
  return '<div class="brow">'+T.map(function(t){return '<button class="'+(on(t[0])?'on':'')+'" data-menunav="'+t[0]+'">'+navIco(t[0])+'<span>'+t[1]+'</span></button>'}).join('')+'<button class="'+(MENU?'on':'')+'" data-act="'+(MENU?'menuclose':'menu')+'"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg><span>Plus</span></button></div>'}
+function heroPic(){var L=(S.maitrises||[]).slice().sort(function(a,b){return a.year<b.year?1:-1}),u='';
+ L.forEach(function(y){if(!u&&y.troupe&&y.troupe.photo)u=y.troupe.photo});L.forEach(function(y){if(!u&&y.hp&&y.hp.photo)u=y.hp.photo});
+ if(!u&&S.photos[0])u=S.photos[0].src;return u?'<img src="'+u+'" alt="La troupe" class="on" fetchpriority="high">':''}
 function homeTop(){var d='';try{d=new Intl.DateTimeFormat('fr-FR',{timeZone:'Asia/Beirut',weekday:'long',day:'numeric',month:'long'}).format(new Date());d=d.charAt(0).toUpperCase()+d.slice(1)}catch(e){}
  var nm=ACC?String(ACC.name).split(' ')[0]:'',P=S.photos;
  if(P.length){if(firstPick){slide=Math.floor(Math.random()*P.length);firstPick=false}if(slide>=P.length)slide=0;LOADED[slide]=true}
@@ -1529,8 +1553,8 @@ function homeTop(){var d='';try{d=new Intl.DateTimeFormat('fr-FR',{timeZone:'Asi
  if(nx){var p=nx.date.split('-'),dd=Math.round((new Date(+p[0],+p[1]-1,+p[2])-new Date(today()+'T00:00'))/864e5);
   nh='<div class="hnext2" role="button" tabindex="0" data-event="'+nx.id+'"><span class="tear"><small>'+MONTHS[+p[1]-1]+'</small><b>'+(+p[2])+'</b></span><span class="hx"><small>Prochain rendez-vous</small><b>'+esc(nx.title)+'</b><span>'+([span(nx),hours(nx)].filter(Boolean).map(esc).join(' · ')||fmtDate(nx.date))+'</span></span><span class="hj">'+(dd>0?'J-'+dd:'Aujourd’hui')+'</span></div>'}
  var tt=String(S.troop||'').replace(/^Troupe\s+/i,'').replace(/\s+VPJ$/i,'');
- return '<section class="hhero"><div class="hslides" id="show">'+imgs+'</div><div class="hshade"></div><div class="hin">'+
-  '<div class="hbar2"><span class="hbrand"><i aria-hidden="true"></i><span><b>Impeesa</b><small>VPJ · GROUPE VAL PÈRE JACQUES</small></span></span>'+(CP_ON?acctBtn():'')+'</div>'+
+ return '<section class="hhero"><div class="hslides">'+heroPic()+'</div><div class="hshade"></div><div class="hin">'+
+  '<div class="hbar2"><span class="hbrand"><i aria-hidden="true"></i><span><b>Impeesa</b><small>VPJ · GROUPE VAL PÈRE JACQUES</small></span></span>'+topNav()+(CP_ON?acctBtn():'')+'</div>'+
   '<div class="hbody"><div class="hey">'+esc(d)+' · '+esc(S.season)+'</div><h1 class="hh1">Troupe<br><em>'+esc(tt||'Impeesa')+'</em></h1>'+
   '<p class="hlead">'+(nm?'Bonjour '+esc(nm)+' ! ':'')+'Bienvenue chez les éclaireurs du Groupe Val Père Jacques. Quatre patrouilles, une troupe.</p>'+nh+
   '<div class="hbtns"><button class="hbtn s" data-nav="quiz">Jouer au Quiz Prêt →</button><button class="hbtn" data-menunav="events">Voir le calendrier</button></div></div></div>'+
@@ -1542,7 +1566,7 @@ function pageBand(){if(tab==='quiz'&&QZ.play)return '';
   inst:['Rondins, brelages et mesures','Installations','Les installations de camp de chaque patrouille, en 3D.'],
   order:['Coop des Scouts du Liban','Commande Coop','Uniforme, badges, livres et matériel de camp.'],orders:['Coop des Scouts du Liban','Commande troupe','Toutes les commandes de la troupe.'],
   login:['Ton compte de la troupe','Connexion','Connecte-toi pour voir les points, les badges et les présences.'],me:['Ton compte','Mon profil',''],points:['Classement','Points',''],uni:['Formation','Université Impeesa','']}[tab]||[esc(S.season),esc(S.troop),''];
- return '<section class="pband'+(tab==='quiz'?' qz':'')+'"><div class="pin"><div class="pbar"><button class="pbrand" data-act="home"><i aria-hidden="true"></i><b>Impeesa</b></button>'+(CP_ON?acctBtn():'')+'</div><small>'+B[0]+'</small><h1>'+B[1]+'</h1>'+(B[2]?'<p>'+B[2]+'</p>':'')+'</div><svg class="ridge" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 60V38l90-17 70 12 110-26 80 19 60-9 120 22 90-29 70 15 100-19 80 17 70-7 110 26 90-21 80 10 90-17 60 12 70-7v57z"/></svg></section>'}
+ return '<section class="pband'+(tab==='quiz'?' qz':'')+'"><div class="pin"><div class="pbar"><button class="pbrand" data-act="home"><i aria-hidden="true"></i><b>Impeesa</b></button>'+topNav()+(CP_ON?acctBtn():'')+'</div><small>'+B[0]+'</small><h1>'+B[1]+'</h1>'+(B[2]?'<p>'+B[2]+'</p>':'')+'</div><svg class="ridge" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 60V38l90-17 70 12 110-26 80 19 60-9 120 22 90-29 70 15 100-19 80 17 70-7 110 26 90-21 80 10 90-17 60 12 70-7v57z"/></svg></section>'}
 function header(){return (tab==='home'?homeTop():pageBand())+drawer()+tabBar()+
  '<div class="tabbar"></div>'+
  (canEdit&&draftAvail?'<div class="note draftbar"><span>Tu as des modifications non publiées.</span><span><button class="btn" data-act="restore">Récupérer</button> <button class="btn ghost" data-act="nodraft">Ignorer</button></span></div>':'')+
@@ -2949,7 +2973,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="fd1f3f7efc17">
-<script>(function(){var B="fd1f3f7efc17";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="86818b5a11e3">
+<script>(function(){var B="86818b5a11e3";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

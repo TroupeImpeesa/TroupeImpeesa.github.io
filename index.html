@@ -1012,6 +1012,20 @@ body{padding-top:0!important}
 .hbar2 .acct.me .acnm,.pbar .acct.me .acnm{display:inline-block!important;flex:none!important;color:#fff;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
 .hbar2 .acct.me .acsp,.pbar .acct.me .acsp{display:none!important}
 @media(max-width:560px){.hbar2 .acct.me .acnm,.pbar .acct.me .acnm{max-width:72px}}
+
+/* ===== DESIGN C7 : page Plus ===== */
+.plg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr));gap:12px;margin-top:8px}
+@media(max-width:560px){.plg{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
+.plc{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:12px;min-height:150px;padding:16px;border:none;border-radius:22px;background:var(--surface);box-shadow:var(--shadow);color:var(--fg);text-align:left;cursor:pointer;font-family:var(--body);-webkit-tap-highlight-color:transparent;transition:transform .15s}
+.plc:active{transform:scale(.97)}
+.plc .pi{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:var(--pc,#0f2342);color:#fff;flex:none}
+.plc .pi svg{width:22px;height:22px}
+.plc b{display:block;font:400 21px/1.1 var(--serif)}
+.plc span.d{display:block;font-size:12.5px;line-height:1.4;color:var(--muted);margin-top:3px}
+.plc .ch{position:absolute;top:16px;right:16px;color:var(--muted);font-size:20px;line-height:1}
+.plfoot{margin-top:26px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;border-radius:20px;background:#0f2342;color:#fff}
+.plfoot b{font:400 20px var(--serif)}.plfoot span{display:block;font-size:13px;opacity:.75;user-select:all;overflow-wrap:anywhere}
+@media(max-width:560px){.tnav button[data-menunav="inst"],.tnav button[data-menunav="order"],.tnav button[data-menunav="orders"]{display:none}}
 </style>
 </head>
 <body>
@@ -1021,7 +1035,7 @@ body{padding-top:0!important}
 (function(){
 function load(){var x=JSON.parse(document.getElementById('state').textContent);x.meetings=x.meetings||[];x.photos=x.photos||[];x.news=x.news||[];x.faces=x.faces||{};return x}
 var S=load(),curM=null,slide=0,openScout=null,openEvent=null;
-var TABS=['home','progress','events','history','quiz','login','me','order','orders','inst'];
+var TABS=['home','progress','events','history','quiz','login','me','order','orders','inst','plus'];
 var tab='home',openGroup=null,openPts=null;
 function route(h){h=(h==null?(location.hash||'#home').slice(1):h).split('/');var t=h[0]==='points'?'progress':h[0];if(TABS.indexOf(t)<0)t='home';tab=t;if(typeof PRES!=='undefined'&&PRES)PRES.g=null;openGroup=null;openPts=null;openScout=null;openEvent=null;openCP=null;var x=h[1]||'';
  if(t==='progress'){if(x==='mai')openGroup='mai';else if(x.indexOf('g-')===0)openGroup=x.slice(2);else if(x.indexOf('cp-')===0&&pat(x.slice(3))){openCP=x.slice(3);openGroup=openCP}else if(x.indexOf('pts-')===0)openPts=x.slice(4);else if(x.indexOf('s-')===0&&!ACC){var sc0=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc0)openGroup=sc0.patrol}else if(x.indexOf('s-')===0){var sc=S.scouts.filter(function(q){return q.id===x.slice(2)})[0];if(sc){openScout=sc.id;openGroup=sc.patrol}}}
@@ -1543,8 +1557,8 @@ function drawer(){if(!MENU)return visSheet()+presSheet();
  return '<div class="drw-bg" data-act="menuclose"></div><div class="bsheet" role="dialog" aria-label="Menu"><div class="bsh">'+(GAMER?'<button class="drwme" data-act="acct"><span class="drwi acav" style="background:#46178f">🎮</span><span><b>'+esc(GAMER.name)+'</b><span>Compte gaming · ZORO</span></span></button>':ACC?'<button class="drwme" data-act="acct">'+accAv('drwi')+'<span><b>'+esc(ACC.name)+'</b><span>Voir mon profil</span></span></button>':'<button class="drwme" data-menunav="login"><span class="drwi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span><b>Se connecter</b><span>Avec ton compte</span></span></button>')+'<button class="drwx" data-act="menuclose" aria-label="Fermer">×</button></div>'+
   '<div class="bgrid">'+L.map(function(x){return '<button class="bgi'+(tab===x[0]?' on':'')+'" data-menunav="'+x[0]+'"><span class="bgic">'+x[1]+'</span><span>'+esc(x[2])+'</span></button>'}).join('')+'</div>'+tabRow()+'</div>'}
 function navIco(id){var x=NAVL.filter(function(n){return n[0]===id})[0];return x?x[1]:''}
-function topNav(){var L=[['progress','Troupe'],['quiz','Quiz'],['events','Calendrier'],['game','Zoro']];
- return '<nav class="tnav" aria-label="Navigation">'+L.map(function(x){var on=tab===x[0]||(x[0]==='progress'&&tab==='points');return '<button class="'+(on?'on':'')+'" data-menunav="'+x[0]+'">'+x[1]+'</button>'}).join('')+'<button class="'+(MENU?'on':'')+'" data-act="'+(MENU?'menuclose':'menu')+'">Plus</button></nav>'}
+function topNav(){var oid=isChef()?'orders':'order',L=[['progress','Troupe'],['inst','Installations'],['events','Calendrier'],[oid,'Commande'],['plus','Plus']];
+ return '<nav class="tnav" aria-label="Navigation">'+L.map(function(x){var on=tab===x[0]||(x[0]==='progress'&&tab==='points')||(x[0]===oid&&(tab==='order'||tab==='orders'));return '<button class="'+(on?'on':'')+'" data-menunav="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</nav>'}
 function tabBar(){return ''}
 function tabBarOld(){if(tab==='quiz'&&QZ.play)return '';return '<nav class="btab" aria-label="Navigation">'+tabRow()+'</nav>'}
 function tabRow(){var on=function(t){return tab===t||(t==='progress'&&tab==='points')};
@@ -1567,13 +1581,26 @@ function homeTop(){var d='';try{d=new Intl.DateTimeFormat('fr-FR',{timeZone:'Asi
   '<p class="hlead">'+(nm?'Bonjour '+esc(nm)+' ! ':'')+'Bienvenue chez les éclaireurs du Groupe Val Père Jacques. Quatre patrouilles, une troupe.</p>'+nh+
   '<div class="hbtns"><button class="hbtn s" data-nav="quiz">Jouer au Quiz Prêt →</button><button class="hbtn" data-menunav="events">Voir le calendrier</button></div></div></div>'+
   '<svg class="ridge" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 60V38l90-17 70 12 110-26 80 19 60-9 120 22 90-29 70 15 100-19 80 17 70-7 110 26 90-21 80 10 90-17 60 12 70-7v57z"/></svg></section>'}
+function plusPage(){var oid=isChef()?'orders':'order';
+ var L=[['quiz',navIco('quiz'),'Quiz Prêt','15 questions chaque semaine, nouveau quiz le lundi à 14h.','#4b2bb8'],
+  ['game','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 16 0v6a2 2 0 0 1-4 0 2 2 0 0 1-4 0 2 2 0 0 1-4 0 2 2 0 0 1-4 0z"/><circle cx="9" cy="11" r="1.3"/><circle cx="15" cy="11" r="1.3"/></svg>','Zoro','Le jeu de la troupe, juste pour le fun.','#0b1424'],
+  ['inst',IINST,'Installations','Les constructions de camp de chaque patrouille, en 3D.','#8a6a14'],
+  [oid,ICART,isChef()?'Commande troupe':'Commande Coop','Uniforme, badges, livres et matériel.','#1b3a6b'],
+  ['history',navIco('history'),'Histoire','Toutes les maîtrises et HP, année par année.','#2c5d8a'],
+  ['events',navIco('events'),'Calendrier','Réunions, camps et sorties.','#c8353c'],
+  ['progress',navIco('progress'),'Troupe','Patrouilles, membres et points.','#0f2342']];
+ if(isChef()&&ACC&&ACC.u!==QZ_ADMIN)L.splice(4,0,['order',ICART,'Ma commande','Ta commande à la Coop.','#1b3a6b']);
+ if(typeof UNI!=='undefined'&&today()<=UNI.hideAfter)L.push(['uni',navIco('quiz'),'Université Impeesa','La formation de la troupe.','#46178f']);
+ L.push(ACC||GAMER?['me','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>','Mon profil','Ton compte, tes badges et tes présences.','#3d7d7a']:['login','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>','Se connecter','Avec ton compte de la troupe.','#3d7d7a']);
+ return '<div class="plg">'+L.map(function(x){return '<button class="plc" data-menunav="'+x[0]+'" style="--pc:'+x[4]+'"><span class="pi">'+x[1]+'</span><span><b>'+esc(x[2])+'</b><span class="d">'+esc(x[3])+'</span></span><span class="ch" aria-hidden="true">›</span></button>'}).join('')+'</div>'+
+  '<div class="plfoot"><div><b>'+esc(S.troop)+'</b><span>troupeimpeesavpj@gmail.com</span></div></div>'}
 function pageBand(){if(tab==='quiz'&&QZ.play)return '';
  var n=(S.scouts||[]).length,B={progress:[esc(S.season)+(n?' · '+n+' scouts':''),'La troupe','Touche une patrouille pour voir ses points par réunion.'],
   events:[esc(S.season),'Calendrier','Réunions, camps et sorties de la troupe.'],history:['Depuis 2020','Histoire','La troupe, année par année.'],
   quiz:['Le quiz de la semaine sur ton carnet « Prêt »','Quiz <em>Prêt !</em>','15 questions chaque semaine, nouveau quiz le lundi à 14h.'],
   inst:['Rondins, brelages et mesures','Installations','Les installations de camp de chaque patrouille, en 3D.'],
   order:['Coop des Scouts du Liban','Commande Coop','Uniforme, badges, livres et matériel de camp.'],orders:['Coop des Scouts du Liban','Commande troupe','Toutes les commandes de la troupe.'],
-  login:['Ton compte de la troupe','Connexion','Connecte-toi pour voir les points, les badges et les présences.'],me:['Ton compte','Mon profil',''],points:['Classement','Points',''],uni:['Formation','Université Impeesa','']}[tab]||[esc(S.season),esc(S.troop),''];
+  login:['Ton compte de la troupe','Connexion','Connecte-toi pour voir les points, les badges et les présences.'],me:['Ton compte','Mon profil',''],plus:['Tout le reste','Plus','Le quiz, le jeu, les outils et ton compte.'],points:['Classement','Points',''],uni:['Formation','Université Impeesa','']}[tab]||[esc(S.season),esc(S.troop),''];
  return '<section class="pband'+(tab==='quiz'?' qz':'')+'"><div class="pin"><div class="pbar"><button class="pbrand" data-act="home"><i aria-hidden="true"></i><b>Impeesa</b></button>'+topNav()+(CP_ON?acctBtn():'')+'</div><small>'+B[0]+'</small><h1>'+B[1]+'</h1>'+(B[2]?'<p>'+B[2]+'</p>':'')+'</div><svg class="ridge" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 60V38l90-17 70 12 110-26 80 19 60-9 120 22 90-29 70 15 100-19 80 17 70-7 110 26 90-21 80 10 90-17 60 12 70-7v57z"/></svg></section>'}
 function header(){return (tab==='home'?homeTop():pageBand())+drawer()+tabBar()+
  '<div class="tabbar"></div>'+
@@ -2836,7 +2863,7 @@ function render(){
  if(ACC&&ACC.sid){var _n=scName(ACC.sid,ACC.name);if(_n!==ACC.name){ACC.name=_n;try{accSave()}catch(e){}}}
  var keep=editing;try{visTick();if(visCan()&&CP_ON)visListen()}catch(e){}
  try{document.body.classList.toggle('kahoot',tab==='quiz');document.body.classList.toggle('lgpage',tab==='login'&&!ACC)}catch(e){}
- var body=header()+''+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():tab==='quiz'?quiz():tab==='login'?loginPage():tab==='me'?mePage():tab==='inst'?instPage():tab==='order'?orderPage():tab==='orders'?troupeOrderPage():tab==='uni'?uniPage():events())+(full?settings():'');
+ var body=header()+''+(tab==='home'?home():tab==='points'?points():tab==='progress'?progress():tab==='history'?histoire():tab==='quiz'?quiz():tab==='login'?loginPage():tab==='me'?mePage():tab==='inst'?instPage():tab==='order'?orderPage():tab==='orders'?troupeOrderPage():tab==='uni'?uniPage():tab==='plus'?plusPage():events())+(full?settings():'');
  editing=keep;
  if(openScout) body+=profile();
  if(openEvent) body+=eventPage();
@@ -2981,7 +3008,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="b1e3ad1304d1">
-<script>(function(){var B="b1e3ad1304d1";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="26f0b916404d">
+<script>(function(){var B="26f0b916404d";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

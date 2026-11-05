@@ -1067,6 +1067,29 @@ body:not(.kahoot) .psec{font-family:var(--serif)!important;font-weight:400!impor
 .hpick button{padding:0;border:3px solid transparent;border-radius:12px;overflow:hidden;cursor:pointer;background:none;aspect-ratio:4/3}
 .hpick button img{width:100%;height:100%;object-fit:cover;display:block}
 .hpick button.on{border-color:var(--zy);box-shadow:0 0 0 2px #1b1300}
+
+@media (prefers-reduced-motion:no-preference){
+.hsec.rv{opacity:0;transform:translateY(22px)}
+.hsec.rv.in{opacity:1;transform:none;transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+.hsec.rv .hpc,.hsec.rv .hev,.hsec.rv .htl2,.hsec.rv .pol{opacity:0;transform:translateY(14px) scale(.97)}
+.hsec.rv.in .hpc,.hsec.rv.in .hev,.hsec.rv.in .htl2{opacity:1;transform:none;transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.2,1)}
+.hsec.rv.in .pol{opacity:1;transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.2,1)}
+.hsec.rv.in .pol:nth-child(odd){transform:rotate(-2.4deg)}.hsec.rv.in .pol:nth-child(even){transform:rotate(1.8deg)}.hsec.rv.in .pol:nth-child(3n){transform:rotate(-.8deg)}
+.hsec.rv.in .hpc{transition-delay:calc(var(--i,0)*90ms)}
+.hsec.rv.in .hev:nth-child(2),.hsec.rv.in .htl2:nth-child(2),.hsec.rv.in .pol:nth-child(2){transition-delay:.1s}
+.hsec.rv.in .hev:nth-child(3),.hsec.rv.in .pol:nth-child(3){transition-delay:.2s}
+.hsec.rv.in .pol:nth-child(4){transition-delay:.3s}.hsec.rv.in .pol:nth-child(5){transition-delay:.4s}.hsec.rv.in .pol:nth-child(n+6){transition-delay:.5s}
+.htl2:hover{transform:translateY(-3px)}.htl2{transition:transform .2s}
+.hpc:hover{transform:translateY(-3px)}.hpc{transition:transform .2s}
+}
+
+.hpc{gap:4px!important;padding:14px 10px 16px!important;border-top:4px solid var(--pc)}
+.hpt{display:flex;align-items:center;justify-content:center;gap:7px;min-width:0}
+.hpt .pbadge{width:24px;height:24px;font-size:11.5px;flex:none}
+.hpt b{font:700 14px var(--body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hpn2{display:block;font:400 clamp(40px,11vw,52px)/1.05 var(--serif);font-variant-numeric:tabular-nums;color:var(--fg);margin-top:6px}
+.hpn2.lk{font-size:30px;line-height:1.6}
+.hpl2{display:block;font:700 10.5px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -1803,7 +1826,8 @@ document.addEventListener('change',function(ev){var t=ev.target;if(!t||t.id!=='g
  Promise.all(fs.map(function(f){return shrink(f,1100,.8)})).then(function(L){L.forEach(function(s){if(s)GAL.draft.push({src:s,caption:''})});GAL.msg='';render()})});
 function homeRank(){var t=totals(),L=S.patrols.slice().sort(function(a,b){return t[b.id]-t[a.id]});
  var R=['1er','2e','3e','4e','5e','6e'];
- return '<div class="hpat">'+L.map(function(p,i){return '<div class="hpc" role="button" tabindex="0" data-ptab="'+p.id+'"><span class="rk">'+(R[i]||(i+1)+'e')+'</span><span class="pbadge" style="background:'+col(p)+'">'+esc(p.name.charAt(0))+'</span><b>'+esc(p.name)+'</b>'+(ACC?'<em>'+fmtPts(t[p.id])+' pts</em>':'<span class="lkp" title="Connecte-toi pour voir les points">🔒 points</span>')+'</div>'}).join('')+'</div>'}
+ return '<div class="hpat">'+L.map(function(p,i){return '<div class="hpc" role="button" tabindex="0" data-ptab="'+p.id+'" style="--i:'+i+';--pc:'+col(p)+'"><span class="hpt"><span class="pbadge" style="background:'+col(p)+'">'+esc(p.name.charAt(0))+'</span><b>'+esc(p.name)+'</b></span>'+
+  (ACC?'<span class="hpn2"><span data-count="'+t[p.id]+'" data-ck="h'+p.id+'">'+fmtPts(t[p.id])+'</span></span><span class="hpl2">points · '+(R[i]||(i+1)+'e')+'</span>':'<span class="hpn2 lk" title="Connecte-toi pour voir les points">🔒</span><span class="hpl2">'+(R[i]||(i+1)+'e')+' · connecte-toi</span>')+'</div>'}).join('')+'</div>'}
 function fmtPts(n){return (Math.round(n*10)/10).toString()}
 function ptsL(n){return ACC?fmtPts(n):'<span class="lkn" title="Connecte-toi pour voir les points">🔒</span>'}
 function lkB(){return ACC?'':' lkb'}
@@ -1929,7 +1953,7 @@ function progress(){
    return '<button class="tmem" data-scout="'+s.id+'">'+avatar(s,'tav')+'<span class="tmt"><b>'+esc(s.name)+(s.role?'<em>'+esc(s.role)+'</em>':'')+'</b><span class="tsteps'+lkB()+'" title="'+(ACC?esc(S.stages[st]||''):'')+'">'+[1,2,3].map(function(i){return '<i'+(ACC&&st>=i?' class="f"':'')+'></i>'}).join('')+'</span><small'+(ACC?'':' class="lkb"')+'>'+(ACC?esc(S.stages[st]||'')+(k?' · 🔥'+k:''):'Promesse · 🔥0')+'</small></span>'+(nb?'<span class="tbd'+lkB()+'">🏅 '+(ACC?nb:'0')+'</span>':'')+'<span class="mgo" aria-hidden="true">'+(ACC?'›':'🔒')+'</span></button>'}).join('');
   if(!list.length) rows='<p class="empty" style="padding:14px 16px">Aucun scout dans cette patrouille.</p>';
   return '<button class="back" data-act="closegroup"><span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Troupe</span></button>'+'<section class="phero2" style="--gc:'+col(gp)+'"><span class="phem">'+patEmoji(gp.name)+'</span><small>PATROUILLE · '+(rk===1?'🥇 1ÈRE':rk+'E')+'</small><b>'+esc(gp.name)+'</b><span>'+[cp?'CP '+esc(cp.name):'',sp?'SP '+esc(sp.name):''].filter(Boolean).join(' · ')+'</span></section>'+
-   '<div class="pstats"><div><b>'+ptsL(TT0[gp.id]||0)+'</b><span>points</span></div><div><b>'+list.length+'</b><span>membres</span></div><div><b>'+(ACC?bd:ptsL(0))+'</b><span>badges</span></div>'+(ACC?'<button class="pstb" data-act="presopen" data-g="'+gp.id+'"><b>'+(lp==null?'–':lp+'/'+list.length)+'</b><span>présents ›</span></button>':'<div><b>'+ptsL(0)+'</b><span>présents</span></div>')+'</div>'+
+   '<div class="pstats"><div><b>'+(ACC?'<span data-count="'+(TT0[gp.id]||0)+'" data-ck="ps'+gp.id+'">'+fmtPts(TT0[gp.id]||0)+'</span>':ptsL(0))+'</b><span>points</span></div><div><b><span data-count="'+list.length+'" data-ck="pm'+gp.id+'">'+list.length+'</span></b><span>membres</span></div><div><b>'+(ACC?'<span data-count="'+bd+'" data-ck="pb'+gp.id+'">'+bd+'</span>':ptsL(0))+'</b><span>badges</span></div>'+(ACC?'<button class="pstb" data-act="presopen" data-g="'+gp.id+'"><b>'+(lp==null?'–':lp+'/'+list.length)+'</b><span>présents ›</span></button>':'<div><b>'+ptsL(0)+'</b><span>présents</span></div>')+'</div>'+
    cpBtn(gp)+'<div class="tseg"><button class="on">Membres</button><button data-ptab="'+gp.id+'">Points</button></div><div class="tlist" style="--gc:'+col(gp)+'">'+rows+'</div>';
  }
  var TT=totals(),L=S.patrols.slice().sort(function(a,b){return (TT[b.id]||0)-(TT[a.id]||0)}),rkOf=function(p){return 1+S.patrols.filter(function(q){return (TT[q.id]||0)>(TT[p.id]||0)}).length};
@@ -1939,7 +1963,7 @@ function progress(){
  h+='<div style="height:12px"></div>';
  var P3=L.slice(0,3);
  if(P3.length===3&&(TT[P3[0].id]||0)>0){var ord=[P3[1],P3[0],P3[2]],ht=[64,88,46];
-  h+='<div class="tpod">'+ord.map(function(p,i){var r=rkOf(p);return '<button data-group="'+p.id+'"><em class="pbadge" style="background:'+col(p)+'">'+esc(p.name.charAt(0))+'</em><b>'+esc(p.name)+'</b><span>'+(ACC?fmtPts(TT[p.id]||0)+' pts':ptsL(0))+'</span><u style="height:'+ht[i]+'px;background:'+col(p)+'">'+r+'</u></button>'}).join('')+'</div>'}
+  h+='<div class="tpod">'+ord.map(function(p,i){var r=rkOf(p);return '<button data-group="'+p.id+'"><em class="pbadge" style="background:'+col(p)+'">'+esc(p.name.charAt(0))+'</em><b>'+esc(p.name)+'</b><span>'+(ACC?'<span data-count="'+(TT[p.id]||0)+'" data-ck="pod'+p.id+'">'+fmtPts(TT[p.id]||0)+'</span>'+' pts':ptsL(0))+'</span><u style="height:'+ht[i]+'px;background:'+col(p)+'">'+r+'</u></button>'}).join('')+'</div>'}
  h+='<div class="tgrid">'+L.map(function(p){var M=S.scouts.filter(function(x){return x.patrol===p.id}),r=rkOf(p);
   return '<button class="tpc" data-group="'+p.id+'" style="--gc:'+col(p)+'"><span class="trk">'+(r===1?'1er':r+'e')+'</span><span class="pbadge tpb" style="background:'+col(p)+'">'+esc(p.name.charAt(0))+'</span><span class="tpn"><b>'+esc(p.name)+'</b><small>'+M.length+' membres · '+(ACC?fmtPts(TT[p.id]||0)+' pts':ptsL(0))+'</small></span><span class="tavs">'+M.slice(0,3).map(function(x){var f=S.faces[x.id];return '<i>'+(f?'<img src="'+f+'" alt="">':esc(initials(x.name)))+'</i>'}).join('')+(M.length>3?'<i>+'+(M.length-3)+'</i>':'')+'</span><span class="tem">'+patEmoji(p.name)+'</span></button>'}).join('')+'</div>';
  h+='<div class="trank">'+points()+'</div>';
@@ -2913,9 +2937,21 @@ function render(){
  app.innerHTML=body+
   (canEdit&&!editing?'<button class="btn editbtn" data-act="edit">Modifier</button>':'')+
   (editing?'<div class="savebar"><span class="msg" role="status">'+esc(msg||(dirty?'Modifications non publiées':'Aucune modification'))+'</span><button class="btn ghost" data-act="done">'+(dirty?'Annuler':'Fermer')+'</button><button class="btn" data-act="publish"'+(dirty&&!saving?'':' disabled')+'>'+(saving?'Publication…':'Publier')+'</button></div>':'');
+ try{fxRun()}catch(e){}
  var ind=document.getElementById('tab-ind');if(ind){requestAnimationFrame(function(){requestAnimationFrame(function(){ind.style.setProperty('--i',TABS.indexOf(tab));prevTab=tab})})}
 }
 
+/* ===== Animations : chiffres qui montent, sections qui apparaissent au défilement ===== */
+var FXS={},FXIO=null,RVIO=null;
+function fxCount(el){var k=el.dataset.ck||'';FXS[k]=1;var to=parseFloat(el.dataset.count)||0,t0=null,D=1100;
+ function f(ts){if(!t0)t0=ts;var x=Math.min(1,(ts-t0)/D),v=to*(1-Math.pow(1-x,3));el.textContent=x<1?Math.round(v):fmtPts(to);if(x<1&&document.body.contains(el))requestAnimationFrame(f)}
+ requestAnimationFrame(f)}
+function fxRun(){if(reduce||!('IntersectionObserver' in window))return;
+ if(!FXIO)FXIO=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){FXIO.unobserve(e.target);fxCount(e.target)}})},{threshold:.5});
+ if(!RVIO)RVIO=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){RVIO.unobserve(e.target);e.target.classList.add('in');FXS[e.target.dataset.rk]=2}})},{threshold:.12});
+ [].forEach.call(document.querySelectorAll('[data-count]'),function(el){var k=el.dataset.ck||'';if(FXS[k])return;if(el.getBoundingClientRect().bottom<0){FXS[k]=1;return}el.textContent='0';FXIO.observe(el)});
+ if(tab==='home')[].forEach.call(document.querySelectorAll('.hsec'),function(s,i){var k='sec'+i;s.dataset.rk=k;if(FXS[k]===2)return;if(!FXS[k]){if(s.getBoundingClientRect().top<innerHeight*.9){FXS[k]=2;return}FXS[k]=1}s.classList.add('rv');RVIO.observe(s)});
+}
 function val(id){var e=document.getElementById(id);return e?e.value.trim():''}
 document.addEventListener('click',function(ev){
  if(ev.target.closest('a'))return;
@@ -3059,7 +3095,7 @@ if(window.claude&&window.claude.use){
 </script>
 
 
-<meta data-build="b63fc49dbd8c">
-<script>(function(){var B="b63fc49dbd8c";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="019d3fc33502">
+<script>(function(){var B="019d3fc33502";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

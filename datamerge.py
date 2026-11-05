@@ -28,7 +28,7 @@ def apply_patrol(st, d):
     st["meetings"] = sorted([m for m in st["meetings"] if m["patrols"]], key=lambda m: m["date"])
 
 
-SITE_KEYS = ["news", "photos", "cover", "troop", "season", "maitrises", "staff", "commissaires", "maitrisePhotos", "faces", "patrols", "stages", "example"]
+SITE_KEYS = ["heroPhoto", "news", "photos", "cover", "troop", "season", "maitrises", "staff", "commissaires", "maitrisePhotos", "faces", "patrols", "stages", "example"]
 
 
 def apply_site_edits(state, root):

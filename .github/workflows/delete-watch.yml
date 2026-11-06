@@ -1,0 +1,32 @@
+name: Surveiller les comptes supprimés (instantané)
+on:
+  schedule:
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/delete-watch.yml', 'scripts/delete_watch.py']
+permissions:
+  contents: read
+  actions: write
+concurrency:
+  group: delete-watch
+  cancel-in-progress: false
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+      - name: Surveiller quiz/delq toutes les 20 s
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+        run: |
+          if [ -z "$FIREBASE_SA" ]; then echo "Secret FIREBASE_SA absent"; exit 0; fi
+          pip install -q firebase-admin
+          python3 scripts/delete_watch.py
+      - name: Se relancer
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run delete-watch.yml --ref main -R ${{ github.repository }}

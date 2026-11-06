@@ -1198,7 +1198,7 @@ function col(p){return 'var(--p'+((p&&p.c)||1)+')'}
 function fmtDate(d){var p=d.split('-');return +p[2]+' '+MONTHS[+p[1]-1]}
 var AUTO_FROM='2026-10-17',AUTO_MIN=10,AUTO_PTS=10;
 function autoLog(){var out=[],t=today();S.meetings.forEach(function(m){if(m.date<AUTO_FROM||m.date>t)return;m.patrols.forEach(function(pid){var ids={};S.scouts.forEach(function(x){if(x.patrol===pid)ids[x.id]=1});var n=Object.keys(ids).length,k=m.present.filter(function(i){return ids[i]}).length,full=n>0&&k===n,pts=full?15:(k>=AUTO_MIN?AUTO_PTS:0);if(pts)out.push({id:'auto-'+pid+'-'+m.date,patrol:pid,cat:'presence',pts:pts,reason:(full?'Présence complète : ':'Présence : ')+k+'/'+n+' présents (automatique)',date:m.date,auto:true})})});return out}
-var QLOG=[],QB_FROM='2026-10-26';
+var QLOG=[],QB_FROM='2026-10-26';try{QLOG=JSON.parse(localStorage.getItem('qlog-v1')||'[]')||[]}catch(e){QLOG=[]}
 function allLog(){return S.log.concat(autoLog(),QLOG)}
 var QF1=[25,18,15,12,10,8,6,4,2,1],QFULL=10;
 function qBonus(){
@@ -1213,7 +1213,7 @@ function qBonus(){
    Object.keys(c).forEach(function(pid){out.push({id:'quiz-'+pid+'-'+w,week:w,kind:'top',n:n[pid],patrol:pid,cat:'jeux',pts:c[pid],reason:'Quiz Prêt : '+n[pid]+' scout'+(n[pid]>1?'s':'')+' dans le top 10 (semaine du '+wl+')',date:end,auto:true,live:live})});
    S.patrols.forEach(function(p){var mem=S.scouts.filter(function(x){return x.patrol===p.id});if(!mem.length)return;var got={};E.forEach(function(x){if(x.sid)got[x.sid]=1});
     if(mem.every(function(x){return got[x.id]}))out.push({id:'quiz-'+p.id+'-'+w+'-full',week:w,kind:'full',patrol:p.id,cat:'jeux',pts:QFULL,reason:'Quiz Prêt : toute la patrouille a joué (semaine du '+wl+')',date:end,auto:true,live:live})})});
-  var k=JSON.stringify(out);if(k===last)return;last=k;QLOG=out;if(!(tab==='quiz'&&QZ.play))render()}
+  var k=JSON.stringify(out);if(k===last)return;last=k;QLOG=out;try{localStorage.setItem('qlog-v1',k)}catch(e){}if(!(tab==='quiz'&&QZ.play))render()}
   db.ref('quiz/users').on('value',function(s){U=s.val()||{};go()});
   db.ref('quiz/scores').on('value',function(s){A=s.val()||{};go()});
   setInterval(go,60000);

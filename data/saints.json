@@ -486,5 +486,56 @@
    "تأسيس الإخوة المريميّين على يد القديس مرسلان شانيا (1817)",
    "إعلان قداسة القديس مرسلان شانيا (1999)"
   ]
+ },
+ {
+  "id": "romanos",
+  "n": "Saint Romanos le Mélode",
+  "q": "Aujourd’hui la Vierge enfante Celui qui est au-delà de tout être, et la terre offre une grotte à l’Inaccessible.",
+  "qs": "Saint Romanos le Mélode, kontakion de la Nativité",
+  "ev": [
+   [
+    "10-01",
+    "Fête de saint Romanos le Mélode"
+   ]
+  ],
+  "ar_n": "القديس رومانوس المرنّم",
+  "ar_q": "اليوم البتول تلد الفائق الجوهر، والأرض تقرّب المغارة لمن هو غير مقترَب إليه.",
+  "ar_qs": "القديس رومانوس المرنّم، قنداق الميلاد",
+  "ar_ev": [
+   "عيد القديس رومانوس المرنّم"
+  ]
+ },
+ {
+  "id": "padrepio",
+  "n": "Saint Padre Pio",
+  "q": "Priez, espérez, et ne vous inquiétez pas.",
+  "qs": "Saint Padre Pio (« Prega, spera e non agitarti »)",
+  "ev": [
+   [
+    "09-23",
+    "Fête de saint Padre Pio"
+   ],
+   [
+    "05-25",
+    "Naissance de saint Padre Pio (1887)"
+   ],
+   [
+    "09-20",
+    "Saint Padre Pio reçoit les stigmates (1918)"
+   ],
+   [
+    "06-16",
+    "Canonisation de saint Padre Pio (2002)"
+   ]
+  ],
+  "ar_n": "القديس بادري بيو",
+  "ar_q": "صلِّ، ورجُ، ولا تقلق.",
+  "ar_qs": "القديس بادري بيو («Prega, spera e non agitarti»)",
+  "ar_ev": [
+   "عيد القديس بادري بيو",
+   "ولادة القديس بادري بيو (1887)",
+   "القديس بادري بيو ينال جراح المسيح (1918)",
+   "إعلان قداسة القديس بادري بيو (2002)"
+  ]
  }
 ]

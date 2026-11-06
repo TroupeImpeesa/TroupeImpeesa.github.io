@@ -2317,7 +2317,8 @@ var ACC=null,ACCK=null,GAMER=null,ACCF={busy:false,msg:''},ACM={busy:false,msg:'
 try{var _a=JSON.parse(localStorage.getItem('ti-acc')||'null');if(_a){if(_a.a&&_a.a.role==='Gaming')GAMER=_a.a;else{ACC=_a.a||null;ACCK=_a.k||null}}}catch(e){}
 function accSave(){try{if(ACC)localStorage.setItem('ti-acc',JSON.stringify({a:ACC,k:ACCK}));else if(GAMER)localStorage.setItem('ti-acc',JSON.stringify({a:GAMER,k:null}));else localStorage.removeItem('ti-acc')}catch(e){}}
 function accApply(){if(typeof cp==='undefined'||!cp||!ACCK)return;cp.token=ACCK.token;cp.dk=ACCK.dk||{};cp.scope=ACCK.scope}
-function accPic(){if(!ACC)return '';var f=(S.faces||{})[ACC.sid];if(f)return f;var st=(S.staff||[]).filter(function(m){return m.name===ACC.name&&m.photo})[0];if(st)return st.photo;var mp=S.maitrisePhotos||{},k=nmKey(ACC.name);for(var n in mp){if(mp[n]&&nmKey(n)===k)return mp[n]}return ''}
+function accPic(){if(!ACC)return '';var f=(S.faces||{})[ACC.sid];if(f)return f;var st=(S.staff||[]).filter(function(m){return m.name===ACC.name&&m.photo})[0];if(st)return st.photo;var mp=S.maitrisePhotos||{},k=nmKey(ACC.name);for(var n in mp){if(mp[n]&&nmSame(n,ACC.name))return mp[n]}return ''}
+function nmSame(a,b){if(nmKey(a)===nmKey(b))return true;var x=String(a||'').trim().split(/\s+/),y=String(b||'').trim().split(/\s+/);return x.length>1&&y.length>1&&nmKey(x[0])===nmKey(y[0])&&nmKey(x[x.length-1])===nmKey(y[y.length-1])}
 function nmKey(n){return String(n||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z]/g,'').replace(/abou/g,'bou').replace(/(.)\1+/g,'$1')}
 function accAv(cls){var ph=accPic();return '<span class="'+cls+' acav">'+(ph?'<img src="'+ph+'" alt="">':esc(accIni(ACC.name)))+'</span>'}
 function accIni(n){return String(n||'?').split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w.charAt(0)}).join('').toUpperCase()}
@@ -2447,8 +2448,8 @@ function gamerPage(){
 function accHist(name){
  var k=nmKey(name),Y=(S.maitrises||[]).slice().sort(function(a,b){return a.year<b.year?-1:1}),runs=[];
  Y.forEach(function(y){var ys=String(y.year).split(/[-–]/),a=+ys[0],b=+(ys[1]||a+1),R=[];
-  (y.members||[]).forEach(function(m){if(nmKey(m.name)===k)R.push(m.role==='CT'?'Chef de troupe':m.role==='ACT'?'Assistant chef de troupe (ACT)':m.role)});
-  ((y.hp&&y.hp.patrols)||[]).forEach(function(q){if(nmKey(q.cp)===k)R.push('Chef de patrouille · '+q.name);if(nmKey(q.sp)===k)R.push('Second de patrouille · '+q.name)});
+  (y.members||[]).forEach(function(m){if(nmSame(m.name,name))R.push(m.role==='CT'?'Chef de troupe':m.role==='ACT'?'Assistant chef de troupe (ACT)':m.role)});
+  ((y.hp&&y.hp.patrols)||[]).forEach(function(q){if(nmSame(q.cp,name))R.push('Chef de patrouille · '+q.name);if(nmSame(q.sp,name))R.push('Second de patrouille · '+q.name)});
   R.forEach(function(r){var x=runs.filter(function(z){return z.r===r&&z.b===a})[0];if(x)x.b=b;else runs.push({r:r,a:a,b:b})})});
  if(!runs.length)return '';
  runs.sort(function(x,y){return x.a-y.a});

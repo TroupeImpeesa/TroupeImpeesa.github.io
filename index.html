@@ -2030,7 +2030,7 @@ function prU(k){return PRUI[PRLG][k]}
 function prX(s){var t=PRLG!=='fr'&&PRTR[PRLG]&&PRTR[PRLG][s.id];if(!t)return s;return {id:s.id,c:s.c,g:s.g,ev:s.ev.map(function(e,i){return [e[0],t.ev[i]||e[1]]}),n:t.n,q:t.q,qs:t.qs,h:t.h}}
 function prLangBar(){return '<div class="prlang">'+[['fr','Français'],['ar','العربية'],['en','English']].map(function(L){return '<button data-prlang="'+L[0]+'" class="'+(PRLG===L[0]?'on':'')+'">'+L[1]+'</button>'}).join('')+'</div>'}
 function prDir(){return PRLG==='ar'?' dir="rtl" lang="ar"':PRLG==='en'?' lang="en"':''}
-var PRPH={},PRON=false,PRMSG='';
+var PRPH={},PRON=false,PRMSG='';try{PRPH=JSON.parse(localStorage.getItem('prph-v1')||'{}')||{}}catch(e){PRPH={}}
 function prMD(d){return String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function prJul3(y){var d=new Date(y,6,1);while(d.getDay())d.setDate(d.getDate()+1);d.setDate(d.getDate()+14);return d}
 function prToday(){var d=new Date(),md=prMD(d),j3=prMD(prJul3(d.getFullYear())),out=[];
@@ -2041,7 +2041,7 @@ function prVerse(){var p=today().split('-'),n=Math.floor(Date.UTC(+p[0],+p[1]-1,
 function prVCard(){var v=prVerse();return '<div class="prc" dir="rtl" lang="ar"><div class="prtop"><span class="prav" style="width:60px;height:60px;background:#0f2342;font-size:26px">📖</span><div><small>آية اليوم</small><b>من الكتاب المقدّس</b></div></div><blockquote class="prq2 ar" dir="rtl" lang="ar">»&nbsp;'+esc(v.t)+'&nbsp;«</blockquote><cite>— '+esc(v.r)+'</cite></div>'}
 function prDay(){var L=prToday();return L.length?L.map(prCard).join(''):prVCard()}
 function prGet(id){return SAINTS.filter(function(s){return s.id===id})[0]}
-function prStart(){if(PRON)return;PRON=true;fbLoad().then(function(){firebase.database().ref('gallery/saints').on('value',function(s){var v=s.val()||{},old=PRPH;PRPH=v;Object.keys(v).concat(Object.keys(old)).forEach(function(id){if(v[id]===old[id])return;[].forEach.call(document.querySelectorAll('.prav[data-pr="'+id+'"]'),function(e){e.innerHTML=v[id]?'<img src="'+v[id]+'" alt="">':'✝'})})},function(){})}).catch(function(){PRON=false})}
+function prStart(){if(PRON)return;PRON=true;fbLoad().then(function(){firebase.database().ref('gallery/saints').on('value',function(s){var v=s.val()||{},old=PRPH;PRPH=v;try{localStorage.setItem('prph-v1',JSON.stringify(v))}catch(e){}Object.keys(v).concat(Object.keys(old)).forEach(function(id){if(v[id]===old[id])return;[].forEach.call(document.querySelectorAll('.prav[data-pr="'+id+'"]'),function(e){e.innerHTML=v[id]?'<img src="'+v[id]+'" alt="">':'✝'})})},function(){})}).catch(function(){PRON=false})}
 function prAv(s,sz){var p=PRPH[s.id];return '<span class="prav" data-pr="'+s.id+'" style="width:'+sz+'px;height:'+sz+'px;background:'+s.c+';font-size:'+Math.round(sz*0.4)+'px">'+(p?'<img src="'+p+'" alt="">':'✝')+'</span>'}
 function prDate(code){if(code==='jul3')return prU('j3');var p=code.split('-');return +p[1]+' '+prU('m')[+p[0]-1]}
 function prFeast(s){return prDate(s.ev[0][0])}

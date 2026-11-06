@@ -489,20 +489,25 @@
  },
  {
   "id": "romanos",
-  "n": "Saint Romanos le Mélode",
-  "q": "Aujourd’hui la Vierge enfante Celui qui est au-delà de tout être, et la terre offre une grotte à l’Inaccessible.",
-  "qs": "Saint Romanos le Mélode, kontakion de la Nativité",
+  "n": "Saint Romanos (Mar Romanos de Hadchit)",
+  "q": "Seigneur, ouvre mes lèvres, et ma bouche annoncera ta louange.",
+  "qs": "Psaume 51,17 · saint Romanos a continué à louer Dieu même après qu’on lui a coupé la langue",
   "ev": [
    [
-    "10-01",
-    "Fête de saint Romanos le Mélode"
+    "09-04",
+    "Fête de saint Romanos, patron de Hadchit"
+   ],
+   [
+    "11-18",
+    "Saint Romanos, martyr à Antioche (vers 303)"
    ]
   ],
-  "ar_n": "القديس رومانوس المرنّم",
-  "ar_q": "اليوم البتول تلد الفائق الجوهر، والأرض تقرّب المغارة لمن هو غير مقترَب إليه.",
-  "ar_qs": "القديس رومانوس المرنّم، قنداق الميلاد",
+  "ar_n": "القديس رومانوس (مار رومانوس حدشيت)",
+  "ar_q": "يا ربّ افتح شفتيّ، فيُخبر فمي بتسبيحك.",
+  "ar_qs": "المزمور 51: 15 · ظلّ القديس رومانوس يسبّح الله حتّى بعد أن قطعوا لسانه",
   "ar_ev": [
-   "عيد القديس رومانوس المرنّم"
+   "عيد القديس رومانوس، شفيع حدشيت",
+   "القديس رومانوس، استشهاده في أنطاكية (نحو سنة 303)"
   ]
  },
  {

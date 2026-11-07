@@ -56,7 +56,7 @@ def site_state():
     return S
 
 
-QZ_OPEN = {'2026-11-02': '2026-11-01T18:00:00+02:00'}  # semaines ouvertes en avance (même liste que index.html)
+QZ_OPEN = {'2026-11-02': '2026-11-01T18:00:00+02:00', '2026-11-07': '2026-11-07T17:00:00+02:00'}  # semaines ouvertes en avance (même liste que index.html)
 
 
 def quiz_week(n):

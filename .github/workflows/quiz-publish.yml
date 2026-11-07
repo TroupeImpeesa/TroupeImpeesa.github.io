@@ -1,0 +1,26 @@
+name: Quiz Prêt - publier tout de suite
+on:
+  push:
+    paths: ['scripts/quiz_new.json']
+permissions:
+  contents: read
+jobs:
+  up:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Questions dans Firebase
+        run: pip install -q firebase-admin && python3 scripts/quiz_publish.py
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+      - name: Attendre que le site soit à jour
+        run: |
+          for i in $(seq 1 60); do curl -s "https://troupeimpeesa.github.io/?x=$RANDOM$i" | grep -q "'2026-11-07':" && exit 0; sleep 10; done; exit 1
+      - name: Notification SOS
+        env:
+          ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
+          MSG_TITLE: '🚨 SOS Quiz Prêt !'
+          MSG_BODY: "Un nouveau Quiz Prêt vient de sortir : le premier camp scout (Brownsea 1907). Joue maintenant et gagne des points pour ta patrouille !"
+          MSG_PAGE: '#quiz'
+        run: python3 scripts/notify.py

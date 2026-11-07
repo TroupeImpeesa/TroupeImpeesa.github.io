@@ -1,0 +1,156 @@
+{
+ "week": "2026-11-07",
+ "title": "Le premier camp scout (Brownsea 1907)",
+ "qs": [
+  {
+   "q": "Où a eu lieu le premier camp scout ?",
+   "o": [
+    "Île de Wight",
+    "Île de Brownsea",
+    "Île de Jersey",
+    "Île de Man"
+   ],
+   "ok": 1
+  },
+  {
+   "q": "En quelle année a eu lieu le premier camp scout ?",
+   "o": [
+    "1900",
+    "1905",
+    "1907",
+    "1910"
+   ],
+   "ok": 2
+  },
+  {
+   "q": "Dans quel pays se trouve l'île du premier camp ?",
+   "o": [
+    "Angleterre",
+    "Écosse",
+    "Irlande",
+    "France"
+   ],
+   "ok": 0
+  },
+  {
+   "q": "Qui a organisé le premier camp scout ?",
+   "o": [
+    "Kenneth McLaren",
+    "Saint Georges",
+    "Baden-Powell",
+    "Le Père Sevin"
+   ],
+   "ok": 2
+  },
+  {
+   "q": "Combien de garçons environ ont participé au premier camp ?",
+   "o": [
+    "Une vingtaine",
+    "Une centaine",
+    "8",
+    "50"
+   ],
+   "ok": 0
+  },
+  {
+   "q": "Combien de patrouilles y avait-il au premier camp ?",
+   "o": [
+    "2",
+    "3",
+    "4",
+    "6"
+   ],
+   "ok": 2
+  },
+  {
+   "q": "Laquelle n'était PAS une patrouille du premier camp ?",
+   "o": [
+    "Les Courlis",
+    "Les Corbeaux",
+    "Les Aigles",
+    "Les Taureaux"
+   ],
+   "ok": 2
+  },
+  {
+   "q": "Les patrouilles de Brownsea : Courlis, Corbeaux, Taureaux et…",
+   "o": [
+    "Castors",
+    "Loups",
+    "Renards",
+    "Lions"
+   ],
+   "ok": 1
+  },
+  {
+   "q": "Combien de temps a duré le premier camp ?",
+   "o": [
+    "1 jour",
+    "Environ une semaine",
+    "1 mois",
+    "3 mois"
+   ],
+   "ok": 1
+  },
+  {
+   "q": "Avec quoi Baden-Powell réveillait-il les garçons au camp ?",
+   "o": [
+    "Une cloche",
+    "Un sifflet",
+    "Une corne de koudou",
+    "Un tambour"
+   ],
+   "ok": 2
+  },
+  {
+   "q": "D'où venaient les garçons du premier camp ?",
+   "o": [
+    "D'écoles privées et de la Boys' Brigade",
+    "Tous d'une seule école",
+    "De l'armée",
+    "D'Afrique du Sud"
+   ],
+   "ok": 0
+  },
+  {
+   "q": "Comment s'appelait l'adjoint de Baden-Powell au premier camp ?",
+   "o": [
+    "Kenneth McLaren",
+    "Donald Baden-Powell",
+    "Robert Peel",
+    "Charles Darwin"
+   ],
+   "ok": 0
+  },
+  {
+   "q": "Quel livre Baden-Powell a-t-il publié en 1908, juste après le camp ?",
+   "o": [
+    "Éclaireurs (Scouting for Boys)",
+    "Le Livre de la jungle",
+    "Aids to Scouting",
+    "Rovering to Success"
+   ],
+   "ok": 0
+  },
+  {
+   "q": "Pendant quel siège Baden-Powell avait-il vu des jeunes servir comme messagers ?",
+   "o": [
+    "Mafeking",
+    "Londres",
+    "Le Caire",
+    "Beyrouth"
+   ],
+   "ok": 0
+  },
+  {
+   "q": "Qu'est-ce qui terminait chaque journée au premier camp ?",
+   "o": [
+    "Un match de foot",
+    "Un feu de camp avec des histoires",
+    "Une marche de nuit",
+    "Un examen"
+   ],
+   "ok": 1
+  }
+ ]
+}

@@ -2074,7 +2074,7 @@ var PRUI={
 var PRLG='fr';try{PRLG=localStorage.getItem('pr-lang')||'fr'}catch(e){}if(!PRUI[PRLG])PRLG='fr';
 function prU(k){return PRUI[PRLG][k]}
 function prX(s){var t=PRLG!=='fr'&&PRTR[PRLG]&&PRTR[PRLG][s.id];if(!t)return s;return {id:s.id,c:s.c,g:s.g,ev:s.ev.map(function(e,i){return [e[0],t.ev[i]||e[1]]}),n:t.n,q:t.q,qs:t.qs,h:t.h}}
-var PRLGS=[['fr','Français'],['ar','العربية'],['en','English']],PRLGFROM=null;
+var PRLGS=[['ar','العربية'],['fr','Français'],['en','English']],PRLGFROM=null;
 function prLgI(l){for(var i=0;i<PRLGS.length;i++)if(PRLGS[i][0]===l)return i;return 0}
 function prLangBar(){var to=prLgI(PRLG),fr=PRLGFROM===null?to:PRLGFROM;return '<div class="prlang" dir="ltr" style="--i:'+fr+'" data-to="'+to+'"><span class="prthumb"></span>'+PRLGS.map(function(L){return '<button data-prlang="'+L[0]+'" class="'+(PRLG===L[0]?'on':'')+'"'+(L[0]==='ar'?' lang="ar"':'')+'>'+L[1]+'</button>'}).join('')+'</div>'}
 function prDir(){return PRLG==='ar'?' dir="rtl" lang="ar"':PRLG==='en'?' lang="en"':''}
@@ -3525,7 +3525,7 @@ if(window.claude&&window.claude.use){
 
 
 
-<meta data-build="4b06c5e42188">
-<script>(function(){var B="4b06c5e42188";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="1a1b196bb581">
+<script>(function(){var B="1a1b196bb581";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

@@ -30,7 +30,11 @@
     "Cycliste",
     "Fitness",
     "Modèles Réduits",
-    "Nageur"
+    "Nageur",
+    "Ami de Dieu Jaune",
+    "Intendant",
+    "Premiers Soins",
+    "Meneur de jeu"
    ]
   },
   {
@@ -190,5 +194,5 @@
    ]
   }
  ],
- "updated": "2026-11-07T09:29:18.797Z"
+ "updated": "2026-11-07T14:43:28.165Z"
 }

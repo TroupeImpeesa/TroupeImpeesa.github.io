@@ -833,14 +833,22 @@ h2{font-size:28px}
 .prlist{display:grid;gap:12px}
 .prrows{display:grid;gap:8px}
 .prc blockquote.prq2{margin:12px 0 0;font:italic 400 16.5px/1.35 var(--serif,Georgia,serif)}.prc blockquote.prq2.ar{margin:6px 0 8px;font:400 16.5px/1.55 Tahoma,"Noto Naskh Arabic",sans-serif;opacity:.92}
-.prlang{display:flex;gap:4px;background:var(--surface);border-radius:999px;padding:4px;margin:14px 0 0}.prlang button{flex:1;border:none;background:none;padding:9px 0;border-radius:999px;font:700 13px var(--body);color:var(--muted);cursor:pointer}.prlang button.on{background:#0f2342;color:#fff}
+
 [dir=rtl] .praq{border-left:none;border-right:3px solid #6b3a7a;padding:4px 18px 4px 0}[dir=rtl] .prt{border-left:none!important;border-right:3px solid var(--line);padding:14px 16px 14px 2px!important}[dir=rtl] .prrow{text-align:right}[dir=rtl] .prah h2,[dir=rtl] .prrow b{font-family:Tahoma,"Noto Naskh Arabic",sans-serif;font-weight:700}[dir=rtl] .hsh small{letter-spacing:0}
 
+/* sélecteur de langue : contrôle segmenté moderne avec curseur qui glisse */
+.prlang{--w:94px;position:relative;display:flex;width:max-content;max-width:100%;margin:16px auto 0;padding:4px;border-radius:14px;background:var(--surface);box-shadow:inset 0 0 0 1px rgba(15,35,66,.08),0 1px 2px rgba(15,35,66,.04)}
+.prlang .prthumb{position:absolute;top:4px;bottom:4px;left:4px;width:var(--w);border-radius:10px;background:#0f2342;box-shadow:0 4px 12px rgba(15,35,66,.25);transform:translateX(calc(var(--i) * var(--w)));transition:transform .32s cubic-bezier(.3,.8,.25,1)}
+.prlang button{position:relative;z-index:1;width:var(--w);border:none;background:none;padding:9px 0;border-radius:10px;font:600 13.5px var(--body);letter-spacing:.2px;color:var(--muted);cursor:pointer;transition:color .25s}
+.prlang button[lang=ar]{font-family:Tahoma,"Noto Naskh Arabic",sans-serif;font-weight:700}
+.prlang button.on{color:#fff}
+.prlang button:not(.on):hover{color:var(--fg)}
+@media (prefers-reduced-motion:reduce){.prlang .prthumb{transition:none}}
 .prnext{background:#fff;color:#1b2440;border-radius:18px;padding:12px 14px 6px;margin:0 0 14px;box-shadow:0 2px 12px rgba(20,30,60,.08)}
 .prnh{font:700 13px var(--body);color:#5a6380;margin:0 2px 6px;letter-spacing:.3px}
 .prnr{display:flex;align-items:center;gap:12px;width:100%;padding:10px 2px;border:none;border-top:1px solid #eef0f5;background:none;color:inherit;text-align:inherit;cursor:pointer;font-family:var(--body)}
 .prnr:first-of-type{border-top:none}
-.prnr b{flex:0 0 84px;font:700 14px var(--body);color:#2a6fb5}
+.prnr b{flex:0 0 128px;white-space:nowrap;font:700 14px var(--body);color:#2a6fb5}
 .prnr span{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
 .prnr strong{font:600 15px var(--body)}
 .prnr em{font:400 13px var(--body);font-style:normal;color:#6a7390}
@@ -2066,7 +2074,9 @@ var PRUI={
 var PRLG='fr';try{PRLG=localStorage.getItem('pr-lang')||'fr'}catch(e){}if(!PRUI[PRLG])PRLG='fr';
 function prU(k){return PRUI[PRLG][k]}
 function prX(s){var t=PRLG!=='fr'&&PRTR[PRLG]&&PRTR[PRLG][s.id];if(!t)return s;return {id:s.id,c:s.c,g:s.g,ev:s.ev.map(function(e,i){return [e[0],t.ev[i]||e[1]]}),n:t.n,q:t.q,qs:t.qs,h:t.h}}
-function prLangBar(){return '<div class="prlang">'+[['fr','Français'],['ar','العربية'],['en','English']].map(function(L){return '<button data-prlang="'+L[0]+'" class="'+(PRLG===L[0]?'on':'')+'">'+L[1]+'</button>'}).join('')+'</div>'}
+var PRLGS=[['fr','Français'],['ar','العربية'],['en','English']],PRLGFROM=null;
+function prLgI(l){for(var i=0;i<PRLGS.length;i++)if(PRLGS[i][0]===l)return i;return 0}
+function prLangBar(){var to=prLgI(PRLG),fr=PRLGFROM===null?to:PRLGFROM;return '<div class="prlang" dir="ltr" style="--i:'+fr+'" data-to="'+to+'"><span class="prthumb"></span>'+PRLGS.map(function(L){return '<button data-prlang="'+L[0]+'" class="'+(PRLG===L[0]?'on':'')+'"'+(L[0]==='ar'?' lang="ar"':'')+'>'+L[1]+'</button>'}).join('')+'</div>'}
 function prDir(){return PRLG==='ar'?' dir="rtl" lang="ar"':PRLG==='en'?' lang="en"':''}
 var PRPH={},PRON=false,PRMSG='';try{PRPH=JSON.parse(localStorage.getItem('prph-v1')||'{}')||{}}catch(e){PRPH={}}
 function prMD(d){return String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
@@ -2116,7 +2126,7 @@ var PRVIEW='list';try{if(localStorage.getItem('pr-view')==='grid')PRVIEW='grid'}
 var PRICO={list:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="4.5" cy="6" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.3" fill="currentColor" stroke="none"/><path d="M9 6h11M9 12h11M9 18h11"/></svg>',grid:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg>'};
 function prViewBar(){return '<div class="prview">'+['list','grid'].map(function(v){return '<button data-prview="'+v+'" class="'+(PRVIEW===v?'on':'')+'" aria-label="'+(v==='list'?'Liste':'Grille')+'">'+PRICO[v]+'</button>'}).join('')+'</div>'}
 function prClick(b){if(b.dataset.prview){PRVIEW=b.dataset.prview;try{localStorage.setItem('pr-view',PRVIEW)}catch(e){}render();return true}
- if(b.dataset.prlang){PRLG=b.dataset.prlang;try{localStorage.setItem('pr-lang',PRLG)}catch(e){}render();return true}
+ if(b.dataset.prlang){PRLGFROM=prLgI(PRLG);PRLG=b.dataset.prlang;try{localStorage.setItem('pr-lang',PRLG)}catch(e){}render();PRLGFROM=null;requestAnimationFrame(function(){requestAnimationFrame(function(){document.querySelectorAll('.prlang[data-to]').forEach(function(el){el.style.setProperty('--i',el.dataset.to)})})});return true}
  if(prTClick(b))return true;
  if(priClick(b))return true;
  if(b.dataset.prdel){var id=b.dataset.prdel;PRMSG='…';render();fbAuth().then(function(){return firebase.database().ref('gallery/saints/'+id).remove()}).then(function(){PRMSG='Photo retirée ✓';render()}).catch(function(){PRMSG='Échec, réessaie.';render()});return true}return false}
@@ -3515,7 +3525,7 @@ if(window.claude&&window.claude.use){
 
 
 
-<meta data-build="0129e71b1156">
-<script>(function(){var B="0129e71b1156";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="4b06c5e42188">
+<script>(function(){var B="4b06c5e42188";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

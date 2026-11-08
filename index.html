@@ -1928,7 +1928,7 @@ function home(){
  h+='<div class="igrow">'+(CP_ON?(visCan()?'<button class="online" id="online" data-act="vis" title="Voir qui est sur le site">':'<span class="online" id="online" title="Personnes sur le site en ce moment">')+'<i></i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><b id="online-n">'+(visNum()==null?'·':visNum())+'</b>'+(visCan()?'</button>':'</span>'):'')+'</div>';
  var EV=S.events.filter(function(e){return !evOver(e)}).sort(function(a,b){return a.date<b.date?-1:1}).slice(0,3);
  if(EV.length)h+='<section class="hsec"><div class="hsh"><div><small>Calendrier</small><h2>Prochains rendez-vous</h2></div><button data-menunav="events">Calendrier →</button></div><div class="hevs">'+EV.map(function(e,i){var p=e.date.split('-');return '<div class="hev'+(i===0?' now':'')+'" role="button" tabindex="0" data-event="'+e.id+'">'+(i===0?'<span class="tg">Prochain</span>':'')+'<span class="tear"><small>'+MONTHS[+p[1]-1]+'</small><b>'+(+p[2])+'</b></span><span><b>'+esc(e.title)+'</b><span>'+([span(e)||fmtDate(e.date),hours(e)].filter(Boolean).map(esc).join(' · '))+'</span></span></div>'}).join('')+'</div></section>';
- h+='<section class="hsec ymsec"><div class="hsh"><div><small>Notre aventure '+esc(String(S.season||'').replace(/^Année\s*/i,''))+'</small><h2>La carte de l’année</h2></div><button data-menunav="events">Calendrier →</button></div>'+ymMap('home')+'</section>';
+ h+='<section class="hsec ymsec">'+ymMap('home')+'</section>';
  h+='<section class="hsec"><div class="hsh"><div><small>Du côté de la maîtrise</small><h2>Annonces</h2></div></div>';
  if(editing) h+='<div class="editbox"><h4>Nouvelle annonce</h4><textarea id="nw-text" rows="3" placeholder="Ex. Réunion samedi à 12h00. Inscription : https://…"></textarea><div class="fields"><input id="nw-date" type="date" value="'+today()+'" style="flex:0 1 170px" aria-label="Date"><button class="btn" data-act="addnews">Ajouter l’annonce</button></div><span class="meta">Les liens (https://…) deviennent cliquables.</span></div>';
  h+=N.length?'<ul class="news">'+N.map(function(n){return '<li><span class="ndate">'+fmtDate(n.date)+'</span><span class="ntext">'+(n.auto?'<span class="ntag">Progression</span> ':'')+linkify(n.text)+'</span>'+(editing?'<button class="x" data-delnews="'+n.id+'" aria-label="Supprimer l’annonce">×</button>':'')+'</li>'}).join('')+'</ul>':'<p class="empty">Aucune annonce pour l’instant.</p>';
@@ -3487,12 +3487,11 @@ function ymSvg(st){var L=st.L,P=L.map(function(n){return [n.x,n.y]}),seg=ymSeg(P
  return h+'</svg>'}
 function ymMap(where){var st=ymState(),svg=ymSvg(st);
  var head='<div class="ymbar"><span class="ymprog"><b>'+st.done+'</b>/'+st.total+' étapes débloquées</span><span class="ymprogbar"><i style="width:'+Math.round(st.done/st.total*100)+'%"></i></span></div>';
- if(where==='home')return ymDefs()+'<div class="ymsc" data-ymsc="home"><div class="ymin">'+svg+'</div></div>'+head;
  if(!YM_OPEN)return '<button class="ymfold" data-act="ymopen" aria-expanded="false"><svg class="ymfi" viewBox="0 0 120 84" aria-hidden="true"><path d="M8,16 L42,6 L42,70 L8,80Z" fill="#ead7ab" stroke="#4a3220" stroke-width="2" stroke-linejoin="round"/><path d="M42,6 L78,16 L78,80 L42,70Z" fill="#d9bf8a" stroke="#4a3220" stroke-width="2" stroke-linejoin="round"/><path d="M78,16 L112,6 L112,70 L78,80Z" fill="#ead7ab" stroke="#4a3220" stroke-width="2" stroke-linejoin="round"/><path d="M14,62 C26,40 36,56 46,44 S66,30 74,46 S96,52 104,26" fill="none" stroke="#b3261e" stroke-width="2.4" stroke-dasharray="4 3"/><path d="M103,30 v-20" stroke="#4a3220" stroke-width="1.8"/><path d="M104,10 h10 l-3,4 l3,4 h-10Z" fill="#b3261e"/><path d="M20,28 l6,-10 l6,10Z M58,32 l5,-9 l5,9Z" fill="#5b7d4f" stroke="#4a3220" stroke-width="1.2"/></svg><span class="ymft"><small>'+esc(String(S.season||'Année 2026–2027'))+'</small><b>La carte de l’année</b><span>'+st.done+' étapes débloquées sur '+st.total+' · Touche pour déplier</span></span><span class="ymgo" aria-hidden="true">↘</span></button>';
  var pan=[0,1,2].map(function(k){return '<div class="ymp ymp'+(k+1)+'"><div class="ympi" style="margin-left:-'+(k*100)+'%">'+svg+'</div></div>'}).join('');
- return ymDefs()+'<div class="ymopen"><div class="ymoh"><b>La carte de l’année</b><button class="ymclose" data-act="ymclose">Replier ✕</button></div><div class="ymsc" data-ymsc="cal"><div class="ymin"><div class="ympan'+(YM_ANIM&&!reduce?' ymun':'')+'">'+pan+'</div></div></div>'+head+'</div>'}
+ return ymDefs()+'<div class="ymopen"><div class="ymoh"><b>La carte de l’année</b><button class="ymclose" data-act="ymclose">Replier ✕</button></div><div class="ymsc" data-ymsc="'+where+'"><div class="ymin"><div class="ympan'+(YM_ANIM&&!reduce?' ymun':'')+'">'+pan+'</div></div></div>'+head+'</div>'}
 function ymClick(b){var d=b.dataset;
- if(d.act==='ymopen'){YM_OPEN=true;YM_ANIM=true;delete YM_SC.cal;render();setTimeout(function(){YM_ANIM=false},50);return true}
+ if(d.act==='ymopen'){YM_OPEN=true;YM_ANIM=true;YM_SC={};render();setTimeout(function(){YM_ANIM=false},50);return true}
  if(d.act==='ymclose'){YM_OPEN=false;render();return true}
  return false}
 function ymAfter(){[].forEach.call(document.querySelectorAll('[data-ymsc]'),function(el){var k=el.dataset.ymsc;
@@ -3748,7 +3747,7 @@ if(window.claude&&window.claude.use){
 
 
 
-<meta data-build="526a88cb1fce">
-<script>(function(){var B="526a88cb1fce";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="ff39b6e62ad3">
+<script>(function(){var B="ff39b6e62ad3";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

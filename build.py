@@ -56,7 +56,7 @@ try:
 except Exception:
     pass
 for f in os.listdir(os.path.join(here, "photos")):
-    if f not in used and not f.startswith(("hp-", "g-", "t-")):
+    if f not in used and not f.startswith(("hp-", "g-", "t-", "s-")):
         os.remove(os.path.join(here, "photos", f))
 
 js = json.dumps(state, ensure_ascii=False).replace("<", "\\u003c")
@@ -76,18 +76,19 @@ out = (
     + title + "\n<style>" + reset + "</style>\n" + link + "\n" + style
     + "\n</head>\n<body>\n" + rest + "\n</body>\n</html>\n"
 )
-# Phones keep a saved copy of the page; on every visit, check for a newer
-# build and reload once if there is one.
+# Phones keep a saved copy of the page; on every visit, check build.txt (a few
+# bytes, not the whole 700 KB page) and reload once if there is a newer build.
 bid = hashlib.sha1(out.encode()).hexdigest()[:12]
 fresh = (
     '<script>(function(){var B="' + bid + '";try{if(!/^https?:/.test(location.protocol))return;'
-    'fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){'
-    'var m=t.match(/data-build="(\\w+)"/);if(!m||m[1]===B)return;'
+    'fetch("build.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){'
+    'var m=t.match(/^(\\w{12})/);if(!m||m[1]===B)return;'
     'var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}'
     'return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>\n'
 )
 out = out.replace("\n</body>", '\n<meta data-build="' + bid + '">\n' + fresh + "</body>", 1)
 open(os.path.join(here, "index.html"), "w", encoding="utf-8").write(out)
+open(os.path.join(here, "build.txt"), "w").write(bid + "\n")
 
 # Separate page with only the Histoire (link for the Instagram bio)
 from histpage import write as write_histoire

@@ -2131,8 +2131,12 @@ function prVerse(){var p=today().split('-'),n=Math.floor(Date.UTC(+p[0],+p[1]-1,
 function prVCard(){var v=prVerse();return '<div class="prc" dir="rtl" lang="ar"><div class="prtop"><span class="prav" style="width:60px;height:60px;background:#0f2342;font-size:26px">📖</span><div><small>آية اليوم</small><b>من الكتاب المقدّس</b></div></div><blockquote class="prq2 ar" dir="rtl" lang="ar">»&nbsp;'+esc(v.t)+'&nbsp;«</blockquote><cite>— '+esc(v.r)+'</cite></div>'}
 function prDay(){var L=prToday();return L.length?L.map(prCard).join(''):prVCard()}
 function prGet(id){return SAINTS.filter(function(s){return s.id===id})[0]}
-function prStart(){if(PRON)return;PRON=true;fbLoad().then(function(){firebase.database().ref('gallery/saints').on('value',function(s){var v=s.val()||{},old=PRPH;PRPH=v;try{localStorage.setItem('prph-v1',JSON.stringify(v))}catch(e){}Object.keys(v).concat(Object.keys(old)).forEach(function(id){if(v[id]===old[id])return;[].forEach.call(document.querySelectorAll('.prav[data-pr="'+id+'"]'),function(e){e.innerHTML=v[id]?'<img src="'+v[id]+'" alt="">':'✝'})})},function(){})}).catch(function(){PRON=false})}
-function prAv(s,sz){var p=PRPH[s.id];return '<span class="prav" data-pr="'+s.id+'" style="width:'+sz+'px;height:'+sz+'px;background:'+s.c+';font-size:'+Math.round(sz*0.4)+'px">'+(p?'<img src="'+p+'" alt="">':'✝')+'</span>'}
+/* les photos des saints : visiteurs = data/saints-photos.json (fichiers copiés toutes les 10 min, léger) ; seul impeesa.admin écoute Firebase en direct */
+function prApply(v){var old=PRPH;PRPH=v||{};try{localStorage.setItem('prph-v1',JSON.stringify(PRPH))}catch(e){}Object.keys(PRPH).concat(Object.keys(old)).forEach(function(id){if(PRPH[id]===old[id])return;[].forEach.call(document.querySelectorAll('.prav[data-pr="'+id+'"]'),function(e){e.innerHTML=PRPH[id]?'<img src="'+PRPH[id]+'" alt="" loading="lazy" decoding="async">':'✝'})})}
+function prLive(){if(PRON==='live')return;PRON='live';fbLoad().then(function(){firebase.database().ref('gallery/saints').on('value',function(s){prApply(s.val())},function(){})}).catch(function(){PRON=false})}
+function prStart(){if(window.claude||galIsAdmin()){prLive();return}if(PRON)return;PRON=true;try{for(var k in PRPH){if(String(PRPH[k]).indexOf('data:')===0){PRPH={};break}}}catch(e){}
+ fetch('data/saints-photos.json',{cache:'no-cache'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(v){if(!v||typeof v!=='object')throw 0;prApply(v)}).catch(prLive)}
+function prAv(s,sz){var p=PRPH[s.id];return '<span class="prav" data-pr="'+s.id+'" style="width:'+sz+'px;height:'+sz+'px;background:'+s.c+';font-size:'+Math.round(sz*0.4)+'px">'+(p?'<img src="'+p+'" alt="" loading="lazy" decoding="async">':'✝')+'</span>'}
 /* « Bientôt » : les 3 prochaines dates de saints (dates du même saint le même jour réunies) */
 function prEvD(c,y){if(c==='jul3')return prJul3(y);var p=c.split('-');return new Date(y,+p[0]-1,+p[1])}
 function prTy(l){l=l||'';if(/^Fête/.test(l))return 'feast';if(/^Naissance/.test(l))return 'birth';if(/^Canonisation/.test(l))return 'canon';if(/^Béatification/.test(l))return 'beat';if(/au Ciel|^Martyre|martyr à/.test(l))return 'death';if(/^Première communion/.test(l))return 'fc';if(/^Fondation/.test(l))return 'found';if(/stigmates/.test(l))return 'stig';return ''}
@@ -3747,7 +3751,7 @@ if(window.claude&&window.claude.use){
 
 
 
-<meta data-build="ff39b6e62ad3">
-<script>(function(){var B="ff39b6e62ad3";try{if(!/^https?:/.test(location.protocol))return;fetch(location.pathname+"?fresh="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/data-build="(\w+)"/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
+<meta data-build="1250c32d700d">
+<script>(function(){var B="1250c32d700d";try{if(!/^https?:/.test(location.protocol))return;fetch("build.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/^(\w{12})/);if(!m||m[1]===B)return;var k="ti-reloaded-"+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}return fetch(location.href.split("#")[0],{cache:"reload"}).then(function(){location.reload()})}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

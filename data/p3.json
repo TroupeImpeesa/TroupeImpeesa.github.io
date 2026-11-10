@@ -62,7 +62,10 @@
    "name": "Anthony Semaan",
    "role": "",
    "stage": 1,
-   "badges": []
+   "badges": [
+    "Intendant",
+    "Ecologie"
+   ]
   },
   {
    "id": "p3-7",
@@ -195,5 +198,5 @@
    ]
   }
  ],
- "updated": "2026-11-09T21:00:02.231Z"
+ "updated": "2026-11-10T04:43:44.585Z"
 }

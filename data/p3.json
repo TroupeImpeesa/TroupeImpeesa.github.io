@@ -32,10 +32,11 @@
     "Modèles Réduits",
     "Nageur",
     "Ami de Dieu Jaune",
-    "Intendant",
     "Premiers Soins",
     "Meneur de jeu",
-    "Self Defense"
+    "Self Defense",
+    "Sciences Animales",
+    "Gérant De Matériel"
    ]
   },
   {
@@ -198,5 +199,5 @@
    ]
   }
  ],
- "updated": "2026-11-10T04:43:44.585Z"
+ "updated": "2026-11-10T12:53:11.737Z"
 }

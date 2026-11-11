@@ -6,7 +6,7 @@
 3. Quiz Prêt : quand quelqu'un dépasse un joueur au classement de la semaine,
    le joueur dépassé reçoit une notification (qui l'a dépassé, sa place, celle de l'autre).
 
-Lancé toutes les 5 minutes par .github/workflows/notify.yml.
+Lancé par .github/workflows/notify.yml (cron GitHub, peu fiable) + chaque heure par la tâche Claude de synchro (workflow_dispatch).
 Env : ONESIGNAL_API_KEY (secret), DRY=1 pour tester sans envoyer, FB_DUMP=fichier.json pour lire Firebase hors ligne.
 """
 import json, os, re, sys, urllib.request
@@ -200,7 +200,7 @@ def main():
         st['daily'] = today
 
     # 4. Coin prière : la phrase du saint du jour à 7h (même choix que le site)
-    if SAINT_HOUR <= n.hour < 12 and st.get('saint') != today:
+    if n.hour >= SAINT_HOUR and st.get('saint') != today:  # GitHub saute souvent des passages : on envoie au premier passage après 7h
         try:
             L = json.load(open(os.path.join(ROOT, 'data', 'saints.json'), encoding='utf-8'))
             md = n.strftime('%m-%d')

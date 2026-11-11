@@ -18,9 +18,10 @@ jobs:
     timeout-minutes: 355
     steps:
       - uses: actions/checkout@v5
-      - name: Surveiller quiz/delq toutes les 20 s
+      - name: Surveiller quiz/delq toutes les 20 s (+ relance les notifications toutes les 10 min)
         env:
           FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           if [ -z "$FIREBASE_SA" ]; then echo "Secret FIREBASE_SA absent"; exit 0; fi
           pip install -q firebase-admin

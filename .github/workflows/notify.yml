@@ -26,6 +26,7 @@ on:
         default: ''
 permissions:
   contents: write
+  actions: write
 concurrency:
   group: notify
   cancel-in-progress: false
@@ -52,3 +53,8 @@ jobs:
             git commit -m "Notifications : état [skip ci]"
             for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
           fi
+      - name: Relancer aussi « Supprimer les comptes retirés » (modifs admin, galerie, saints)
+        if: github.event_name == 'workflow_dispatch' && inputs.title == '' && inputs.verify != '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run delete-accounts.yml --ref main -R ${{ github.repository }} || true

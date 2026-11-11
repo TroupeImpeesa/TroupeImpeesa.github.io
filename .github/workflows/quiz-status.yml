@@ -1,0 +1,15 @@
+name: Quiz Prêt - semaines prêtes
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - name: Semaines dans Firebase (sans les réponses)
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+        run: pip install -q firebase-admin && python3 scripts/quiz_status.py

@@ -200,7 +200,7 @@ def main():
         st['daily'] = today
 
     # 4. Coin prière : la phrase du saint du jour à 7h (même choix que le site)
-    if n.hour >= SAINT_HOUR and st.get('saint') != today:  # GitHub saute souvent des passages : on envoie au premier passage après 7h
+    if SAINT_HOUR <= n.hour < DAILY_HOUR and st.get('saint') != today:  # GitHub saute souvent des passages : on envoie au premier passage après 7h
         try:
             L = json.load(open(os.path.join(ROOT, 'data', 'saints.json'), encoding='utf-8'))
             md = n.strftime('%m-%d')

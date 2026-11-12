@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#0b1424">
 <title>ZORO 🦊</title>
 <link rel="icon" href="logo-192.png">
@@ -11,6 +11,7 @@
 :root{--bg:#0b1424;--card:#13213a;--card2:#1c2a44;--y:#f5c542;--r:#e5484d;--mut:#9fb0cc;--fg:#fff}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:Inter,system-ui,sans-serif;overscroll-behavior:none}
+html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}button,input,.task,.task *,.ov,.ov *{touch-action:manipulation}#game,#game *{touch-action:none}
 body{min-height:100%;-webkit-user-select:none;user-select:none}
 button{font:inherit;cursor:pointer;border:none}
 input{font:inherit}
@@ -104,6 +105,15 @@ input{font:inherit}
 </head>
 <body>
 <div id="app"></div>
+<script>
+/* pas de zoom (pincer, double-tap, Ctrl+molette) dans le jeu */
+(function(){function no(e){e.preventDefault()}
+['gesturestart','gesturechange','gestureend'].forEach(function(t){document.addEventListener(t,no,{passive:false})});
+document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1||(e.scale&&e.scale!==1))e.preventDefault()},{passive:false});
+document.addEventListener('dblclick',no,{passive:false});
+document.addEventListener('wheel',function(e){if(e.ctrlKey)e.preventDefault()},{passive:false});
+document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&/^(\+|-|=|0)$/.test(e.key))e.preventDefault()});})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="game3d.js?v=2"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>

@@ -292,8 +292,35 @@ function getCh(p){var c=CH[p.id];if(c&&(c.userData.key!==p.col+'|'+p.name+'|'+(p
 function turn(o,a,k){var d=a-o.rotation.y;while(d>PI)d-=2*PI;while(d<-PI)d+=2*PI;o.rotation.y+=d*Math.min(1,k)}
 function animWalk(ch,mv,dt){var u=ch.userData;if(u.fz)return;u.ph+=dt*(mv?11:0);var s=mv?Math.sin(u.ph)*.7:0,k=Math.min(1,dt*10);u.lL.rotation.x+=(s-u.lL.rotation.x)*k;u.lR.rotation.x+=(-s-u.lR.rotation.x)*k;u.aL.rotation.x+=(-s*.8-u.aL.rotation.x)*k;u.aR.rotation.x+=(s*.8-u.aR.rotation.x)*k;ch.position.y=mv?Math.abs(Math.sin(u.ph))*.06:0}
 
+/* ---- danses ---- */
+function resetPose(c,k){var u=c.userData;[u.aL,u.aR,u.lL,u.lR].forEach(function(l){l.rotation.z+=(0-l.rotation.z)*k});c.rotation.z+=(0-c.rotation.z)*k}
+function danceAnim(c,d,s){var u=c.userData,L=u.lL,R=u.lR,A=u.aL,B=u.aR,b=s*2*PI*(d===1?1.87:2),y=0,ey=0;c.rotation.z=0;
+ if(d===1){var k=Math.max(0,Math.sin(b));R.rotation.x=-1.05*k;L.rotation.x=.15*k;y=Math.abs(Math.sin(b))*.12;A.rotation.x=B.rotation.x=0;A.rotation.z=-1.25+Math.sin(b*2)*.12;B.rotation.z=1.25-Math.sin(b*2)*.12;ey=Math.sin(b/2)*.3}
+ else if(d===2){var up=Math.sin(b)>0;B.rotation.z=up?2.6:.45;B.rotation.x=up?0:-.7;A.rotation.z=-.55;A.rotation.x=-.25;c.rotation.z=Math.sin(b)*.12;L.rotation.x=Math.sin(b)*.35;R.rotation.x=-Math.sin(b)*.35;y=Math.abs(Math.sin(b))*.05}
+ else if(d===3){var q=Math.floor(s*4)%4;A.rotation.x=-1.57+(q%2?.55:0);B.rotation.x=-1.57+(q%2?0:.55);A.rotation.z=B.rotation.z=0;ey=[0,.5,0,-.5][q];L.rotation.x=q===1?-.55:0;R.rotation.x=q===3?-.55:0}
+ else{ey=s*9;A.rotation.z=-1.5;B.rotation.z=1.5;A.rotation.x=B.rotation.x=0;y=Math.abs(Math.sin(s*6))*.25;L.rotation.x=R.rotation.x=0}
+ c.position.y=y;c.rotation.y=(u.face||0)+ey}
+var AC=null;function ac(){try{if(!AC){var C=window.AudioContext||window.webkitAudioContext;if(!C)return null;AC=new C()}if(AC.state==='suspended')AC.resume()}catch(e){return null}return AC}
+document.addEventListener('pointerdown',function(){ac()},{passive:true});
+function sfx(d,vol){var a=ac();if(!a||vol<=.02)return function(){};var out=a.createGain(),t0=a.currentTime+.03,end=t0+4,V=Math.min(1,vol)*.55;out.connect(a.destination);out.gain.setValueAtTime(.0001,t0);out.gain.exponentialRampToValueAtTime(V,t0+.05);out.gain.setValueAtTime(V,end-.35);out.gain.exponentialRampToValueAtTime(.0001,end);
+ var lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1700;lp.connect(out);
+ function tone(f,t,dur,type,g,f2,dst){var o=a.createOscillator(),gn=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+dur);gn.gain.setValueAtTime(.0001,t);gn.gain.exponentialRampToValueAtTime(g||.5,t+.012);gn.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(gn);gn.connect(dst||out);o.start(t);o.stop(t+dur+.05)}
+ var nb=a.createBuffer(1,a.sampleRate*.4|0,a.sampleRate),nd=nb.getChannelData(0);for(var i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
+ function noise(t,dur,g,hp){var s=a.createBufferSource();s.buffer=nb;var f=a.createBiquadFilter();f.type='highpass';f.frequency.value=hp||6000;var gn=a.createGain();gn.gain.setValueAtTime(g||.3,t);gn.gain.exponentialRampToValueAtTime(.0001,t+dur);s.connect(f);f.connect(gn);gn.connect(out);s.start(t);s.stop(t+dur+.02)}
+ function kick(t,g){tone(150,t,.28,'sine',g||.9,42)}
+ var bt,t,i2;
+ if(d===1){/* Dabké : darbouka doum-tak + mélodie */bt=60/112;var mel=[440,466,440,392,440,392,349,392,349,330,349,392,440,392,440,440];
+  for(i2=0;(t=t0+i2*bt/2)<end-.15;i2++){var st=i2%8;if(st===0||st===3||st===4)tone(105,t,.32,'sine',.95,62);if(st===2||st===6)noise(t,.09,.4,2500),tone(820,t,.05,'triangle',.18);if(st===5||st===7)noise(t,.05,.18,4000);tone(mel[i2%16],t,bt/2*.9,'sawtooth',.13,0,lp)}}
+ else if(d===2){/* Disco */bt=.5;var bass=[110,220,110,220,98,196,98,196];
+  for(i2=0;(t=t0+i2*bt/2)<end-.15;i2++){if(i2%2===0)kick(t);else{noise(t,.05,.22,8000);[440,554,659].forEach(function(f){tone(f,t,.14,'triangle',.08)})}if(i2%4===2)noise(t,.14,.32,1500);tone(bass[i2%8],t,bt/2*.85,'sawtooth',.22,0,lp)}}
+ else if(d===3){/* Robot */bt=.4;var ar=[523,659,784,1047,784,659,523,392];
+  for(i2=0;(t=t0+i2*bt/4)<end-.15;i2++){if(i2%4===0)kick(t,.7);if(i2%8===4)noise(t,.06,.25,3000);tone(ar[i2%8]*(Math.floor(i2/16)%2?1.5:1),t,.07,'square',.09)}tone(900,t0+1.6,.4,'square',.12,200);tone(900,t0+3.2,.4,'square',.12,200)}
+ else{/* Toupie */tone(180,t0,.4,'triangle',.4,520);for(var w=0;w<3;w++)tone(380,t0+.35+w*1.2,1.05,'sine',.28,1500);
+  for(i2=0;(t=t0+i2*.125)<end-.15;i2++){noise(t,.05,i2%2?.1:.18,7000);if(i2%4===0)tone(120,t,.2,'sine',.6,60)}noise(end-.5,.45,.35,5000)}
+ return function(){try{var n=a.currentTime;out.gain.cancelScheduledValues(n);out.gain.setValueAtTime(Math.max(.0001,out.gain.value),n);out.gain.exponentialRampToValueAtTime(.0001,n+.15);setTimeout(function(){try{out.disconnect()}catch(e){}},300)}catch(e){}}}
+
 /* ---- API ---- */
-var Z3={ok:false,yaw:0,
+var Z3={ok:false,yaw:0,sfx:sfx,
  canvas:function(){if(!renderer){try{renderer=new THREE.WebGLRenderer({antialias:(window.devicePixelRatio||1)<2,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));camera=new THREE.PerspectiveCamera(62,1,.1,300);bindLook(renderer.domElement);Z3.ok=true}catch(e){Z3.ok=false;return null}}return renderer.domElement},
  reset:function(){KEY='';first=true},
  /* bloque l'entrée dans un objet du décor (tentes, rochers…), coordonnées du jeu en pixels */
@@ -304,7 +331,7 @@ var Z3={ok:false,yaw:0,
   var dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
   /* joueurs */
   var seen={};o.players.forEach(function(p){var c=getCh(p);seen[p.id]=1;var u=c.userData,x=p.x*U,z=p.y*U,dx=x-u.px,dz=z-u.pz,mv=Math.hypot(dx,dz)>dt*.8;
-   c.position.x=x;c.position.z=z;if(mv&&!p.ice)turn(c,Math.atan2(dx,dz),dt*12);if(p.me&&o.face!=null&&!mv){}animWalk(c,mv,dt);u.px=x;u.pz=z});
+   c.position.x=x;c.position.z=z;if(p.dance&&!mv&&!p.ice){danceAnim(c,p.dance.d,p.dance.s)}else{c.rotation.y=u.face||0;if(mv&&!p.ice)turn(c,Math.atan2(dx,dz),dt*12);u.face=c.rotation.y;resetPose(c,Math.min(1,dt*10));animWalk(c,mv,dt)}u.px=x;u.pz=z});
   Object.keys(CH).forEach(function(k){if(!seen[k]){scene.remove(CH[k]);delete CH[k]}});
   var mx=o.me.x*U,mz=o.me.y*U,meC=CH.me;
   /* premier cadre : caméra derrière le joueur, tournée vers le feu */

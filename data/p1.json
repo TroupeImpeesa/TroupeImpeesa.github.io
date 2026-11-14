@@ -59,7 +59,9 @@
    "name": "Peter Jarjour",
    "role": "",
    "stage": 1,
-   "badges": []
+   "badges": [
+    "Meneur de jeu"
+   ]
   },
   {
    "id": "p1-6",
@@ -216,5 +218,5 @@
    ]
   }
  ],
- "updated": "2026-11-14T10:24:27.691Z"
+ "updated": "2026-11-14T10:24:50.123Z"
 }

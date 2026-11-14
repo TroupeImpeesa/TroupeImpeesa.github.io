@@ -94,7 +94,9 @@
    "name": "Oliver Khoury",
    "role": "",
    "stage": 0,
-   "badges": []
+   "badges": [
+    "Collectionneur"
+   ]
   },
   {
    "id": "p1-11",
@@ -214,5 +216,5 @@
    ]
   }
  ],
- "updated": "2026-11-14T10:24:17.792Z"
+ "updated": "2026-11-14T10:24:27.691Z"
 }

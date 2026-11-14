@@ -43,7 +43,9 @@
     "Sécurité Routière",
     "Campeur",
     "Cuisinier",
-    "Garde"
+    "Garde",
+    "Photographe",
+    "Intendant"
    ]
   },
   {
@@ -220,5 +222,5 @@
    ]
   }
  ],
- "updated": "2026-11-14T13:20:02.200Z"
+ "updated": "2026-11-14T13:23:54.109Z"
 }

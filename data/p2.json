@@ -46,7 +46,8 @@
     "Meneur de jeu",
     "Musicien",
     "Sciences Animales",
-    "Intendant"
+    "Intendant",
+    "Ami de Dieu"
    ]
   },
   {
@@ -188,5 +189,5 @@
    ]
   }
  ],
- "updated": "2026-11-14T10:24:02.040Z"
+ "updated": "2026-11-14T10:24:29.900Z"
 }

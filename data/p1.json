@@ -37,7 +37,13 @@
     "Secouriste",
     "Secrétaire",
     "Guetteur",
-    "Sport de balles"
+    "Sport de balles",
+    "Ami de Dieu",
+    "Ami de Dieu Jaune",
+    "Ami de Dieu Rouge",
+    "Ami de Dieu Vert",
+    "Sciences Animales",
+    "Photographe"
    ]
   },
   {
@@ -218,5 +224,5 @@
    ]
   }
  ],
- "updated": "2026-11-14T10:24:50.123Z"
+ "updated": "2026-11-14T18:31:09.208Z"
 }

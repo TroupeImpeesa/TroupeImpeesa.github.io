@@ -108,7 +108,10 @@
    "name": "Anthony Chucry",
    "role": "",
    "stage": 0,
-   "badges": []
+   "badges": [
+    "Sport de balles",
+    "Sécurité Routière"
+   ]
   }
  ],
  "meetings": [
@@ -211,5 +214,5 @@
    ]
   }
  ],
- "updated": "2026-11-14T10:23:28.074Z"
+ "updated": "2026-11-14T10:24:17.792Z"
 }

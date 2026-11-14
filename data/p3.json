@@ -21,7 +21,7 @@
    "id": "p3-2",
    "name": "Joe Geagea",
    "role": "SP",
-   "stage": 2,
+   "stage": 1,
    "badges": [
     "Interprète",
     "Athlète",
@@ -36,7 +36,11 @@
     "Meneur de jeu",
     "Self Defense",
     "Sciences Animales",
-    "Gérant De Matériel"
+    "Gérant De Matériel",
+    "Ecriture Sainte",
+    "Cinéma",
+    "Nutritionniste",
+    "Sécurité Routière"
    ]
   },
   {
@@ -213,5 +217,5 @@
    ]
   }
  ],
- "updated": "2026-11-14T12:03:44.377Z"
+ "updated": "2026-11-14T13:18:41.188Z"
 }

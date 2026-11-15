@@ -21,7 +21,7 @@
    "id": "p3-2",
    "name": "Joe Geagea",
    "role": "SP",
-   "stage": 1,
+   "stage": 2,
    "badges": [
     "Interprète",
     "Athlète",
@@ -225,5 +225,5 @@
    ]
   }
  ],
- "updated": "2026-11-15T07:21:59.396Z"
+ "updated": "2026-11-15T07:48:13.933Z"
 }

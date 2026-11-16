@@ -138,20 +138,6 @@
    "role": "",
    "stage": 0,
    "badges": []
-  },
-  {
-   "id": "p4-12",
-   "name": "Michel Bou Fadel",
-   "role": "",
-   "stage": 0,
-   "badges": []
-  },
-  {
-   "id": "p4-13",
-   "name": "Marc Bou Fadel",
-   "role": "",
-   "stage": 0,
-   "badges": []
   }
  ],
  "meetings": [
@@ -242,5 +228,5 @@
    ]
   }
  ],
- "updated": "2026-11-16T14:26:35.738Z"
+ "updated": "2026-11-16T14:34:52.093Z"
 }

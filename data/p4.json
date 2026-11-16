@@ -88,7 +88,10 @@
     "Animaux domestiques",
     "Botanique",
     "Intendant",
-    "Patrimoine"
+    "Patrimoine",
+    "Sécurité Routière",
+    "Bien-être",
+    "Nutritionniste"
    ]
   },
   {
@@ -225,5 +228,5 @@
    ]
   }
  ],
- "updated": "2026-11-14T20:39:41.309Z"
+ "updated": "2026-11-16T14:23:32.076Z"
 }

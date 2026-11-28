@@ -14,7 +14,9 @@
     "Cuisinier",
     "Sciences Animales",
     "Electricien",
-    "Gérant De Matériel"
+    "Gérant De Matériel",
+    "Cinéma",
+    "Nutritionniste"
    ]
   },
   {
@@ -240,7 +242,11 @@
     "p3-12",
     "p3-nmvm6x2pj"
    ]
+  },
+  {
+   "date": "2026-11-28",
+   "present": []
   }
  ],
- "updated": "2026-11-25T18:52:23.133Z"
+ "updated": "2026-11-28T09:59:37.425Z"
 }

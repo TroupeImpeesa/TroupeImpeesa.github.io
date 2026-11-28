@@ -16,7 +16,8 @@
     "Electricien",
     "Gérant De Matériel",
     "Cinéma",
-    "Nutritionniste"
+    "Nutritionniste",
+    "Garde"
    ]
   },
   {
@@ -248,5 +249,5 @@
    "present": []
   }
  ],
- "updated": "2026-11-28T09:59:37.425Z"
+ "updated": "2026-11-28T10:05:57.942Z"
 }
